@@ -1,0 +1,62 @@
+// <!-- Bouton pour ouvrir le modal -->
+// <button class="btn btn-primary" (click)="openModal(modal)">
+//   <i class="bi bi-plus-circle"></i> Ajouter un utilisateur
+// </button>
+
+// <!-- Modal Structure -->
+// <ng-template #modal let-modal>
+//   <div class="modal-header">
+//     <h5 class="modal-title">Créer un Nouveau Compte</h5>
+//     <button type="button" class="btn-close" aria-label="Close" (click)="closeModal()"></button>
+//   </div>
+
+//   <div class="modal-body">
+//     <div class="container">
+//       <form (ngSubmit)="onSubmit()">
+        
+//         <!-- Champ Email -->
+//         <div class="mb-3">
+//           <label for="useremail" class="form-label">Email <span class="text-danger">*</span></label>
+//           <input type="email" class="form-control" id="useremail" placeholder="Entrez votre adresse e-mail" [(ngModel)]="user.email" name="email" required />
+//           <div *ngIf="email.invalid && email.touched" class="text-danger">Veuillez entrer un email valide.</div>
+//         </div>
+
+//         <!-- Champ Username -->
+//         <div class="mb-3">
+//           <label for="username" class="form-label">Nom d'utilisateur <span class="text-danger">*</span></label>
+//           <input type="text" class="form-control" id="username" placeholder="Entrez votre nom d'utilisateur" [(ngModel)]="user.username" name="username" required />
+//           <div *ngIf="username.invalid && username.touched" class="text-danger">Veuillez entrer un nom d'utilisateur.</div>
+//         </div>
+
+//         <!-- Champ Mot de Passe -->
+//         <div class="mb-3">
+//           <label for="userpassword" class="form-label">Mot de passe <span class="text-danger">*</span></label>
+//           <input type="password" class="form-control" id="userpassword" placeholder="Entrez votre mot de passe" [(ngModel)]="user.password" name="password" required />
+//           <div *ngIf="password.invalid && password.touched" class="text-danger">Veuillez entrer un mot de passe.</div>
+//         </div>
+
+//         <!-- Champ de Confirmation de Mot de Passe -->
+//         <div class="mb-3">
+//           <label for="confirmPassword" class="form-label">Confirmer le mot de passe <span class="text-danger">*</span></label>
+//           <input type="password" class="form-control" id="confirmPassword" placeholder="Confirmez votre mot de passe" [(ngModel)]="user.confirmPassword" name="confirmPassword" required />
+//           <div *ngIf="confirmPassword.invalid && confirmPassword.touched" class="text-danger">Veuillez confirmer votre mot de passe.</div>
+//         </div>
+
+//         <!-- Rôle -->
+//         <div class="mb-3">
+//           <label for="role" class="form-label">Rôle</label>
+//           <select class="form-select" id="role" [(ngModel)]="user.role" name="role">
+//             <option value="admin">Administrateur</option>
+//             <option value="user">Utilisateur</option>
+//           </select>
+//         </div>
+
+//         <!-- Soumettre le Formulaire -->
+//         <div class="d-flex justify-content-end">
+//           <button type="submit" class="btn btn-success" [disabled]="!form.valid">Créer un compte</button>
+//         </div>
+        
+//       </form>
+//     </div>
+//   </div>
+// </ng-template>

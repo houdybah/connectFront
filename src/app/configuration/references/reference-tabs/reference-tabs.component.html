@@ -1,0 +1,25 @@
+<div class="card">
+    <div class="card-header bg-primary text-white">
+        <h5>Tables de References</h5>
+    </div>
+
+    <div class="card-body  border-top">
+        <ul ngbNav  #navKC="ngbNav" [(activeId)]="activeKeep" [destroyOnHide]="false" class="nav-tabs">
+
+            <li [ngbNavItem]="1" [destroyOnHide]="true">
+                <a ngbNavLink>Compte</a>
+                <ng-template ngbNavContent>
+                    <app-compte-list></app-compte-list>
+                </ng-template>
+            </li>
+            <li [ngbNavItem]="2" [destroyOnHide]="true">
+                <a ngbNavLink>Rubrique</a>
+                <ng-template ngbNavContent>
+                    <app-rubrique-list></app-rubrique-list>
+                </ng-template>
+            </li>
+        </ul>
+        <div [ngbNavOutlet]="navKC" class="mt-1"></div>
+    </div>
+
+</div>

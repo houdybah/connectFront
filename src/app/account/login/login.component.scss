@@ -1,0 +1,12 @@
+.container-fluid {
+    height: 100vh;
+  }
+  
+  .row {
+    height: 100%;
+  }
+  
+  .col-md-6:first-child {
+    background-color: #f8f9fa; /* Couleur de fond en cas d'absence d'image */
+  }
+  

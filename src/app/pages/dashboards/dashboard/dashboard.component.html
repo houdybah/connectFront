@@ -1,0 +1,53 @@
+<!-- Start Breadcrumbs -->
+<!-- <app-breadcrumbs title="DASHBOARD" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs> -->
+<!-- End Breadcrumbs -->
+
+
+<div class="container mt-4">
+    <div class="row">
+      <!-- Déclarations Payées -->
+      <div class="col-md-6 col-lg-3">
+        <div class="card text-white bg-success mb-3">
+          <div class="card-header">Déclarations Payées</div>
+          <div class="card-body">
+            <h5 class="card-title">{{ stats.paid.count }} Déclarations</h5>
+            <p class="card-text">Montant Total : {{ stats.paid.amount | currency }}</p>
+          </div>
+        </div>
+      </div>
+  
+      <!-- Déclarations en Attente de Validation -->
+      <div class="col-md-6 col-lg-3">
+        <div class="card text-white bg-warning mb-3">
+          <div class="card-header">En Attente de Validation</div>
+          <div class="card-body">
+            <h5 class="card-title">{{ stats.pending.count }} Déclarations</h5>
+            <p class="card-text">Montant Total : {{ stats.pending.amount | currency }}</p>
+          </div>
+        </div>
+      </div>
+  
+      <!-- Déclarations FT -->
+      <div class="col-md-6 col-lg-3">
+        <div class="card text-white bg-info mb-3">
+          <div class="card-header">Déclarations FT</div>
+          <div class="card-body">
+            <h5 class="card-title">{{ stats.ft.count }} Déclarations</h5>
+            <p class="card-text">Montant Total : {{ stats.ft.amount | currency }}</p>
+          </div>
+        </div>
+      </div>
+  
+      <!-- Déclarations FlashCash -->
+      <div class="col-md-6 col-lg-3">
+        <div class="card text-white bg-primary mb-3">
+          <div class="card-header">Déclarations FlashCash</div>
+          <div class="card-body">
+            <h5 class="card-title">{{ stats.flashcash.count }} Déclarations</h5>
+            <p class="card-text">Montant Total : {{ stats.flashcash.amount | currency }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  

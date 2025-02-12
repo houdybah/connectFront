@@ -1,0 +1,36 @@
+<div class="modal-body">
+    <div class="container">
+        <form  [formGroup]="compteForm" >
+
+            <div class="mb-3">
+                <label for="codeCompte" class="form-label">Numero de compte <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="codeCompte" formControlName="codeCompte" placeholder="Entrez le numero de compte"  />
+                <div *ngIf="compteForm.get('codeCompte')?.touched && compteForm.get('codeCompte')?.invalid" class="text-danger">
+                    Le code est requis
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="descrptionCompte" class="form-label">Description <span class="text-danger">*</span></label>
+                <textarea  class="form-control" id="descrptionCompte" formControlName="descrptionCompte" placeholder="Entrez la description" ></textarea>
+                <div *ngIf="compteForm.get('descrptionCompte')?.touched && compteForm.get('descrptionCompte')?.invalid" class="text-danger">
+                    La description est requise
+                </div>
+            </div>
+
+
+            <hr>
+
+
+            <!-- Soumettre le Formulaire -->
+            <div class="d-flex justify-content-end">
+                <button  class="btn btn-secondary "  [disabled]="isEnable" (click)="activer($event)" >Modifier</button>
+                <button type="submit" class="btn btn-danger " [disabled]="!isEdit || !isEnable " (click)="delete(compte)" >Supprimer</button>
+                <button type="submit" class="btn btn-success " [disabled]="!isEnable" (click)="Onsave()" >Valider</button>
+            </div>
+
+            <hr>
+
+        </form>
+    </div>
+</div>

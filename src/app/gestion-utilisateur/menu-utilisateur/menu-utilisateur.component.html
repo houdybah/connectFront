@@ -1,0 +1,26 @@
+<main id="main" class="main">
+    <div class="card mx-auto p-2 custom-width">
+      <h3 class="text-center mb-2">
+        <u>Gestions Utilisateurs</u>
+      </h3>
+  
+      <ul ngbNav #nav="ngbNav" class="nav nav-tabs">
+        <li [ngbNavItem]="1" [disabled]="unActive" class="nav-item">
+          <a ngbNavLink class="nav-link">Utilisateur</a>
+          <ng-template ngbNavContent>
+            <app-list-utilisateur></app-list-utilisateur>
+          </ng-template>
+        </li>
+        <li [ngbNavItem]="2" [disabled]="unActive" class="nav-item">
+          <a ngbNavLink class="nav-link">Code Nif</a>
+          <ng-template ngbNavContent>
+            <app-nif-list></app-nif-list>
+          </ng-template>
+        </li>
+    
+      </ul>
+  
+      <div [ngbNavOutlet]="nav" class="mt-4"></div>
+    </div>
+  </main>
+  
