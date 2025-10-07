@@ -1,0 +1,73 @@
+<div class="mt-1">
+    <!-- <h4 class="text-primary">Bon de Sortie de la Compagnie</h4> -->
+    <form [formGroup]="bonSortieForm" (ngSubmit)="onSubmit()">
+      <div class="row">
+        <div class="col-md-6">
+          <div class="mb-3">
+            <div class="form-floating">
+              <input type="text" id="refCompagnie" class="form-control custom-border" formControlName="refCompagnie" placeholder="Name">
+              <label for="refCompagnie">Numéro</label>
+            </div>
+          </div>
+  
+          <div class="mb-3">
+            <div class="form-floating mt-3">
+              <input type="date" id="dateEmission" class="form-control custom-border" formControlName="dateEmission" placeholder="Name">
+              <label for="dateEmission">Date emission</label>
+            </div>
+          </div>
+  
+          <div class="mb-3">
+           
+            <div class="form-floating mt-3">
+              <input type="date" id="dateValidite" class="form-control custom-border" formControlName="dateValidite" placeholder="Name" (change)="checkDate()">
+              <label for="dateValidite">Date validite</label>
+            </div>
+          </div>
+         
+        </div>
+  
+        <div class="col-md-6">
+          
+  
+          <div class="mb-3">
+            <div class="form-floating">
+              <input type="text" id="compagnie" class="form-control custom-border" formControlName="compagnie" placeholder="Name">
+              <!-- <select id="typeLivraison" class="form-select custom-border" formControlName="compagnie" aria-label="typeLivraison" placeholder="Select Type Livraison">
+                <option value="" disabled selected hidden>Choisir la livraison</option>
+                <option *ngFor="let compagnie of compagnies" value="{{compagnie.libelle}}" >{{compagnie.libelle}}</option>
+                
+              </select> -->
+              <label for="compagnie">Compagnie</label>
+            </div>
+          </div>
+  
+          <div class="mb-3">
+             <div class="form-floating mt-3">
+                <select id="typeLivraison" class="form-select custom-border" formControlName="typeLivraison" aria-label="typeLivraison" placeholder="Select Type Livraison">
+                  <option value="" disabled selected hidden>Choisir la livraison</option>
+                  <option value="Maritime">Maritime</option>
+                  <option value="Aérienne">Aérienne</option>
+                  <option value="Terrestre">Terrestre</option>
+                </select>
+                <label for="typeLivraison">Type de Livraison</label>
+              </div>
+            
+          </div>
+          <div class="mb-3">
+           
+            <div class="form-floating mt-3" *ngIf="!isDisplay">
+              <input type="file" id="fileUuid" class="form-control custom-border" (change)="onImageUpload($event)"  placeholder="Name">
+              <label for="fileUuid">Joindre fichier</label>
+            </div>
+            <app-pdf-download *ngIf="isDisplay" [base64Data]="childProperty.bonCompagnieDto.file" [pdfIcon]="pdfIcon" [resultatFile]="'BON_Compagnie_'+childProperty.bonCompagnieDto.refCompagnie" [title]="'Fichier joint du bon de la compagnie'"></app-pdf-download>
+          </div>
+        </div>
+      </div>
+  
+      <button *ngIf="!isDisplay"  type="submit" class="btn btn-primary mt-3" [disabled]="!bonSortieForm.valid">
+        Soumettre
+      </button>
+    </form>
+  </div>
+  

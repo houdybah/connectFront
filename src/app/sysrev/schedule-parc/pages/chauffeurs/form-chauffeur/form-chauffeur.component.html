@@ -1,0 +1,204 @@
+<div class="form-wrapper" (click)="onBackdropClick($event)">
+  <div class="form-container" (click)="$event.stopPropagation()">
+    <!-- Header -->
+    <div class="form-header">
+      <div class="header-content">
+        <div class="header-info">
+          <h2 class="form-title">
+            <i class="fas fa-user-tie"></i>
+            {{ isEditMode ? 'Modifier' : 'Nouveau' }} Chauffeur
+          </h2>
+          <p class="form-subtitle">Remplissez les informations ci-dessous pour {{ isEditMode ? 'modifier' : 'enregistrer' }} votre chauffeur</p>
+        </div>
+        <button type="button" class="btn-close" (click)="annuler()" title="Fermer">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Form Body -->
+    <form [formGroup]="chauffeurForm" class="form-body">
+      <!-- Section 1: Identité -->
+      <div class="form-section">
+        <div class="section-header">
+          <h3 class="section-title">
+            <i class="fas fa-id-card"></i>
+            Informations personnelles
+          </h3>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Nom *</label>
+            <input 
+              type="text" 
+              class="form-control" 
+              formControlName="nom"
+              placeholder="Nom du chauffeur">
+            <div class="invalid-feedback" *ngIf="chauffeurForm.get('nom')?.invalid && chauffeurForm.get('nom')?.touched">
+              Le nom est obligatoire
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">Prénom *</label>
+            <input 
+              type="text" 
+              class="form-control" 
+              formControlName="prenom"
+              placeholder="Prénom du chauffeur">
+            <div class="invalid-feedback" *ngIf="chauffeurForm.get('prenom')?.invalid && chauffeurForm.get('prenom')?.touched">
+              Le prénom est obligatoire
+            </div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Sexe *</label>
+            <select class="form-control" formControlName="sexe">
+              <option *ngFor="let sexe of sexeOptions" [value]="sexe.value">
+                {{ sexe.label }}
+              </option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">Téléphone *</label>
+            <input 
+              type="tel" 
+              class="form-control" 
+              formControlName="phone"
+              placeholder="Ex: +224 123 45 67 89">
+            <div class="invalid-feedback" *ngIf="chauffeurForm.get('phone')?.invalid && chauffeurForm.get('phone')?.touched">
+              Le téléphone est obligatoire
+            </div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Email</label>
+            <input 
+              type="email" 
+              class="form-control" 
+              formControlName="email"
+              placeholder="Ex: chauffeur@example.com">
+            <div class="invalid-feedback" *ngIf="chauffeurForm.get('email')?.invalid && chauffeurForm.get('email')?.touched">
+              Format d'email invalide
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">Adresse *</label>
+            <input 
+              type="text" 
+              class="form-control" 
+              formControlName="adresse"
+              placeholder="Adresse complète">
+            <div class="invalid-feedback" *ngIf="chauffeurForm.get('adresse')?.invalid && chauffeurForm.get('adresse')?.touched">
+              L'adresse est obligatoire
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 2: Permis -->
+      <div class="form-section">
+        <div class="section-header">
+          <h3 class="section-title">
+            <i class="fas fa-id-badge"></i>
+            Informations du permis
+          </h3>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Numéro de permis *</label>
+            <input 
+              type="text" 
+              class="form-control" 
+              formControlName="permis"
+              placeholder="Numéro du permis de conduire">
+            <div class="invalid-feedback" *ngIf="chauffeurForm.get('permis')?.invalid && chauffeurForm.get('permis')?.touched">
+              Le numéro de permis est obligatoire
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">Catégorie de permis *</label>
+            <select class="form-control" formControlName="categoriePermis">
+              <option *ngFor="let categorie of categoriesPermis" [value]="categorie.value">
+                {{ categorie.label }}
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Date d'obtention *</label>
+            <input 
+              type="date" 
+              class="form-control" 
+              formControlName="dateObtentionPermis">
+            <div class="invalid-feedback" *ngIf="chauffeurForm.get('dateObtentionPermis')?.invalid && chauffeurForm.get('dateObtentionPermis')?.touched">
+              La date d'obtention est obligatoire
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">Date d'expiration *</label>
+            <input 
+              type="date" 
+              class="form-control" 
+              formControlName="dateExpirationPermis">
+            <div class="invalid-feedback" *ngIf="chauffeurForm.get('dateExpirationPermis')?.invalid && chauffeurForm.get('dateExpirationPermis')?.touched">
+              La date d'expiration est obligatoire
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 3: Statut -->
+      <div class="form-section">
+        <div class="section-header">
+          <h3 class="section-title">
+            <i class="fas fa-user-check"></i>
+            Statut du chauffeur
+          </h3>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Statut *</label>
+            <select class="form-control" formControlName="statut">
+              <option *ngFor="let statut of statutOptions" [value]="statut.value">
+                {{ statut.label }}
+              </option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Form Actions -->
+      <div class="form-actions">
+        <button 
+          type="button" 
+          class="btn btn-secondary" 
+          (click)="annuler()">
+          <i class="fas fa-times"></i>
+          Annuler
+        </button>
+        <button 
+          type="submit" 
+          class="btn btn-primary" 
+          (click)="onSubmit()"
+          [disabled]="chauffeurForm.invalid || loading">
+          <i class="fas fa-save" [class.fa-spin]="loading"></i>
+          {{ loading ? 'Enregistrement...' : (isEditMode ? 'Modifier' : 'Enregistrer') }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

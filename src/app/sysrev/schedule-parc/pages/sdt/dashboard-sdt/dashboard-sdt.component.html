@@ -1,0 +1,328 @@
+<div class="dashboard-wrapper">
+  <!-- Header -->
+  <div class="dashboard-header">
+    <div class="header-content">
+      <h1 class="dashboard-title">Tableau de Bord SDT</h1>
+      <p class="dashboard-subtitle">Service de Transport - Vue d'ensemble du système</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-outline-primary" (click)="refreshData()" [disabled]="loading">
+        <i class="fas fa-sync-alt" [class.fa-spin]="loading"></i>
+        Actualiser
+      </button>
+      <button class="btn btn-primary" (click)="exportData()">
+        <i class="fas fa-download"></i>
+        Exporter
+      </button>
+    </div>
+  </div>
+
+  <!-- Error Alert -->
+  <div class="error-alert" *ngIf="errorMessage">
+    <div class="alert alert-danger">
+      <i class="fas fa-exclamation-triangle"></i>
+      {{ errorMessage }}
+      <button type="button" class="btn-close" (click)="errorMessage = ''"></button>
+    </div>
+  </div>
+
+  <!-- Quick Stats -->
+  <div class="quick-stats" *ngIf="dashboard">
+    <div class="quick-stat-item">
+      <i class="fas fa-truck"></i>
+      <span class="stat-number">{{ dashboard.statistiques?.nombreCamionsDisponibles || 0 }}</span>
+      <span class="stat-label">Camions</span>
+    </div>
+    <div class="quick-stat-item">
+      <i class="fas fa-users"></i>
+      <span class="stat-number">{{ dashboard.camionsChauffeursDisponibles?.length || 0 }}</span>
+      <span class="stat-label">Chauffeurs</span>
+    </div>
+    <div class="quick-stat-item">
+      <i class="fas fa-link"></i>
+      <span class="stat-number">{{ dashboard.camionsChauffeursDisponibles?.length || 0 }}</span>
+      <span class="stat-label">Affectations</span>
+    </div>
+    <div class="quick-stat-item">
+      <i class="fas fa-route"></i>
+      <span class="stat-number">{{ dashboard.statistiques?.nombreMesLignes || 0 }}</span>
+      <span class="stat-label">Lignes</span>
+    </div>
+  </div>
+
+  <!-- Main Cards -->
+  <div class="main-cards" *ngIf="dashboard">
+    <!-- Carte Camions -->
+    <div class="dashboard-card card-camions" (click)="navigateTo('/sdt/camions')">
+      <div class="card-header">
+        <div class="card-icon">
+          <i class="fas fa-truck"></i>
+        </div>
+        <div class="card-title-section">
+          <h3>Camions</h3>
+          <p>Gestion de la flotte</p>
+        </div>
+      </div>
+      <div class="card-stats">
+        <div class="stat-row">
+          <span class="stat-label">Disponibles</span>
+          <span class="stat-value">{{ dashboard.statistiques?.nombreCamionsDisponibles || 0 }}</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">En Mission</span>
+          <span class="stat-value text-warning">0</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Total</span>
+          <span class="stat-value text-info">{{ dashboard.statistiques?.nombreCamionsDisponibles || 0 }}</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span class="card-action">Gérer les camions <i class="fas fa-arrow-right"></i></span>
+      </div>
+    </div>
+
+    <!-- Carte Chauffeurs -->
+    <div class="dashboard-card card-chauffeurs" (click)="navigateTo('/sdt/chauffeurs')">
+      <div class="card-header">
+        <div class="card-icon">
+          <i class="fas fa-users"></i>
+        </div>
+        <div class="card-title-section">
+          <h3>Chauffeurs</h3>
+          <p>Gestion du personnel</p>
+        </div>
+      </div>
+      <div class="card-stats">
+        <div class="stat-row">
+          <span class="stat-label">Disponibles</span>
+          <span class="stat-value text-success">{{ dashboard.camionsChauffeursDisponibles?.length || 0 }}</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">En Mission</span>
+          <span class="stat-value text-warning">0</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Total</span>
+          <span class="stat-value text-info">{{ dashboard.camionsChauffeursDisponibles?.length || 0 }}</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span class="card-action">Gérer les chauffeurs <i class="fas fa-arrow-right"></i></span>
+      </div>
+    </div>
+
+    <!-- Carte Lignes -->
+    <div class="dashboard-card card-lignes" (click)="navigateTo('/sdt/lignes')">
+      <div class="card-header">
+        <div class="card-icon">
+          <i class="fas fa-route"></i>
+        </div>
+        <div class="card-title-section">
+          <h3>Lignes</h3>
+          <p>Transport et logistique</p>
+        </div>
+      </div>
+      <div class="card-stats">
+        <div class="stat-row">
+          <span class="stat-label">Actives</span>
+          <span class="stat-value text-success">{{ dashboard.statistiques?.nombreMesLignes || 0 }}</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">En Cours</span>
+          <span class="stat-value text-info">0</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Terminées</span>
+          <span class="stat-value text-muted">0</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span class="card-action">Gérer les lignes <i class="fas fa-arrow-right"></i></span>
+      </div>
+    </div>
+
+    <!-- Carte Demandes CKT -->
+    <div class="dashboard-card card-ckt" (click)="navigateTo('/sdt/demandes-ckt')">
+      <div class="card-header">
+        <div class="card-icon">
+          <i class="fas fa-ship"></i>
+        </div>
+        <div class="card-title-section">
+          <h3>Demandes CKT</h3>
+          <p>Terminal conteneur</p>
+        </div>
+      </div>
+      <div class="card-stats">
+        <div class="stat-row">
+          <span class="stat-label">En Attente</span>
+          <span class="stat-value text-warning">{{ dashboard.statistiques?.nombreDemandesEnAttente || 0 }}</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Traitées</span>
+          <span class="stat-value text-success">0</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Total</span>
+          <span class="stat-value text-info">{{ dashboard.statistiques?.nombreDemandesEnAttente || 0 }}</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span class="card-action">Gérer les demandes <i class="fas fa-arrow-right"></i></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Content Sections -->
+  <div class="content-sections" *ngIf="dashboard">
+    <!-- Demandes en attente -->
+    <div class="content-section" *ngIf="dashboard.demandesEnAttente && dashboard.demandesEnAttente.length > 0">
+      <div class="section-header">
+        <h2 class="section-title">
+          <i class="fas fa-clock"></i>
+          Demandes CKT en attente
+        </h2>
+        <span class="section-badge warning">{{ dashboard.demandesEnAttente.length }} demande(s)</span>
+      </div>
+      
+      <div class="table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Numéro</th>
+              <th>Date</th>
+              <th>Heure</th>
+              <th>Horaire</th>
+              <th>Capacité</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let demande of dashboard.demandesEnAttente" class="table-row">
+              <td class="demande-cell">
+                <strong>{{ demande.numero }}</strong>
+              </td>
+              <td class="date-cell">
+                <span class="info-badge">
+                  <i class="fas fa-calendar"></i>
+                  {{ demande.date }}
+                </span>
+              </td>
+              <td class="time-cell">
+                <span class="info-badge">
+                  <i class="fas fa-clock"></i>
+                  {{ demande.heure }}
+                </span>
+              </td>
+              <td class="horaire-cell">
+                <span class="status-badge horaire">
+                  <i class="fas fa-sun"></i>
+                  {{ demande.horaire }}
+                </span>
+              </td>
+              <td class="capacity-cell">
+                <span class="capacity-info">
+                  <i class="fas fa-boxes"></i>
+                  {{ demande.capacite }} places
+                </span>
+              </td>
+              <td class="actions-cell">
+                <button 
+                  class="btn-action btn-process"
+                  (click)="traiterDemande(demande)"
+                  title="Traiter cette demande">
+                  <i class="fas fa-cog"></i>
+                  Traiter
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Mes lignes -->
+    <div class="content-section" *ngIf="dashboard.mesLignes && dashboard.mesLignes.length > 0">
+      <div class="section-header">
+        <h2 class="section-title">
+          <i class="fas fa-route"></i>
+          Mes lignes créées
+        </h2>
+        <span class="section-badge primary">{{ dashboard.mesLignes.length }} ligne(s)</span>
+      </div>
+      
+      <div class="table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Numéro</th>
+              <th>Date</th>
+              <th>Heure</th>
+              <th>Statut</th>
+              <th>Capacité</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let ligne of dashboard.mesLignes" class="table-row">
+              <td class="ligne-cell">
+                <strong>{{ ligne.numero }}</strong>
+              </td>
+              <td class="date-cell">
+                <span class="info-badge">
+                  <i class="fas fa-calendar"></i>
+                  {{ ligne.date }}
+                </span>
+              </td>
+              <td class="time-cell">
+                <span class="info-badge">
+                  <i class="fas fa-clock"></i>
+                  {{ ligne.heure }}
+                </span>
+              </td>
+              <td class="status-cell">
+                <span class="status-badge" [ngClass]="getStatusClass(ligne.status)">
+                  <i class="fas" [ngClass]="getStatusIcon(ligne.status)"></i>
+                  {{ ligne.status }}
+                </span>
+              </td>
+              <td class="capacity-cell">
+                <span class="capacity-info">
+                  <i class="fas fa-boxes"></i>
+                  {{ ligne.capacite }} places
+                </span>
+              </td>
+              <td class="actions-cell">
+                <div class="action-buttons">
+                  <button 
+                    class="btn-action btn-view"
+                    (click)="voirDetailsLigne(ligne)"
+                    title="Voir les détails">
+                    <i class="fas fa-eye"></i>
+                    Détails
+                  </button>
+                  <button 
+                    class="btn-action btn-assign"
+                    (click)="assignerCamion(ligne.uuid!)"
+                    *ngIf="ligne.status === 'EN_ATTENTE'"
+                    title="Assigner un camion">
+                    <i class="fas fa-truck"></i>
+                    Assigner
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div class="loading-section" *ngIf="loading">
+    <div class="loading-content">
+      <div class="loading-spinner"></div>
+      <p class="loading-text">Chargement des données...</p>
+    </div>
+  </div>
+</div>

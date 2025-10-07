@@ -1,0 +1,115 @@
+<div class="container-fluid mt-4">
+    <div class="card">
+      <div class="card-header bg-primary text-white">
+        <h5>Liste des Transactions</h5>
+      </div>
+      <div class="card-body">
+        <!-- Filtres -->
+        <div class="row mb-3">
+          <div class="col-md-4">
+            <label for="startDate" class="form-label">Date de début</label>
+            <input type="date" id="startDate" [(ngModel)]="filters.startDate" class="form-control" />
+          </div>
+          <div class="col-md-4">
+            <label for="endDate" class="form-label">Date de fin</label>
+            <input type="date" id="endDate" [(ngModel)]="filters.endDate" class="form-control" />
+          </div>
+          <div class="col-md-4">
+            <label for="status" class="form-label">Statut</label>
+            <select name="" id="" [(ngModel)]="filters.status" class="form-select">
+                <option value="">Tous</option>
+                <option value="Validée">Validée</option>
+                <option value="En attente">En attente</option>
+            </select>
+            <!-- <select id="status" [(ngModel)]="filters.status" class="form-control form-select col-md-12">
+              <option value="">Tous</option>
+              <option value="Validée">Validée</option>
+              <option value="En attente">En attente</option>
+            </select> -->
+          </div>
+        </div>
+  
+        <!-- Boutons d'actions -->
+        <div class="mb-3">
+          <button class="btn btn-primary me-2" >Exporter en Excel</button>
+          <button class="btn btn-success" [disabled]="!isAnySelected" (click)="validateSelected()">Valider les Sélections</button>
+        </div>
+  
+        <!-- Tableau -->
+        <table class="table table-bordered">
+          <thead class="table-light">
+            <tr>
+              <th><input type="checkbox" (change)="toggleAllSelection($event)" /></th>
+              <th>Bureau</th>
+              <th>Code Déclarant</th>
+              <th>Code NIF</th>
+              <th>Numéro BL</th>
+              <th>Date</th>
+              <th>Référence</th>
+              <th>Montant</th>
+              <th>NQ</th>
+              <th>Statut Douane</th>
+              <th>Statut Guceg</th>
+              <th>Statut Declarant</th>
+              <th>Actions</th>
+            
+              <!-- <th *ngIf="role.isGuceg" >Validation</th>
+              <th *ngIf="role.isDeclarant" >Validation Paiement</th> -->
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let declaration of transactions; let i = index" [ngClass]="{ 'table-checked': declaration.selected}">
+              <td>
+                <input type="checkbox" [(ngModel)]="declaration.selected" (change)="toggleCheck(declaration)" />
+              </td>
+              <td>{{ declaration.office }}</td>
+              <td>{{ declaration.codeDeclarant }}</td>
+              <td>{{ declaration.codeEntreprise }}</td>
+              <td class="text-center">L{{ declaration.numeroBl }}</td>
+              <td>{{ declaration.dateTransaction }}</td>
+              <td>{{ declaration.reference }}</td>
+              <td>{{ declaration.montantTransaction |  currency:'GNF':'symbol':'1.0-0':'fr-GN' }}</td>
+              <td>{{ declaration.numeroQuittance }}</td>
+              <td>{{ declaration.avisDouane }}</td>
+              <td>{{ declaration.avisGuceg }}</td>
+              <td>{{ declaration.avisDeclarant }}</td>
+              <td>
+                <button class="btn btn-primary btn-sm" *ngIf="role.isDouane" data-bs-toggle="modal" data-bs-target="#showModal" (click)="openModal(content,declaration.transactionStatusDtos)" >Details</button>
+                <button class="btn btn-primary btn-sm" *ngIf="role.isGuceg" data-bs-toggle="modal" data-bs-target="#showModal" (click)="openModal(content,declaration.transactionStatusDtos)" >Details</button>
+                <button class="btn btn-primary btn-sm" *ngIf="role.isDeclarant" data-bs-toggle="modal" data-bs-target="#showModal" (click)="openModal(content,declaration.transactionStatusDtos)" >Details</button>
+              </td>
+              <td *ngIf="role.isGuceg && declaration.avisGuceg === 'EN_ATTENTE'">
+
+                <button class="btn btn-danger btn-sm" *ngIf="role.isGuceg" (click)="onValideGuceg(declaration,'VALID')" >VALID</button>
+                <button class="btn btn-danger btn-sm ms-1" *ngIf="role.isGuceg" (click)="onValideGuceg(declaration,'NON_VALID')" >NON VALID</button>
+              </td>
+              <!-- <td *ngIf="role.isDeclarant && declaration.avisDouane === 'VALID' && declaration.avisGuceg === 'VALID'"  [ngClass]="{'class-name': declaration.avisDeclarant ==='PAYE'}">
+                
+                <button class="btn btn-danger btn-sm" *ngIf="role.isDeclarant && declaration.avisDeclarant !=='PAYE'" (click)="onValideDeclarant(declaration,'PAYE')" >PAYE</button>
+              
+              </td>
+              <td *ngIf="role.isGuceg && declaration.avisGuceg === 'VALID'" class="bg-primary">
+                
+              </td> -->
+            </tr>
+          </tbody>
+        </table>
+        <div class="pagination">
+          <!-- <pagination-controls 
+          (pageChange)="onPageChange($event)" 
+          [totalItems]="totalItems" 
+          [itemsPerPage]="itemsPerPage">
+        </pagination-controls> -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <ng-template #content role="document" let-modal >
+    <div class="modal-header bg-light p-3">
+        <h5 class="modal-title" id="exampleModalLabel">{{title}}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <app-status-paiement [childProperty]="parentProperty"></app-status-paiement>
+</ng-template>
+  

@@ -27,6 +27,7 @@ import {ParametreListComponent} from "./parametres/parametre-list/parametre-list
 import {ParametreFormComponent} from "./parametres/parametre-form/parametre-form.component";
 import {RubriqueListComponent} from "./references/rubrique-list/rubrique-list.component";
 import {RubriqueFormComponent} from "./references/rubrique-form/rubrique-form.component";
+// ParametresTabsComponent est standalone
 
 
 @NgModule({

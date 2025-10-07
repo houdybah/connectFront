@@ -1,0 +1,298 @@
+<div class="form-wrapper" (click)="onBackdropClick($event)">
+  <div class="form-container" (click)="$event.stopPropagation()">
+    <!-- Header -->
+    <div class="form-header">
+      <div class="header-content">
+        <div class="header-info">
+          <h2 class="form-title">
+            <i class="fas fa-clipboard-list"></i>
+            {{ isEditMode ? 'Modifier' : 'Nouvelle' }} Demande CKT
+          </h2>
+          <p class="form-subtitle">Remplissez les informations ci-dessous pour créer votre demande</p>
+        </div>
+        <button type="button" class="btn-close" (click)="annuler()" title="Fermer">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Form Body -->
+    <form [formGroup]="demandeForm" class="form-body">
+      <!-- Progress indicator -->
+      <div class="progress-indicator">
+        <div class="progress-step" [class.active]="true">
+          <div class="step-number">1</div>
+          <div class="step-label">Informations</div>
+        </div>
+        <div class="progress-line"></div>
+        <div class="progress-step" [class.active]="demandeForm.get('date')?.value && demandeForm.get('heure')?.value">
+          <div class="step-number">2</div>
+          <div class="step-label">Horaire</div>
+        </div>
+        <div class="progress-line"></div>
+        <div class="progress-step" [class.active]="demandeForm.get('horaire')?.value">
+          <div class="step-number">3</div>
+          <div class="step-label">Capacité</div>
+        </div>
+      </div>
+
+      <!-- Section 1: Informations de base -->
+      <div class="form-section">
+        <div class="section-header">
+          <h3 class="section-title">
+            <i class="fas fa-info-circle"></i>
+            Informations de base
+          </h3>
+          <span class="section-badge">Étape 1/3</span>
+        </div>
+        
+        <!-- Numéro (auto-generated) -->
+        <div class="form-field-group">
+          <div class="form-field readonly-field">
+            <label class="field-label">
+              <i class="fas fa-hashtag"></i>
+              Numéro de la demande
+            </label>
+            <div class="readonly-input">
+              <input 
+                type="text" 
+                class="form-input readonly" 
+                formControlName="numero"
+                readonly>
+              <i class="fas fa-magic readonly-icon"></i>
+            </div>
+            <span class="field-help">Généré automatiquement</span>
+          </div>
+        </div>
+
+        <!-- Date et Heure -->
+        <div class="form-field-group">
+          <div class="form-field">
+            <label class="field-label">
+              <i class="fas fa-calendar"></i>
+              Date <span class="required">*</span>
+            </label>
+            <input 
+              type="date" 
+              class="form-input" 
+              formControlName="date"
+              [class.error]="hasError('date')">
+            <div class="field-error" *ngIf="hasError('date')">
+              {{ getErrorMessage('date') }}
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label class="field-label">
+              <i class="fas fa-clock"></i>
+              Heure <span class="required">*</span>
+            </label>
+            <input 
+              type="time" 
+              class="form-input" 
+              formControlName="heure"
+              [class.error]="hasError('heure')">
+            <div class="field-error" *ngIf="hasError('heure')">
+              {{ getErrorMessage('heure') }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 2: Horaire -->
+      <div class="form-section">
+        <div class="section-header">
+          <h3 class="section-title">
+            <i class="fas fa-clock"></i>
+            Horaire <span class="required">*</span>
+          </h3>
+          <span class="section-badge">Étape 2/3</span>
+        </div>
+        
+        <div class="form-field-group">
+          <div class="form-field full-width">
+            <label class="field-label">
+              <i class="fas fa-calendar-day"></i>
+              Choisissez votre créneau horaire
+            </label>
+            <div class="option-cards">
+              <div 
+                *ngFor="let option of horaireOptions"
+                class="option-card"
+                [class.selected]="demandeForm.get('horaire')?.value === option.value"
+                (click)="demandeForm.patchValue({horaire: option.value})">
+                <div class="option-icon">
+                  <i class="fas fa-{{option.icon}}"></i>
+                </div>
+                <div class="option-content">
+                  <span class="option-label">{{ option.label }}</span>
+                  <span class="option-description">{{ getHoraireDescription(option.value) }}</span>
+                </div>
+                <div class="option-check" *ngIf="demandeForm.get('horaire')?.value === option.value">
+                  <i class="fas fa-check"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 3: Capacité -->
+      <div class="form-section">
+        <div class="section-header">
+          <h3 class="section-title">
+            <i class="fas fa-boxes"></i>
+            Capacité demandée <span class="required">*</span>
+          </h3>
+          <span class="section-badge">Étape 3/3</span>
+        </div>
+        
+        <div class="form-field-group">
+          <div class="form-field full-width">
+            <label class="field-label">
+              <i class="fas fa-users"></i>
+              Nombre de places nécessaires
+            </label>
+            <div class="capacity-control">
+              <button 
+                type="button" 
+                class="capacity-btn decrease" 
+                (click)="adjustCapacity(-1)"
+                [disabled]="f['capacite'].value <= 1">
+                <i class="fas fa-minus"></i>
+              </button>
+              <div class="capacity-display">
+                <input 
+                  type="number" 
+                  class="form-input capacity-input" 
+                  formControlName="capacite"
+                  min="1"
+                  max="100">
+                <span class="capacity-unit">places</span>
+              </div>
+              <button 
+                type="button" 
+                class="capacity-btn increase" 
+                (click)="adjustCapacity(1)"
+                [disabled]="f['capacite'].value >= 100">
+                <i class="fas fa-plus"></i>
+              </button>
+            </div>
+            <div class="capacity-info">
+              <span class="field-help">Entre 1 et 100 places disponibles</span>
+              <div class="capacity-slider">
+                <input 
+                  type="range" 
+                  class="slider" 
+                  min="1" 
+                  max="100" 
+                  [value]="f['capacite'].value"
+                  (input)="onSliderChange($event)">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 4: Résumé -->
+      <div class="form-section summary-section" *ngIf="demandeForm.valid">
+        <div class="section-header">
+          <h3 class="section-title">
+            <i class="fas fa-check-circle"></i>
+            Résumé de la demande
+          </h3>
+          <span class="section-badge success">Prêt à créer</span>
+        </div>
+        
+        <div class="form-field-group">
+          <div class="form-field full-width">
+            <div class="summary-preview">
+              <div class="summary-item">
+                <div class="summary-icon">
+                  <i class="fas fa-hashtag"></i>
+                </div>
+                <div class="summary-content">
+                  <span class="summary-label">Numéro</span>
+                  <span class="summary-value">{{ f['numero'].value }}</span>
+                </div>
+              </div>
+              
+              <div class="summary-item">
+                <div class="summary-icon">
+                  <i class="fas fa-calendar"></i>
+                </div>
+                <div class="summary-content">
+                  <span class="summary-label">Date</span>
+                  <span class="summary-value">{{ f['date'].value | date:'dd/MM/yyyy' }}</span>
+                </div>
+              </div>
+              
+              <div class="summary-item">
+                <div class="summary-icon">
+                  <i class="fas fa-clock"></i>
+                </div>
+                <div class="summary-content">
+                  <span class="summary-label">Heure</span>
+                  <span class="summary-value">{{ f['heure'].value }}</span>
+                </div>
+              </div>
+              
+              <div class="summary-item">
+                <div class="summary-icon">
+                  <i class="fas" [ngClass]="getSelectedHoraire()?.icon"></i>
+                </div>
+                <div class="summary-content">
+                  <span class="summary-label">Horaire</span>
+                  <span class="summary-value">{{ getSelectedHoraire()?.label }}</span>
+                </div>
+              </div>
+              
+              <div class="summary-item">
+                <div class="summary-icon">
+                  <i class="fas fa-boxes"></i>
+                </div>
+                <div class="summary-content">
+                  <span class="summary-label">Capacité</span>
+                  <span class="summary-value">{{ f['capacite'].value }} places</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <!-- Footer -->
+    <div class="form-footer">
+      <div class="footer-content">
+        <div class="form-status" *ngIf="!demandeForm.valid">
+          <i class="fas fa-exclamation-triangle"></i>
+          <span>Veuillez remplir tous les champs obligatoires</span>
+        </div>
+        <div class="form-status success" *ngIf="demandeForm.valid">
+          <i class="fas fa-check-circle"></i>
+          <span>Formulaire prêt à être soumis</span>
+        </div>
+      </div>
+      <div class="footer-actions">
+        <button 
+          type="button" 
+          class="btn btn-secondary" 
+          (click)="annuler()"
+          [disabled]="loading">
+          <i class="fas fa-times"></i>
+          <span class="btn-text">Annuler</span>
+        </button>
+        <button 
+          type="button" 
+          class="btn btn-primary" 
+          (click)="onSubmit()"
+          [disabled]="loading || demandeForm.invalid">
+          <i class="fas fa-spinner fa-spin" *ngIf="loading"></i>
+          <i class="fas fa-save" *ngIf="!loading"></i>
+          <span class="btn-text">{{ isEditMode ? 'Modifier' : 'Créer' }}</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

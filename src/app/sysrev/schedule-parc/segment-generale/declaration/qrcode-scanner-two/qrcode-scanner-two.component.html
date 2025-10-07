@@ -1,0 +1,114 @@
+<div class="scanner-container">
+  <div class="scanner-header">
+    <h2>Scanner de code QR/code-barres</h2>
+    <div class="controls">
+      <button *ngIf="scanActive" class="btn btn-danger" (click)="stopScanner()">
+        <i class="bi bi-stop-circle"></i> Arrêter le scan
+      </button>
+    </div>
+  </div>
+
+  <div class="scanner-content" [ngClass]="{'active': scanActive}">
+    <div *ngIf="scanActive" class="scanner-wrapper">
+      <zxing-scanner
+        #scanner
+        [enable]="scanActive"
+        [formats]="allowedFormats"
+        (scanSuccess)="onScanSuccess($event)"
+      ></zxing-scanner>
+      <div class="scanning-overlay">
+        <div class="scan-region"></div>
+        <div class="scanning-info">Placez le code dans le cadre</div>
+      </div>
+    </div>
+     
+    <div *ngIf="!scanActive && !scanResult" class="scanner-placeholder">
+      <div class="placeholder-content">
+        <i class="bi bi-upc-scan placeholder-icon"></i>
+        <p>Le scanner démarrera automatiquement</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Séparateur -->
+  <div class="separator">
+    <hr class="separator-line">
+    <span class="separator-text">OU</span>
+  </div>
+
+  <!-- Section de saisie manuelle -->
+  <div class="manual-input-section">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">
+          <i class="bi bi-keyboard"></i> Saisie manuelle
+        </h5>
+        <div class="input-group">
+          <input 
+            type="text" 
+            
+            class="form-control" 
+            placeholder="Entrez le numéro de rendez-vous"
+            [(ngModel)]="manualInput"
+            (keyup.enter)="validateManualInput()"
+            #manualInputField>
+          <button 
+            class="btn btn-primary" 
+            type="button" 
+            (click)="validateManualInput()"
+            [disabled]="!manualInput || manualInput.trim() === ''">
+            <i class="bi bi-check-circle"></i> Valider
+          </button>
+        </div>
+        <small class="form-text text-muted mt-2">
+          Si vous ne pouvez pas scanner le code QR ci-dessus
+        </small>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal pour afficher les résultats -->
+<ng-template #resultModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">Résultat {{ inputMethod === 'manual' ? 'de la saisie' : 'du scan' }}</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss(); resetScanner()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="result-container">
+      <div *ngIf="resultDetails">
+        <div class="result-method">
+          <span class="badge" [ngClass]="inputMethod === 'manual' ? 'bg-success' : 'bg-info'">
+            <i class="bi" [ngClass]="inputMethod === 'manual' ? 'bi-keyboard' : 'bi-upc-scan'"></i>
+            {{ inputMethod === 'manual' ? 'Saisie manuelle' : 'Scan automatique' }}
+          </span>
+        </div>
+        <div class="result-type">
+          <span class="badge bg-secondary">{{ resultDetails.type }}</span>
+        </div>
+        <div class="result-value">
+          <p><strong>Référence:</strong> {{ resultDetails.reference || resultDetails.value }}</p>
+        </div>
+        <div class="result-time" *ngIf="resultDetails.scannedAt">
+          <small>{{ inputMethod === 'manual' ? 'Saisi' : 'Scanné' }} à {{ resultDetails.scannedAt }}</small>
+        </div>
+      </div>
+    </div>
+    <div class="timer-info">
+      <p>Cette fenêtre se fermera dans {{ countdown }} secondes</p>
+      <div class="progress">
+        <div class="progress-bar" role="progressbar" [style.width]="(countdown/5)*100 + '%'"></div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="modal.dismiss(); resetScanner()">Fermer</button>
+    <button type="button" class="btn btn-primary" (click)="modal.dismiss(); startNewScan()">
+      {{ inputMethod === 'manual' ? 'Saisir à nouveau' : 'Scanner à nouveau' }}
+    </button>
+  </div>
+</ng-template>
+
+

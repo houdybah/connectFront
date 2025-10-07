@@ -1,0 +1,638 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+// Background global pour le composant
+:host {
+  display: block;
+  background: #f8f9fa;
+  min-height: 100vh;
+}
+
+// Variables CSS
+:root {
+  --primary-color: #0d6efd;
+  --secondary-color: #6c757d;
+  --success-color: #198754;
+  --info-color: #0dcaf0;
+  --warning-color: #ffc107;
+  --danger-color: #dc3545;
+  --light-color: #f8f9fa;
+  --dark-color: #212529;
+  --border-radius: 0.375rem;
+  --box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+  --box-shadow-lg: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+// Styles généraux
+.container-fluid {
+  font-family: 'Inter', sans-serif;
+  padding: 1rem;
+  background: #f8f9fa;
+  min-height: 100vh;
+}
+
+.card {
+  border: 1px solid #e9ecef;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  transition: all 0.3s ease;
+  background: #ffffff;
+}
+
+.card:hover {
+  box-shadow: var(--box-shadow-lg);
+}
+
+.card-header {
+  background: #ffffff;
+  border-bottom: 2px solid #e9ecef;
+  padding: 1.25rem 1.5rem;
+}
+
+.card-header h4 {
+  font-weight: 600;
+  color: var(--dark-color);
+  margin: 0;
+}
+
+.card-body {
+  padding: 1.5rem;
+}
+
+// Section de recherche
+.search-section {
+  .card {
+    background: #ffffff;
+    border: 1px solid #e9ecef;
+  }
+  
+  .card-title {
+    color: var(--secondary-color);
+    font-weight: 500;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+}
+
+// Formulaires
+.form-label {
+  font-weight: 600;
+  color: var(--dark-color);
+  margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.form-control {
+  border: 1px solid #ced4da;
+  border-radius: var(--border-radius);
+  transition: all 0.3s ease;
+  
+  &:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+  }
+}
+
+.form-control-sm {
+  padding: 0.375rem 0.75rem;
+  font-size: 0.875rem;
+}
+
+// Boutons
+.btn {
+  border-radius: var(--border-radius);
+  font-weight: 500;
+  transition: all 0.3s ease;
+  border: 1px solid transparent;
+}
+
+.btn-primary {
+  background: var(--primary-color);
+  border: 1px solid var(--primary-color);
+  color: black;
+  box-shadow: 0 2px 4px rgba(13, 110, 253, 0.3);
+  
+  &:hover {
+    background: #0b5ed7;
+    border-color: #0b5ed7;
+    transform: translateY(-2px);
+    color: white;
+    box-shadow: 0 4px 8px rgba(13, 110, 253, 0.4);
+  }
+  
+  &:disabled {
+    opacity: 0.6;
+    transform: none;
+  }
+}
+
+.btn-outline-secondary {
+  color: var(--secondary-color);
+  border-color: var(--secondary-color);
+  
+  &:hover {
+    background-color: var(--secondary-color);
+    border-color: var(--secondary-color);
+    color: white;
+  }
+}
+
+.btn-outline-primary {
+  color: var(--primary-color);
+  border-color: var(--primary-color);
+  
+  &:hover {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: white;
+  }
+}
+
+.btn-outline-warning {
+  color: var(--warning-color);
+  border-color: var(--warning-color);
+  
+  &:hover {
+    background-color: var(--warning-color);
+    border-color: var(--warning-color);
+    color: var(--dark-color);
+  }
+  
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.btn-sm {
+  padding: 0.375rem 0.75rem;
+  font-size: 0.8rem;
+}
+
+// Badges
+.badge {
+  font-weight: 500;
+  padding: 0.375rem 0.75rem;
+  border-radius: var(--border-radius);
+}
+
+.bg-primary {
+  background-color: var(--primary-color) !important;
+}
+
+.bg-secondary {
+  background-color: var(--secondary-color) !important;
+}
+
+.bg-info {
+  background-color: var(--info-color) !important;
+  color: var(--dark-color);
+}
+
+.bg-success {
+  background-color: var(--success-color) !important;
+}
+
+.bg-warning {
+  background-color: var(--warning-color) !important;
+  color: var(--dark-color);
+}
+
+// Tableau
+.table-responsive {
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  box-shadow: var(--box-shadow);
+}
+
+.table {
+  margin-bottom: 0;
+  font-size: 0.875rem;
+}
+
+.table-dark {
+  background: #343a40;
+  
+  th {
+    border: none;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.5px;
+    padding: 1rem 0.75rem;
+  }
+}
+
+.table tbody tr {
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background-color: rgba(13, 110, 253, 0.05);
+    transform: translateY(-1px);
+  }
+  
+  &:nth-child(even) {
+    background-color: rgba(0, 0, 0, 0.02);
+  }
+}
+
+.table tbody td {
+  padding: 1rem 0.75rem;
+  vertical-align: middle;
+  border-top: 1px solid #e9ecef;
+}
+
+// Cartes d'appurement pour mobile
+.appurement-card {
+  border: 1px solid #e9ecef;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  transition: all 0.3s ease;
+  margin-bottom: 1rem;
+}
+
+.appurement-card:hover {
+  box-shadow: var(--box-shadow-lg);
+  transform: translateY(-2px);
+}
+
+.appurement-card .card-body {
+  padding: 1rem;
+}
+
+.appurement-card .card-title {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+// Alertes
+.alert {
+  border: none;
+  border-radius: var(--border-radius);
+  font-weight: 500;
+}
+
+.alert-info {
+  background: #d1ecf1;
+  color: #0c5460;
+  border-left: 4px solid var(--info-color);
+}
+
+.alert-sm {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.8rem;
+}
+
+// Spinner
+.spinner-border {
+  width: 3rem;
+  height: 3rem;
+  border-width: 0.3rem;
+}
+
+// Pagination
+ngb-pagination {
+  .pagination {
+    margin-bottom: 0;
+  }
+  
+  .page-link {
+    color: var(--primary-color);
+    border: 1px solid #dee2e6;
+    border-radius: var(--border-radius);
+    margin: 0 2px;
+    transition: all 0.3s ease;
+    
+    &:hover {
+      background-color: var(--primary-color);
+      border-color: var(--primary-color);
+      color: white;
+    }
+  }
+  
+  .page-item.active .page-link {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+  }
+}
+
+// Modals
+.modal-header {
+  border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.modal-footer {
+  border-top: 1px solid #e9ecef;
+}
+
+// États vides
+.text-center.py-5 {
+  .card {
+    background: #ffffff;
+    border: 2px dashed #e9ecef;
+  }
+  
+  i {
+    opacity: 0.5;
+  }
+}
+
+// Responsive - Mobile First
+@media (max-width: 575.98px) {
+  .container-fluid {
+    padding: 0.25rem;
+  }
+  
+  .card-body {
+    padding: 0.75rem;
+  }
+  
+  .btn {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+  }
+  
+  .btn-sm {
+    padding: 0.2rem 0.4rem;
+    font-size: 0.7rem;
+  }
+  
+  .form-control-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+  }
+  
+  .appurement-card .card-body {
+    padding: 0.75rem;
+  }
+  
+  .appurement-card .card-title {
+    font-size: 0.9rem;
+  }
+  
+  .badge {
+    font-size: 0.65rem;
+    padding: 0.25rem 0.5rem;
+  }
+  
+  code {
+    font-size: 0.7rem;
+    padding: 0.15rem 0.3rem;
+  }
+  
+  .small {
+    font-size: 0.7rem;
+  }
+}
+
+// Responsive - Tablette
+@media (min-width: 576px) and (max-width: 991.98px) {
+  .container-fluid {
+    padding: 0.75rem;
+  }
+  
+  .card-body {
+    padding: 1.25rem;
+  }
+  
+  .appurement-card .card-body {
+    padding: 1rem;
+  }
+  
+  .btn {
+    font-size: 0.8rem;
+    padding: 0.375rem 0.75rem;
+  }
+  
+  .btn-sm {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.75rem;
+  }
+  
+  .form-control-sm {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.8rem;
+  }
+}
+
+// Responsive - Desktop
+@media (min-width: 992px) {
+  .container-fluid {
+    padding: 1rem;
+  }
+  
+  .card-body {
+    padding: 1.5rem;
+  }
+  
+  .table-responsive {
+    font-size: 0.875rem;
+  }
+  
+  .table thead th {
+    padding: 1rem 0.75rem;
+    font-size: 0.8rem;
+  }
+  
+  .table tbody td {
+    padding: 1rem 0.75rem;
+  }
+}
+
+// Améliorations spécifiques pour les cartes mobiles
+@media (max-width: 991.98px) {
+  .appurement-card {
+    .d-grid.gap-2.d-md-flex {
+      display: grid !important;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem;
+    }
+    
+    .btn {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+}
+
+// Améliorations pour les très petits écrans
+@media (max-width: 375px) {
+  .appurement-card {
+    .d-grid.gap-2.d-md-flex {
+      grid-template-columns: 1fr;
+    }
+  }
+  
+  .btn-sm {
+    padding: 0.25rem 0.4rem;
+    font-size: 0.65rem;
+  }
+  
+  .appurement-card .card-title {
+    font-size: 0.85rem;
+  }
+}
+
+// Améliorations pour les écrans moyens
+@media (min-width: 768px) and (max-width: 991.98px) {
+  .appurement-card {
+    .d-grid.gap-2.d-md-flex {
+      display: flex !important;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    
+    .btn {
+      flex: 1;
+      min-width: 120px;
+    }
+  }
+}
+
+// Améliorations modals pour mobile
+@media (max-width: 768px) {
+  .modal-dialog {
+    margin: 0.5rem;
+    max-width: calc(100% - 1rem);
+  }
+  
+  .modal-header {
+    padding: 0.75rem 1rem;
+  }
+  
+  .modal-body {
+    padding: 1rem;
+  }
+  
+  .modal-footer {
+    padding: 0.75rem 1rem;
+  }
+  
+  .modal-title {
+    font-size: 1rem;
+  }
+}
+
+// Améliorations pour l'en-tête sur mobile
+@media (max-width: 768px) {
+  .card-header {
+    padding: 0.75rem 1rem;
+  }
+  
+  .card-header h4 {
+    font-size: 1.25rem;
+  }
+  
+  .card-header .btn {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+  }
+}
+
+// Améliorations pour les alertes sur mobile
+@media (max-width: 768px) {
+  .alert {
+    padding: 0.75rem;
+    font-size: 0.875rem;
+  }
+  
+  .alert-sm {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.8rem;
+  }
+  
+  .text-center.py-5 {
+    padding: 2rem 1rem !important;
+    
+    .card-body {
+      padding: 2rem 1rem;
+    }
+    
+    i {
+      font-size: 3rem !important;
+    }
+    
+    h5 {
+      font-size: 1.1rem;
+    }
+    
+    p {
+      font-size: 0.9rem;
+    }
+  }
+}
+
+// Améliorations pour les spinners sur mobile
+@media (max-width: 768px) {
+  .spinner-border {
+    width: 2rem;
+    height: 2rem;
+    border-width: 0.25rem;
+  }
+  
+  .spinner-border-sm {
+    width: 0.75rem;
+    height: 0.75rem;
+  }
+}
+
+// Animations
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.card {
+  animation: fadeIn 0.5s ease-out;
+}
+
+.table tbody tr {
+  animation: fadeIn 0.3s ease-out;
+}
+
+// Améliorations de l'accessibilité
+.btn:focus {
+  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+.form-control:focus {
+  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+// Styles pour les icônes
+i {
+  transition: color 0.3s ease;
+}
+
+.btn:hover i {
+  color: inherit;
+}
+
+// Améliorations pour les codes
+code {
+  background-color: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.875em;
+  color: #e83e8c;
+}
+
+// Améliorations pour les textes
+.text-muted {
+  color: #6c757d !important;
+}
+
+.fw-semibold {
+  font-weight: 600 !important;
+}
+
+.fw-bold {
+  font-weight: 700 !important;
+}

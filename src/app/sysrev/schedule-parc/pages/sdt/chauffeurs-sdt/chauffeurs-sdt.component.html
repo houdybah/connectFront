@@ -1,0 +1,52 @@
+<div class="chauffeurs-sdt-wrapper">
+  <!-- Header simple -->
+  <div class="page-header">
+    <div class="header-content">
+      <h1 class="page-title">
+        <i class="fas fa-users"></i>
+        Gestion des Chauffeurs - SDT
+      </h1>
+      <div class="header-actions">
+        <button class="btn btn-outline-primary" (click)="refreshData()" [disabled]="loading">
+          <i class="fas fa-sync-alt" [class.fa-spin]="loading"></i>
+          Actualiser
+        </button>
+        <button class="btn btn-primary" (click)="nouveauChauffeur()">
+          <i class="fas fa-plus"></i>
+          Nouveau Chauffeur
+        </button>
+        <button class="btn btn-secondary" (click)="exportData()">
+          <i class="fas fa-download"></i>
+          Exporter
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Navigation simple -->
+  <div class="sdt-navigation">
+    <div class="nav-links">
+      <a class="nav-link" (click)="navigateTo('/sdt/dashboard')">
+        <i class="fas fa-tachometer-alt"></i>
+        Tableau de Bord
+      </a>
+      <a class="nav-link" (click)="navigateTo('/sdt/camions')">
+        <i class="fas fa-truck"></i>
+        Camions
+      </a>
+      <a class="nav-link" (click)="navigateTo('/sdt/affectations')">
+        <i class="fas fa-link"></i>
+        Affectations
+      </a>
+      <a class="nav-link" (click)="navigateTo('/sdt/lignes')">
+        <i class="fas fa-route"></i>
+        Lignes
+      </a>
+    </div>
+  </div>
+
+  <!-- Composant liste-chauffeurs intégré -->
+  <div class="chauffeurs-content">
+    <app-liste-chauffeurs></app-liste-chauffeurs>
+  </div>
+</div>

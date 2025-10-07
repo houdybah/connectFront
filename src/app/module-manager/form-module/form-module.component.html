@@ -1,0 +1,192 @@
+<!-- start page title -->
+<div class="row">
+  <div class="col-12">
+    <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+      <h4 class="mb-sm-0">{{ isEditMode ? 'Modifier le Module' : 'Nouveau Module' }}</h4>
+      <div class="page-title-right">
+        <ol class="breadcrumb m-0">
+          <li class="breadcrumb-item"><a href="javascript: void(0);">Modules</a></li>
+          <li class="breadcrumb-item"><a href="/modules/list">Liste</a></li>
+          <li class="breadcrumb-item active">{{ isEditMode ? 'Modifier' : 'Nouveau' }}</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- end page title -->
+
+<div class="row">
+  <div class="col-lg-8">
+    <div class="card">
+      <div class="card-header">
+        <h5 class="card-title mb-0">Informations du Module</h5>
+      </div>
+      <div class="card-body">
+        <form [formGroup]="moduleForm" (ngSubmit)="onSubmit()">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="name" class="form-label">Nom du Module <span class="text-danger">*</span></label>
+                <input 
+                  type="text" 
+                  class="form-control" 
+                  id="name" 
+                  formControlName="name"
+                  placeholder="Entrez le nom du module"
+                  [class.is-invalid]="name?.invalid && name?.touched">
+                <div class="invalid-feedback" *ngIf="name?.invalid && name?.touched">
+                  <div *ngIf="name?.errors?.['required']">Le nom est requis</div>
+                  <div *ngIf="name?.errors?.['minlength']">Le nom doit contenir au moins 3 caractères</div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="version" class="form-label">Version <span class="text-danger">*</span></label>
+                <input 
+                  type="text" 
+                  class="form-control" 
+                  id="version" 
+                  formControlName="version"
+                  placeholder="ex: 1.0.0"
+                  [class.is-invalid]="version?.invalid && version?.touched">
+                <div class="invalid-feedback" *ngIf="version?.invalid && version?.touched">
+                  La version est requise
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="category" class="form-label">Catégorie <span class="text-danger">*</span></label>
+                <select 
+                  class="form-select" 
+                  id="category" 
+                  formControlName="category"
+                  [class.is-invalid]="category?.invalid && category?.touched">
+                  <option value="">Sélectionner une catégorie</option>
+                  <option value="Gestion">Gestion</option>
+                  <option value="Comptabilité">Comptabilité</option>
+                  <option value="Analyse">Analyse</option>
+                  <option value="Rapport">Rapport</option>
+                  <option value="Configuration">Configuration</option>
+                </select>
+                <div class="invalid-feedback" *ngIf="category?.invalid && category?.touched">
+                  La catégorie est requise
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="status" class="form-label">Statut <span class="text-danger">*</span></label>
+                <select 
+                  class="form-select" 
+                  id="status" 
+                  formControlName="status"
+                  [class.is-invalid]="status?.invalid && status?.touched">
+                  <option value="Actif">Actif</option>
+                  <option value="Inactif">Inactif</option>
+                  <option value="En développement">En développement</option>
+                  <option value="En maintenance">En maintenance</option>
+                </select>
+                <div class="invalid-feedback" *ngIf="status?.invalid && status?.touched">
+                  Le statut est requis
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="description" class="form-label">Description <span class="text-danger">*</span></label>
+            <textarea 
+              class="form-control" 
+              id="description" 
+              formControlName="description"
+              rows="4"
+              placeholder="Décrivez le module et ses fonctionnalités"
+              [class.is-invalid]="description?.invalid && description?.touched"></textarea>
+            <div class="invalid-feedback" *ngIf="description?.invalid && description?.touched">
+              <div *ngIf="description?.errors?.['required']">La description est requise</div>
+              <div *ngIf="description?.errors?.['minlength']">La description doit contenir au moins 10 caractères</div>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="dependencies" class="form-label">Dépendances</label>
+            <textarea 
+              class="form-control" 
+              id="dependencies" 
+              formControlName="dependencies"
+              rows="2"
+              placeholder="Listez les dépendances du module (optionnel)"></textarea>
+          </div>
+
+          <div class="mb-3">
+            <label for="configuration" class="form-label">Configuration</label>
+            <textarea 
+              class="form-control" 
+              id="configuration" 
+              formControlName="configuration"
+              rows="3"
+              placeholder="Notes de configuration (optionnel)"></textarea>
+          </div>
+
+          <div class="text-end">
+            <button type="button" class="btn btn-light me-2" (click)="onCancel()">
+              <i class="ri-close-line align-middle me-1"></i> Annuler
+            </button>
+            <button type="submit" class="btn btn-primary" [disabled]="moduleForm.invalid">
+              <i class="ri-save-line align-middle me-1"></i> 
+              {{ isEditMode ? 'Mettre à jour' : 'Créer' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-4">
+    <div class="card">
+      <div class="card-header">
+        <h5 class="card-title mb-0">Informations</h5>
+      </div>
+      <div class="card-body">
+        <div class="d-flex align-items-center mb-3">
+          <div class="flex-shrink-0">
+            <div class="avatar-sm bg-primary-subtle rounded">
+              <div class="avatar-title text-primary fs-16">
+                <i class="ri-information-line"></i>
+              </div>
+            </div>
+          </div>
+          <div class="flex-grow-1 ms-3">
+            <h6 class="mb-0">Conseils</h6>
+            <p class="text-muted mb-0">Remplissez tous les champs obligatoires</p>
+          </div>
+        </div>
+        
+        <div class="alert alert-info">
+          <i class="ri-information-line me-2"></i>
+          <strong>Note :</strong> Les modules créés seront immédiatement disponibles dans le système après validation.
+        </div>
+
+        <div class="d-flex align-items-center">
+          <div class="flex-shrink-0">
+            <div class="avatar-sm bg-success-subtle rounded">
+              <div class="avatar-title text-success fs-16">
+                <i class="ri-check-line"></i>
+              </div>
+            </div>
+          </div>
+          <div class="flex-grow-1 ms-3">
+            <h6 class="mb-0">Validation</h6>
+            <p class="text-muted mb-0">Vérifiez les informations avant de sauvegarder</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

@@ -9,11 +9,9 @@ import { AuthGuard } from './core/guards/auth.guard';
 const routes: Routes = [
   { path: '', component: LayoutComponent, loadChildren: () => import('./pages/pages.module').then(m => m.PagesModule), canActivate: [AuthGuard] },
   { path: 'auth', loadChildren: () => import('./account/account.module').then(m => m.AccountModule)  },
-  { path: 'user', component: LayoutComponent, loadChildren: () => import('./gestion-utilisateur/gestion-utilisateur-routing-module').then(m => m.GestionUtilisateurRoutingModule), canActivate: [AuthGuard] },
-  { path: 'tabsBord', component: LayoutComponent, loadChildren: () => import('./tabs-bord/tabs-bord-routing.module').then(m => m.TabsBordRoutingModule), canActivate: [AuthGuard] },
-  { path: 'analyseSynthese', component: LayoutComponent, loadChildren: () => import('./analyse-synthese/analyse-synthese-routing.module').then(m => m.AnalyseSyntheseRoutingModule), canActivate: [AuthGuard] },
-  { path: 'comptabilite', component: LayoutComponent, loadChildren: () => import('./comptabilite/comptabilite-routing.module').then(m => m.ComptabiliteRoutingModule), canActivate: [AuthGuard] },
-  { path: 'configuration', component: LayoutComponent, loadChildren: () => import('./configuration/configuration-routing.module').then(m => m.ConfigurationRoutingModule), canActivate: [AuthGuard] }
+  { path: 'sygdrd', component: LayoutComponent, loadChildren: () => import('./module-sygdrd/module-sygdrd-routing.module').then(m => m.ModuleSygdrdRoutingModule), canActivate: [AuthGuard] },
+  { path: 'modules', component: LayoutComponent, loadChildren: () => import('./module-manager/module-manager-routing.module').then(m => m.ModuleManagerRoutingModule), canActivate: [AuthGuard] },
+  { path: 'sysrev', component: LayoutComponent, loadChildren: () => import('./sysrev/sysrev.module').then(m => m.SysrevModule), canActivate: [AuthGuard] }
 ];
 
 @NgModule({

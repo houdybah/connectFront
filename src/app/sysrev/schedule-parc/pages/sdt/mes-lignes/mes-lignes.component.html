@@ -1,0 +1,243 @@
+<div class="mes-lignes-container">
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-content">
+      <h1 class="page-title">
+        <i class="fas fa-route"></i>
+        Mes lignes créées
+      </h1>
+      <p class="page-subtitle">Gestion et suivi des lignes de transport créées</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-outline-primary" (click)="refreshData()" [disabled]="loading">
+        <i class="fas fa-sync-alt" [class.fa-spin]="loading"></i>
+        Actualiser
+      </button>
+      <button class="btn btn-primary" (click)="exportData()">
+        <i class="fas fa-download"></i>
+        Exporter
+      </button>
+    </div>
+  </div>
+
+  <!-- Error Alert -->
+  <div class="error-alert" *ngIf="errorMessage">
+    <div class="alert alert-danger">
+      <i class="fas fa-exclamation-triangle"></i>
+      {{ errorMessage }}
+      <button type="button" class="btn-close" (click)="errorMessage = ''"></button>
+    </div>
+  </div>
+
+  <!-- Stats Section -->
+  <div class="stats-section">
+    <div class="stats-grid">
+      <div class="stat-card total">
+        <div class="stat-icon">
+          <i class="fas fa-route"></i>
+        </div>
+        <div class="stat-content">
+          <div class="stat-value">{{ getStats().total }}</div>
+          <div class="stat-label">Total Lignes</div>
+        </div>
+      </div>
+      
+      <div class="stat-card en-attente">
+        <div class="stat-icon">
+          <i class="fas fa-clock"></i>
+        </div>
+        <div class="stat-content">
+          <div class="stat-value">{{ getStats().enAttente }}</div>
+          <div class="stat-label">En attente</div>
+        </div>
+      </div>
+      
+      <div class="stat-card en-cours">
+        <div class="stat-icon">
+          <i class="fas fa-play-circle"></i>
+        </div>
+        <div class="stat-content">
+          <div class="stat-value">{{ getStats().enCours }}</div>
+          <div class="stat-label">En cours</div>
+        </div>
+      </div>
+      
+      <div class="stat-card terminees">
+        <div class="stat-icon">
+          <i class="fas fa-check-circle"></i>
+        </div>
+        <div class="stat-content">
+          <div class="stat-value">{{ getStats().cloturees }}</div>
+          <div class="stat-label">Clôturées</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filter Section -->
+  <div class="filter-section">
+    <div class="filter-card">
+      <div class="filter-header">
+        <h3 class="filter-title">
+          <i class="fas fa-filter"></i>
+          Filtres
+        </h3>
+      </div>
+      <div class="filter-content">
+        <div class="filter-row">
+          <div class="filter-group">
+            <label class="filter-label">Recherche</label>
+            <input 
+              type="text" 
+              class="form-control" 
+              placeholder="Rechercher par numéro, demande, date..."
+              [(ngModel)]="searchTerm"
+              (ngModelChange)="applyFilters()">
+          </div>
+          
+          <div class="filter-group">
+            <label class="filter-label">Demande</label>
+            <select class="form-control" [(ngModel)]="selectedDemande" (ngModelChange)="applyFilters()">
+              <option value="">Toutes les demandes</option>
+              <option *ngFor="let demande of demandes" [value]="demande.uuid">
+                {{ demande.numero }} - {{ demande.date }}
+              </option>
+            </select>
+          </div>
+          
+          <div class="filter-group">
+            <label class="filter-label">Horaire</label>
+            <select class="form-control" [(ngModel)]="selectedHoraire" (ngModelChange)="applyFilters()">
+              <option value="">Tous les horaires</option>
+              <option *ngFor="let horaire of horairesOptions" [value]="horaire.value">
+                {{ horaire.label }}
+              </option>
+            </select>
+          </div>
+          
+          <div class="filter-group">
+            <label class="filter-label">Statut</label>
+            <select class="form-control" [(ngModel)]="selectedStatut" (ngModelChange)="applyFilters()">
+              <option value="">Tous les statuts</option>
+              <option *ngFor="let statut of statutsOptions" [value]="statut.value">
+                {{ statut.label }}
+              </option>
+            </select>
+          </div>
+          
+          <div class="filter-actions">
+            <button class="btn btn-primary" (click)="applyFilters()" [disabled]="loading">
+              <i class="fas fa-search"></i>
+              Filtrer
+            </button>
+            <button class="btn btn-outline-secondary" (click)="clearFilters()" [disabled]="loading">
+              <i class="fas fa-times"></i>
+              Effacer
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Lignes Section -->
+  <div class="lignes-section">
+    <!-- Loading State -->
+    <div class="loading-state" *ngIf="loading">
+      <div class="loading-content">
+        <div class="loading-spinner"></div>
+        <p class="loading-text">Chargement des lignes...</p>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div class="empty-state" *ngIf="!loading && filteredLignes.length === 0">
+      <div class="empty-content">
+        <i class="fas fa-route"></i>
+        <h3>Aucune ligne trouvée</h3>
+        <p>Aucune ligne ne correspond aux critères de recherche.</p>
+        <button class="btn btn-primary" (click)="clearFilters()">
+          <i class="fas fa-refresh"></i>
+          Voir toutes les lignes
+        </button>
+      </div>
+    </div>
+
+    <!-- Lignes List -->
+    <div class="lignes-list" *ngIf="!loading && filteredLignes.length > 0">
+      <div class="ligne-item" *ngFor="let ligne of filteredLignes">
+        <div class="ligne-icon">
+          <i class="fas fa-route"></i>
+        </div>
+        
+        <div class="ligne-content">
+          <div class="ligne-header">
+            <h4 class="ligne-title">Ligne {{ ligne.numero }}</h4>
+            <div class="ligne-meta">
+              <span class="ligne-badge badge" [ngClass]="getStatusClass(ligne)">
+                <i class="fas" [ngClass]="getStatusIcon(ligne)"></i>
+                {{ getStatusText(ligne) }}
+              </span>
+            </div>
+          </div>
+          
+          <div class="ligne-body">
+            <div class="ligne-details">
+              <div class="detail-row">
+                <span class="detail-label">Date:</span>
+                <span class="detail-value">{{ ligne.date || 'N/A' }}</span>
+              </div>
+              <div class="detail-row">
+                <span class="detail-label">Heure:</span>
+                <span class="detail-value">{{ ligne.heure || 'N/A' }}</span>
+              </div>
+              <div class="detail-row">
+                <span class="detail-label">Capacité:</span>
+                <span class="detail-value">{{ ligne.capacite || 0 }} camions</span>
+              </div>
+              <div class="detail-row">
+                <span class="detail-label">Nombre de camions:</span>
+                <span class="detail-value">{{ ligne.nombreRendezVous || 0 }} camions</span>
+              </div>
+              <div class="detail-row" *ngIf="ligne.demandeCKT">
+                <span class="detail-label">Demande:</span>
+                <span class="detail-value">{{ ligne.demandeCKT.numero }}</span>
+              </div>
+              <div class="detail-row">
+                <span class="detail-label">Horaire:</span>
+                <span class="detail-value">{{ ligne.horaire || 'N/A' }}</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="ligne-actions">
+            <button class="btn-action btn-view" (click)="voirDetails(ligne)" title="Voir les détails">
+              <i class="fas fa-eye"></i>
+              Détails
+            </button>
+            <button 
+              class="btn-action btn-assign" 
+              [disabled]="isLigneCloturee(ligne)"
+              (click)="assignerCamion(ligne)" 
+              [title]="isLigneCloturee(ligne) ? 'Ligne clôturée - Impossible d\'assigner' : 'Assigner un camion'">
+              <i class="fas fa-truck"></i>
+              Assigner
+            </button>
+            <button class="btn-action btn-edit" (click)="modifierLigne(ligne)" title="Modifier la ligne">
+              <i class="fas fa-edit"></i>
+              Modifier
+            </button>
+            <button 
+              class="btn-action btn-delete" 
+              [disabled]="isSuppressionDesactivee(ligne)"
+              (click)="supprimerLigne(ligne)" 
+              [title]="getMessageSuppression(ligne)">
+              <i class="fas fa-trash"></i>
+              Supprimer
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

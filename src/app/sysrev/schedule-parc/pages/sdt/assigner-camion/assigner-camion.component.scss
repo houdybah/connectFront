@@ -1,0 +1,236 @@
+// Styles pour le composant d'assignation de camion
+.container-fluid {
+  background-color: #f8f9fa;
+  min-height: 100vh;
+}
+
+// En-tête
+h2 {
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+// Cards
+.card {
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+  border-radius: 0.5rem;
+  transition: box-shadow 0.15s ease-in-out;
+
+  &:hover {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+  }
+}
+
+.card-header {
+  border-radius: 0.5rem 0.5rem 0 0 !important;
+  font-weight: 600;
+}
+
+// Informations de la ligne
+.form-control-plaintext {
+  font-weight: 500;
+  min-height: 38px;
+  display: flex;
+  align-items: center;
+}
+
+// Table des rendez-vous
+.table {
+  font-size: 0.9rem;
+  
+  th {
+    font-weight: 600;
+    background-color: #f8f9fa;
+    border-bottom: 2px solid #dee2e6;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  td {
+    vertical-align: middle;
+    padding: 0.75rem 0.5rem;
+  }
+
+  .table-success {
+    background-color: rgba(25, 135, 84, 0.1) !important;
+  }
+
+  .table-warning {
+    background-color: rgba(255, 193, 7, 0.1) !important;
+  }
+}
+
+// Checkboxes
+.form-check-input {
+  width: 1.1rem;
+  height: 1.1rem;
+  cursor: pointer;
+  
+  &:checked {
+    background-color: #198754;
+    border-color: #198754;
+  }
+  
+  &:focus {
+    box-shadow: 0 0 0 0.25rem rgba(25, 135, 84, 0.25);
+  }
+}
+
+// Badges
+.badge {
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+// Boutons
+.btn {
+  font-weight: 500;
+  border-radius: 0.375rem;
+  transition: all 0.15s ease-in-out;
+
+  &:hover {
+    transform: translateY(-1px);
+  }
+
+  &.btn-success {
+    background: linear-gradient(135deg, #198754 0%, #20c997 100%);
+    border: none;
+    
+    &:hover {
+      background: linear-gradient(135deg, #157347 0%, #1aa179 100%);
+    }
+  }
+
+  &.btn-outline-primary {
+    border-color: #0d6efd;
+    color: #0d6efd;
+    
+    &:hover {
+      background-color: #0d6efd;
+      border-color: #0d6efd;
+    }
+  }
+
+  &.btn-outline-secondary {
+    border-color: #6c757d;
+    color: #6c757d;
+    
+    &:hover {
+      background-color: #6c757d;
+      border-color: #6c757d;
+    }
+  }
+}
+
+// Formulaires
+.form-select, .form-control {
+  border-radius: 0.375rem;
+  border: 1px solid #ced4da;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+
+  &:focus {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+  }
+}
+
+.form-label {
+  font-weight: 600;
+  color: #495057;
+  margin-bottom: 0.5rem;
+}
+
+// Loading
+.spinner-border {
+  width: 3rem;
+  height: 3rem;
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .table-responsive {
+    font-size: 0.8rem;
+  }
+  
+  .btn {
+    font-size: 0.875rem;
+    padding: 0.375rem 0.75rem;
+  }
+  
+  .card-body {
+    padding: 1rem;
+  }
+}
+
+// Animations
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.card {
+  animation: fadeIn 0.3s ease-out;
+}
+
+// États de sélection
+.table-success {
+  animation: pulse 0.3s ease-in-out;
+}
+
+@keyframes pulse {
+  0% {
+    background-color: rgba(25, 135, 84, 0.1);
+  }
+  50% {
+    background-color: rgba(25, 135, 84, 0.2);
+  }
+  100% {
+    background-color: rgba(25, 135, 84, 0.1);
+  }
+}
+
+// Icônes
+i {
+  &.ri-truck-line {
+    color: #198754;
+  }
+  
+  &.ri-calendar-line {
+    color: #0dcaf0;
+  }
+  
+  &.ri-settings-3-line {
+    color: #198754;
+  }
+  
+  &.ri-information-line {
+    color: #0d6efd;
+  }
+}
+
+// Scrollbar personnalisée
+.table-responsive::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.table-responsive::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+  
+  &:hover {
+    background: #a8a8a8;
+  }
+}

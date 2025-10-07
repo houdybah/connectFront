@@ -1413,6 +1413,259 @@ export const MENU: MenuItem[] = [
         ]
       },
     ]
+  },
+  {
+    id: 1500,
+    label: 'SYSREV',
+    isTitle: true
+  },
+  {
+    id: 1501,
+    label: 'SYSREV',
+    icon: 'ri-truck-line',
+    isCollapsed: true,
+    subItems: [
+      {
+        id: 1502,
+        label: 'Tableau de Bord',
+        link: '/sysrev/schedule-parc/tableaudebord',
+        parentId: 1501
+      },
+      {
+        id: 1503,
+        label: 'Gestion SDT',
+        parentId: 1501,
+        isCollapsed: true,
+        subItems: [
+          {
+            id: 1504,
+            label: 'Dashboard SDT',
+            link: '/sysrev/schedule-parc/sdt/dashboard',
+            parentId: 1503
+          },
+          {
+            id: 1505,
+            label: 'Notifications',
+            link: '/sysrev/schedule-parc/sdt/notifications',
+            parentId: 1503
+          },
+          {
+            id: 1506,
+            label: 'Mes Lignes',
+            link: '/sysrev/schedule-parc/sdt/mes-lignes',
+            parentId: 1503
+          },
+          {
+            id: 1507,
+            label: 'Camions SDT',
+            link: '/sysrev/schedule-parc/sdt/camions',
+            parentId: 1503
+          },
+          {
+            id: 1508,
+            label: 'Chauffeurs SDT',
+            link: '/sysrev/schedule-parc/sdt/chauffeurs',
+            parentId: 1503
+          }
+        ]
+      },
+      {
+        id: 1510,
+        label: 'Gestion Camions',
+        parentId: 1501,
+        isCollapsed: true,
+        subItems: [
+          {
+            id: 1511,
+            label: 'Liste Camions',
+            link: '/sysrev/schedule-parc/camions',
+            parentId: 1510
+          },
+          {
+            id: 1512,
+            label: 'Nouveau Camion',
+            link: '/sysrev/schedule-parc/camions/nouveau',
+            parentId: 1510
+          }
+        ]
+      },
+      {
+        id: 1515,
+        label: 'Gestion Chauffeurs',
+        parentId: 1501,
+        isCollapsed: true,
+        subItems: [
+          {
+            id: 1516,
+            label: 'Liste Chauffeurs',
+            link: '/sysrev/schedule-parc/chauffeurs',
+            parentId: 1515
+          },
+          {
+            id: 1517,
+            label: 'Nouveau Chauffeur',
+            link: '/sysrev/schedule-parc/chauffeurs/nouveau',
+            parentId: 1515
+          }
+        ]
+      },
+      {
+        id: 1520,
+        label: 'Affectations',
+        parentId: 1501,
+        isCollapsed: true,
+        subItems: [
+          {
+            id: 1521,
+            label: 'Liste Affectations',
+            link: '/sysrev/schedule-parc/affectations',
+            parentId: 1520
+          },
+          {
+            id: 1522,
+            label: 'Nouvelle Affectation',
+            link: '/sysrev/schedule-parc/affectations/nouveau',
+            parentId: 1520
+          }
+        ]
+      },
+      {
+        id: 1525,
+        label: 'Programmes & Lignes',
+        parentId: 1501,
+        isCollapsed: true,
+        subItems: [
+          {
+            id: 1526,
+            label: 'Demandes CKT',
+            link: '/sysrev/schedule-parc/demandes-ckt',
+            parentId: 1525
+          },
+          {
+            id: 1527,
+            label: 'Gestion Lignes',
+            link: '/sysrev/schedule-parc/sdt/lignes',
+            parentId: 1525
+          },
+          {
+            id: 1528,
+            label: 'Liste Programmes',
+            link: '/sysrev/schedule-parc/liste-programmes',
+            parentId: 1525
+          }
+        ]
+      },
+      {
+        id: 1530,
+        label: 'Rendez-vous',
+        parentId: 1501,
+        isCollapsed: true,
+        subItems: [
+          {
+            id: 1531,
+            label: 'Liste Rendez-vous',
+            link: '/sysrev/schedule-parc/rendez-vous',
+            parentId: 1530
+          },
+          {
+            id: 1532,
+            label: 'Rendez-vous Sortie',
+            link: '/sysrev/schedule-parc/rendez-vous/sortie',
+            parentId: 1530
+          },
+          {
+            id: 1533,
+            label: 'Rendez-vous Global',
+            link: '/sysrev/schedule-parc/rendez-vous/globale',
+            parentId: 1530
+          }
+        ]
+      },
+      {
+        id: 1540,
+        label: 'Déclarations',
+        parentId: 1501,
+        isCollapsed: true,
+        subItems: [
+          {
+            id: 1541,
+            label: 'Segment Général',
+            link: '/sysrev/schedule-parc/segment-general',
+            parentId: 1540
+          },
+          {
+            id: 1542,
+            label: 'Nouvelle Déclaration',
+            link: '/sysrev/schedule-parc/segment-general-form',
+            parentId: 1540
+          },
+          {
+            id: 1543,
+            label: 'Appurement',
+            link: '/sysrev/schedule-parc/appurement',
+            parentId: 1540
+          },
+          {
+            id: 1544,
+            label: 'Scanner QR Code',
+            link: '/sysrev/schedule-parc/scanner',
+            parentId: 1540
+          }
+        ]
+      },
+      {
+        id: 1550,
+        label: 'Paiement Douane',
+        parentId: 1501,
+        isCollapsed: true,
+        subItems: [
+          {
+            id: 1551,
+            label: 'Déclaration Paiement',
+            link: '/sysrev/douane-payment/declaration',
+            parentId: 1550
+          },
+          {
+            id: 1552,
+            label: 'Liste Déclarations',
+            link: '/sysrev/douane-payment/liste-declaration',
+            parentId: 1550
+          }
+        ]
+      },
+      {
+        id: 1560,
+        label: 'Statistiques',
+        parentId: 1501,
+        isCollapsed: true,
+        subItems: [
+          {
+            id: 1561,
+            label: 'Statistiques Générales',
+            link: '/sysrev/schedule-parc/stats',
+            parentId: 1560
+          },
+          {
+            id: 1562,
+            label: 'Statistiques Douane',
+            link: '/sysrev/schedule-parc/statistiques',
+            parentId: 1560
+          },
+          {
+            id: 1563,
+            label: 'Destinations Conteneurs',
+            link: '/sysrev/schedule-parc/destination',
+            parentId: 1560
+          }
+        ]
+      },
+      {
+        id: 1570,
+        label: 'Utilisateurs',
+        link: '/sysrev/schedule-parc/utilisateur',
+        parentId: 1501
+      }
+    ]
   }
 
 ];
