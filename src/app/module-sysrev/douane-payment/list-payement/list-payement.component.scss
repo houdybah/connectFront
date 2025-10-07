@@ -1,0 +1,21 @@
+.pagination {
+    margin-top: 20px;
+  }
+  
+  .pagination button {
+    margin: 0 5px;
+    padding: 5px 10px;
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+    cursor: pointer;
+  }
+  
+  .pagination button.active {
+    background-color: #007bff;
+    color: white;
+    font-weight: bold;
+  }
+
+  .table-checked {
+    background-color: #d1e7dd !important; /* Vert clair pour Bootstrap */
+  }

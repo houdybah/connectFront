@@ -257,15 +257,15 @@ loadRendezVousByUuid(uuid: string): void {
 }
 
   // Getters pour l'accès facile aux données
-  get Chauffeur() {
+  get chauffeur() {
     return this.rendezVous?.SysrevCamionChauffeur?.Chauffeur;
   }
 
-  get Camion() {
+  get camion() {
     return this.rendezVous?.SysrevCamionChauffeur?.Camion;
   }
 
-  get Declaration() {
+  get declaration() {
     return {
       reference: this.rendezVous?.referenceDeclaration,
       compagnie: this.rendezVous?.compagnie,

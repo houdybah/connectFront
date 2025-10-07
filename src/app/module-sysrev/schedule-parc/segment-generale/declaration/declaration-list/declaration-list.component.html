@@ -1,0 +1,392 @@
+
+<div class="container-fluid mt-3">
+  <div class="card shadow-sm">
+    <div class="card-header bg-white border-bottom">
+      <div class="d-flex justify-content-between align-items-center">
+        <h4 class="mb-0 text-dark">
+          <i class="ri-file-list-3-line me-2"></i>Liste des Déclarations
+        </h4>
+        <div class="d-flex gap-2">
+          <button type="button" 
+                  class="btn btn-primary btn-sm" 
+                  [routerLink]="['/douane/segment-general-form']">
+            <i class="ri-add-line me-1"></i>Nouvelle Déclaration
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <div class="card-body p-4">
+      <!-- Formulaire de recherche amélioré -->
+      <div class="search-section mb-4">
+        <div class="card border-0 bg-light">
+          <div class="card-body p-3">
+            <h6 class="card-title mb-3 text-muted">
+              <i class="ri-search-line me-2"></i>Recherche et Filtres
+            </h6>
+            <form [formGroup]="searchForm" (ngSubmit)="onSearch()">
+              <div class="row g-3">
+                <div class="col-12 col-sm-6 col-md-4">
+                  <label for="refDeclarant" class="form-label fw-semibold">
+                    <i class="ri-file-copy-line me-1"></i>Référence Déclaration
+                  </label>
+                  <input type="text" 
+                         class="form-control form-control-sm" 
+                         id="refDeclarant" 
+                         formControlName="refDeclarant"
+                         (input)="onSearchInput()"
+                         placeholder="Ex: 2025GNB02L12447">
+                </div>
+                
+                <div class="col-12 col-sm-6 col-md-4">
+                  <label for="dateDebut" class="form-label fw-semibold">
+                    <i class="ri-calendar-line me-1"></i>Date Début
+                  </label>
+                  <div class="input-group input-group-sm">
+                    <input class="form-control" 
+                           placeholder="Sélectionner la date" 
+                           formControlName="dateDebut"
+                           ngbDatepicker 
+                           #dateDebutPicker="ngbDatepicker" 
+                           id="dateDebut" 
+                           readonly>
+                    <button class="btn btn-outline-secondary" 
+                            (click)="dateDebutPicker.toggle()" 
+                            type="button">
+                      <i class="ri-calendar-line"></i>
+                    </button>
+                  </div>
+                </div>
+                
+                <div class="col-12 col-sm-6 col-md-4">
+                  <label for="dateFin" class="form-label fw-semibold">
+                    <i class="ri-calendar-line me-1"></i>Date Fin
+                  </label>
+                  <div class="input-group input-group-sm">
+                    <input class="form-control" 
+                           placeholder="Sélectionner la date" 
+                           formControlName="dateFin"
+                           ngbDatepicker 
+                           #dateFinPicker="ngbDatepicker" 
+                           id="dateFin" 
+                           readonly>
+                    <button class="btn btn-outline-secondary" 
+                            (click)="dateFinPicker.toggle()" 
+                            type="button">
+                      <i class="ri-calendar-line"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Boutons d'action -->
+              <div class="mt-3 d-flex flex-column flex-sm-row gap-2">
+                <button type="submit" 
+                        class="btn btn-primary btn-sm flex-fill flex-sm-grow-0" 
+                        [disabled]="loading">
+                  <span *ngIf="loading" class="spinner-border spinner-border-sm me-1" role="status"></span>
+                  <i *ngIf="!loading" class="ri-search-line me-1"></i>
+                  <span class="d-none d-sm-inline">{{ loading ? 'Recherche...' : 'Rechercher' }}</span>
+                  <span class="d-sm-none">{{ loading ? '...' : 'Rechercher' }}</span>
+                </button>
+                <button type="button" 
+                        class="btn btn-outline-secondary btn-sm flex-fill flex-sm-grow-0" 
+                        (click)="resetSearch()"
+                        [disabled]="loading">
+                  <i class="ri-refresh-line me-1"></i>
+                  <span class="d-none d-sm-inline">Réinitialiser</span>
+                  <span class="d-sm-none">Reset</span>
+                </button>
+              </div>
+              
+              <!-- Indicateur du mode de recherche -->
+              <div *ngIf="isSearchMode && !loading" class="mt-2">
+                <div class="alert alert-dark alert-sm py-2 mb-0">
+                  <i class="ri-filter-line me-1"></i>
+                  <strong>Recherche active:</strong> {{ collectionSize }} résultat(s) trouvé(s)
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+      <!-- Indicateur de chargement -->
+      <div *ngIf="loading" class="d-flex justify-content-center my-5">
+        <div class="text-center">
+          <div class="spinner-border text-primary mb-2" role="status" style="width: 3rem; height: 3rem;">
+            <span class="visually-hidden">Chargement...</span>
+          </div>
+          <p class="text-muted">Chargement des déclarations...</p>
+        </div>
+      </div>
+
+      <!-- Vue Desktop - Tableau -->
+      <div class="d-none d-lg-block" *ngIf="!loading">
+        <div class="table-responsive">
+          <table class="table table-hover table-bordered">
+            <thead class="table-dark bg-dark">
+              <tr>
+                <th class="text-center">
+                  <i class="ri-file-copy-line me-1"></i>Référence
+                </th>
+                <th class="text-center">
+                  <i class="ri-building-line me-1"></i>Bureau
+                </th>
+                <th class="text-center">
+                  <i class="ri-receipt-line me-1"></i>Quittance
+                </th>
+                <th class="text-center">
+                  <i class="ri-calendar-line me-1"></i>Date Liquidation
+                </th>
+                <th class="text-center">
+                  <i class="ri-calendar-line me-1"></i>Date Quittance
+                </th>
+                <th class="text-center">
+                  <i class="ri-money-dollar-circle-line me-1"></i>Montant
+                </th>
+                <th class="text-center">
+                  <i class="ri-container-line me-1"></i>Conteneurs
+                </th>
+                <th class="text-center">
+                  <i class="ri-eye-line me-1"></i>Les Bons
+                </th>
+                <th class="text-center">
+                  <i class="ri-settings-line me-1"></i>Appurement BL/BS
+                </th>
+                <th class="text-center">
+                  <i class="ri-delete-bin-line me-1"></i>Supprimer
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let declaration of declarations; trackBy: trackByDeclaration" 
+                  class="align-middle">
+                <td class="fw-semibold text-primary">
+                  {{ declaration.refDeclarant }}
+                </td>
+                <td>
+                  <span class="badge bg-secondary">{{ declaration.office }}</span>
+                </td>
+                <td class="text-center">
+                  <code class="text-dark">{{ declaration.quitance }}</code>
+                </td>
+                <td class="text-center">
+                  <span class="text-muted">{{ declaration.dateLiquidation | date:'dd/MM/yyyy' }}</span>
+                </td>
+                <td class="text-center">
+                  <span class="text-muted">{{ declaration.dateQuittance | date:'dd/MM/yyyy' }}</span>
+                </td>
+                <td class="text-end fw-bold text-success">
+                  {{ declaration.montant | number:'1.0-0' }} GNF
+                </td>
+                <td class="text-center">
+                  <button class="btn btn-outline-info btn-sm" 
+                          (click)="openConteneurModal(detailConteneur, declaration)"
+                          title="Voir les conteneurs">
+                    <i class="ri-container-line me-1"></i>Conteneurs
+                  </button>
+                </td>
+                <td class="text-center">
+                  <button class="btn btn-outline-primary btn-sm" 
+                          (click)="openDetailsModal(detailsModal, declaration)"
+                          title="Voir les détails">
+                    <i class="ri-eye-line me-1"></i>Détails
+                  </button>
+                </td>
+                <td class="text-center">
+                  <button class="btn btn-outline-dark btn-sm" 
+                          [routerLink]="['/douane/appurement', declaration.uuid]"
+                          title="Apurement BL/BS">
+                    <i class="ri-settings-line me-1"></i>TC
+                  </button>
+                </td>
+                <td class="text-center">
+                  <button class="btn btn-outline-danger btn-sm" 
+                          (click)="onDeleteDeclaration(declaration)"
+                          title="Supprimer">
+                    <i class="ri-delete-bin-line me-1"></i>Supprimer
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Vue Mobile/Tablette - Cartes -->
+      <div class="d-lg-none" *ngIf="!loading">
+        <div class="row g-3">
+          <div class="col-12" *ngFor="let declaration of paginatedDeclarations; trackBy: trackByDeclaration">
+            <div class="card declaration-card">
+              <div class="card-body">
+                <!-- En-tête de la carte -->
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                  <div>
+                    <h6 class="card-title text-primary mb-1">
+                      <i class="ri-file-copy-line me-1"></i>{{ declaration.refDeclarant }}
+                    </h6>
+                    <span class="badge bg-secondary">{{ declaration.office }}</span>
+                  </div>
+                  <div class="text-end">
+                    <div class="fw-bold text-success fs-6">
+                      {{ declaration.montant | number:'1.0-0' }} GNF
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Informations principales -->
+                <div class="row g-2 mb-3">
+                  <div class="col-6">
+                    <small class="text-muted d-block">Quittance</small>
+                    <code class="text-dark">{{ declaration.quitance }}</code>
+                  </div>
+                  <div class="col-6">
+                    <small class="text-muted d-block">Date Liquidation</small>
+                    <span class="text-dark">{{ declaration.dateLiquidation | date:'dd/MM/yyyy' }}</span>
+                  </div>
+                  <div class="col-6">
+                    <small class="text-muted d-block">Date Quittance</small>
+                    <span class="text-dark">{{ declaration.dateQuittance | date:'dd/MM/yyyy' }}</span>
+                  </div>
+                </div>
+
+                <!-- Boutons d'action -->
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                  <button class="btn btn-outline-info btn-sm" 
+                          (click)="openConteneurModal(detailConteneur, declaration)"
+                          title="Voir les conteneurs">
+                    <i class="ri-container-line me-1"></i>Conteneurs
+                  </button>
+                  <button class="btn btn-outline-primary btn-sm" 
+                          (click)="openDetailsModal(detailsModal, declaration)"
+                          title="Voir les détails">
+                    <i class="ri-eye-line me-1"></i>Details
+                  </button>
+                  <button class="btn btn-outline-dark btn-sm" 
+                          [routerLink]="['/douane/appurement', declaration.uuid]"
+                          title="Apurement BL/BS">
+                    <i class="ri-settings-line me-1"></i>TC
+                  </button>
+                  <button class="btn btn-outline-danger btn-sm ms-2" 
+                          (click)="onDeleteDeclaration(declaration)"
+                          title="Supprimer">
+                    <i class="ri-delete-bin-line me-1"></i>Supprimer
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Message si aucune déclaration -->
+      <div *ngIf="!loading && declarations.length === 0" class="text-center py-5">
+        <div class="card border-0 bg-light">
+          <div class="card-body py-5">
+            <i class="ri-file-list-3-line text-muted" style="font-size: 4rem;"></i>
+            <h5 class="mt-3 text-muted">
+              {{ isSearchMode ? 'Aucun résultat trouvé' : 'Aucune déclaration' }}
+            </h5>
+            <p class="text-muted mb-4">
+              {{ isSearchMode ? 'Aucun résultat ne correspond à vos critères de recherche.' : 'Aucune déclaration n\'a été trouvée dans le système.' }}
+            </p>
+            <button *ngIf="isSearchMode" 
+                    class="btn btn-outline-primary" 
+                    (click)="resetSearch()">
+              <i class="ri-refresh-line me-1"></i>Voir toutes les déclarations
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pagination et informations -->
+      <div *ngIf="!loading && declarations.length > 0" class="mt-4">
+        <!-- Informations de pagination -->
+        <div class="row align-items-center mb-3">
+          <div class="col-12 col-md-6 mb-2 mb-md-0">
+            <div class="d-flex align-items-center flex-wrap">
+              <span class="text-muted me-3 small">
+                <i class="ri-information-line me-1"></i>
+                <span class="d-none d-sm-inline">
+                  Affichage de <strong>{{ ((page - 1) * pageSize) + 1 }}</strong> à 
+                  <strong>{{ Math.min(page * pageSize, collectionSize) }}</strong> sur 
+                  <strong>{{ collectionSize }}</strong> résultat(s)
+                </span>
+                <span class="d-sm-none">
+                  <strong>{{ ((page - 1) * pageSize) + 1 }}-{{ Math.min(page * pageSize, collectionSize) }}</strong> / {{ collectionSize }}
+                </span>
+                <span *ngIf="isSearchMode" class="badge bg-info ms-2">Recherche</span>
+              </span>
+            </div>
+          </div>
+          <div class="col-12 col-md-6">
+            <div class="d-flex justify-content-start justify-content-md-end align-items-center">
+              <label class="form-label me-2 mb-0 text-muted small d-none d-sm-block">Éléments par page:</label>
+              <label class="form-label me-2 mb-0 text-muted small d-sm-none">Par page:</label>
+              <select class="form-select form-select-sm" 
+                      style="width: auto; min-width: 80px;" 
+                      [(ngModel)]="pageSize"
+                      (ngModelChange)="onPageSizeChange()">
+                <option [ngValue]="5">5</option>
+                <option [ngValue]="10">10</option>
+                <option [ngValue]="25">25</option>
+                <option [ngValue]="50">50</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Pagination Bootstrap -->
+        <div class="d-flex justify-content-center">
+          <ngb-pagination
+            [collectionSize]="collectionSize"
+            [(page)]="page"
+            [pageSize]="pageSize"
+            [maxSize]="3"
+            [rotate]="true"
+            [boundaryLinks]="true"
+            [directionLinks]="true"
+            (pageChange)="onPageChange($event)"
+            class="pagination-sm">
+          </ngb-pagination>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal pour les détails -->
+<ng-template #detailsModal let-modal>
+  <div class="modal-header bg-primary text-white">
+    <h5 class="modal-title">
+      <i class="ri-eye-line me-2"></i>Détails de la Déclaration
+    </h5>
+    <button type="button" class="btn-close btn-close-white" (click)="modal.close('Close click')"></button>
+  </div>
+  <div class="modal-body p-0">
+    <app-index-bon [childProperty]="parentProperty"></app-index-bon>
+  </div>
+  <div class="modal-footer bg-light">
+    <button type="button" class="btn btn-secondary" (click)="modal.close('Close click')">
+      <i class="ri-close-line me-1"></i>Fermer
+    </button>
+  </div>
+</ng-template>
+
+<!-- Modal pour les conteneurs -->
+<ng-template #detailConteneur let-modal>
+  <div class="modal-header bg-info text-white">
+    <h5 class="modal-title">
+      <i class="ri-container-line me-2"></i>Conteneurs de la Déclaration
+    </h5>
+    <button type="button" class="btn-close btn-close-white" (click)="closeModal()"></button>
+  </div>
+  <div class="modal-body p-0">
+    <app-detail-container-declaration [childProperty]="parentProperty"></app-detail-container-declaration>
+  </div>
+  <div class="modal-footer bg-light">
+    <button type="button" class="btn btn-secondary" (click)="closeModal()">
+      <i class="ri-close-line me-1"></i>Fermer
+    </button>
+  </div>
+</ng-template>

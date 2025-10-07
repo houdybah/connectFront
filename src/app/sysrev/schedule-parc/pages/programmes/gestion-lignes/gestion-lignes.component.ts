@@ -13,7 +13,7 @@ import {DemandeCKTService} from "../../../../services/demande-ckt.service";
 })
 export class GestionLignesComponent implements OnInit, OnDestroy {
   demandeCKTUuid: string = '';
-  DemandeCKT: DemandeCKT | null = null;
+  demandeCKT: DemandeCKT | null = null;
   lignes: Ligne[] = [];
   loading = false;
   generatingLignes = false;
@@ -33,7 +33,7 @@ export class GestionLignesComponent implements OnInit, OnDestroy {
   private subscriptions: Subscription[] = [];
 
   constructor(
-    public LigneService: LigneService,
+    public ligneService: LigneService,
     private DemandeCKTService: DemandeCKTService,
     private route: ActivatedRoute,
     private router: Router
@@ -57,9 +57,9 @@ export class GestionLignesComponent implements OnInit, OnDestroy {
   loadDemandeCKT(): void {
     this.subscriptions.push(
       this.DemandeCKTService.getDemandeCKTById(this.demandeCKTUuid).subscribe({
-        next: (DemandeCKT) => {
-          this.DemandeCKT = DemandeCKT;
-          console.log('Demande CKT chargée:', DemandeCKT);
+        next: (demandeCKTData) => {
+          this.demandeCKT = demandeCKTData;
+          console.log('Demande CKT chargée:', demandeCKTData);
         },
         error: (error) => {
           console.error('Erreur chargement demande CKT:', error);
@@ -83,7 +83,7 @@ export class GestionLignesComponent implements OnInit, OnDestroy {
     this.loading = true;
     
     this.subscriptions.push(
-      this.LigneService.getLignesByDemandeCKT(this.demandeCKTUuid).subscribe({
+      this.ligneService.getLignesByDemandeCKT(this.demandeCKTUuid).subscribe({
         next: (lignes) => {
           console.log('Lignes chargées:', lignes.length);
           this.lignes = lignes.sort((a, b) => {
@@ -130,7 +130,7 @@ export class GestionLignesComponent implements OnInit, OnDestroy {
 
   creerLigne(): void {
     // Vérifier le rôle SDT
-    if (!this.LigneService.isSDT() && !this.LigneService.isAdminOrDouane()) {
+    if (!this.ligneService.isSDT() && !this.ligneService.isAdminOrDouane()) {
       alert('Seuls les utilisateurs SDT peuvent créer des lignes');
       return;
     }
@@ -143,7 +143,7 @@ export class GestionLignesComponent implements OnInit, OnDestroy {
   supprimerLigne(uuid: string): void {
     if (confirm('Êtes-vous sûr de vouloir supprimer cette Ligne ?')) {
       this.subscriptions.push(
-        this.LigneService.deleteLigne(uuid).subscribe({
+        this.ligneService.deleteLigne(uuid).subscribe({
           next: () => {
             alert('Ligne supprimée avec succès');
             this.loadLignes();

@@ -5,8 +5,8 @@ import {ChauffeurService} from "../../../../services/chauffeur.service";
 
 @Component({
   selector: 'app-chauffeurs-sdt',
-  templateUrl: './SysrevChauffeurs-sdt.component.html',
-  styleUrls: ['./SysrevChauffeurs-sdt.component.scss']
+  templateUrl: './Chauffeurs-sdt.component.html',
+  styleUrls: ['./Chauffeurs-sdt.component.scss']
 })
 export class ChauffeursSdtComponent implements OnInit {
   loading = false;

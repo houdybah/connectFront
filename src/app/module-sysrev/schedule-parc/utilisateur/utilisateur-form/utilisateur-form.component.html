@@ -1,0 +1,197 @@
+<div class="modal-header">
+    <h4 class="modal-title">{{ title }}</h4>
+    <button type="button" class="btn-close" aria-label="Fermer" (click)="close()"></button>
+  </div>
+  
+  <div class="modal-body">
+    <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+      <div class="mb-3 text-center">
+        <div class="image-preview-container">
+          <img [src]="imagePreview || 'assets/images/rdv/avatar.png'" 
+               class="rounded-circle mb-3" 
+               alt="Photo de profil" 
+               width="80" 
+               height="80">
+               
+          <div class="mt-2">
+            <label for="photo" class="btn btn-outline-secondary">
+              <i class="bi bi-camera me-2"></i>Choisir une photo
+            </label>
+            <input 
+              type="file" 
+              id="photo" 
+              class="d-none" 
+              accept="image/*" 
+              formControlName="photo" 
+              (change)="onFileChange($event)">
+          </div>
+        </div>
+      </div>
+  
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label for="username" class="form-label">Nom d'utilisateur*</label>
+          <input 
+            type="text" 
+            id="username" 
+            class="form-control" 
+            formControlName="username" 
+            [ngClass]="{'is-invalid': userForm.get('username')?.invalid && userForm.get('username')?.touched}">
+          <div class="invalid-feedback" *ngIf="userForm.get('username')?.errors?.['required']">
+            Le nom d'utilisateur est requis.
+          </div>
+          <div class="invalid-feedback" *ngIf="userForm.get('username')?.errors?.['minlength']">
+            Le nom d'utilisateur doit contenir au moins 3 caractères.
+          </div>
+        </div>
+        
+        <div class="col-md-6 mb-3">
+          <label for="email" class="form-label">Email*</label>
+          <input 
+            type="email" 
+            id="email" 
+            class="form-control" 
+            formControlName="email" 
+            [ngClass]="{'is-invalid': userForm.get('email')?.invalid && userForm.get('email')?.touched}">
+          <div class="invalid-feedback" *ngIf="userForm.get('email')?.errors?.['required']">
+            L'email est requis.
+          </div>
+          <div class="invalid-feedback" *ngIf="userForm.get('email')?.errors?.['email']">
+            Veuillez saisir un email valide.
+          </div>
+        </div>
+      </div>
+      
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label for="prenom" class="form-label">Prénom*</label>
+          <input 
+            type="text" 
+            id="prenom" 
+            class="form-control" 
+            formControlName="prenom" 
+            (keypress)="onKeyPress($event)"
+            (input)="onInput($event)"
+            [ngClass]="{'is-invalid': userForm.get('prenom')?.invalid && userForm.get('prenom')?.touched}">
+          <div class="invalid-feedback" *ngIf="userForm.get('prenom')?.errors?.['required']">
+            Le prénom est requis.
+          </div>
+        </div>
+        
+        <div class="col-md-6 mb-3">
+          <label for="nom" class="form-label">Nom*</label>
+          <input 
+            type="text" 
+            id="nom" 
+            class="form-control" 
+            formControlName="nom" 
+            (keypress)="onKeyPress($event)"
+            (input)="onInput($event)"
+            [ngClass]="{'is-invalid': userForm.get('nom')?.invalid && userForm.get('nom')?.touched}">
+          <div class="invalid-feedback" *ngIf="userForm.get('nom')?.errors?.['required']">
+            Le nom est requis.
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12 mb-3">
+            <label for="nom" class="form-label">Telephone*</label>
+            <input 
+              type="text" 
+              id="telephone" 
+              class="form-control" 
+              formControlName="telephone" 
+              (keydown)="onlyNumbers($event)"
+              (paste)="onPaste($event)"
+              maxlength="9"
+              minlength="9"
+              [ngClass]="{'is-invalid': userForm.get('telephone')?.invalid && userForm.get('telephone')?.touched}">
+            <div class="invalid-feedback" *ngIf="userForm.get('telephone')?.errors?.['required']">
+              Le telephone est requis.
+            </div>
+          </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12 mb-3">
+            
+            <div class="row">
+  <div class="col-md-12 mb-3">
+    <label for="role" class="form-label">
+      Roles{{ isEditMode ? ' (optionnel)' : '*' }}
+    </label>
+    <select class="form-select" formControlName="role" (change)="displayDeclarant()">
+      <option value="" disabled>
+        {{ isEditMode ? 'Conserver le rôle actuel' : 'Choisir' }}
+      </option>
+      <option value="DECLARANT">ROLE DECLARANT</option>
+      <option value="DOUANE">ROLE DOUANIER</option>
+      <option value="DG">ROLE DG</option>
+      <option value="DGA">ROLE DGA</option>
+      <option value="DIS">ROLE DIS</option>
+      <option value="CHEF_BUREAU_PARC">ROLE CHEF DE BUREAU PARC</option>
+      <option value="CHEF_LIVREUR">ROLE CHEF_LIVREUR</option>
+      <option value="ADMIN">ROLE ADMIN</option>
+      <option value="CKT">ROLE CKT</option>
+      <option value="SDT">ROLE SDT</option>
+    </select>
+    <!-- Afficher l'erreur seulement en mode création -->
+    <div class="invalid-feedback" *ngIf="userForm.get('role')?.errors?.['required'] && !isEditMode">
+      Le role est requis.
+    </div>
+  </div>
+</div>
+      
+          </div>
+      </div>
+
+      <div class="row" *ngIf="displayDeclarant()">
+        <div class="col-md-12 mb-3">
+            <label for="nom" class="form-label">Code declarant*</label>
+            <input 
+              type="text" 
+              id="codeDeclarant" 
+              class="form-control" 
+              formControlName="codeDeclarant" 
+              (keydown)="onlyNumbers($event)"
+              (paste)="onPaste($event)"
+              maxlength="4"
+              minlength="4"
+              [ngClass]="{'is-invalid': userForm.get('codeDeclarant')?.invalid && userForm.get('codeDeclarant')?.touched}">
+            <div class="invalid-feedback" *ngIf="userForm.get('codeDeclarant')?.errors?.['required']">
+              Le code declarant est requis.
+            </div>
+          </div>
+      </div>
+      <div class="row" *ngIf="isEditMode">
+  <div class="col-md-12 mb-3">
+    <label for="password" class="form-label">Nouveau mot de passe (optionnel)</label>
+    <input 
+      type="password" 
+      id="password" 
+      class="form-control" 
+      formControlName="password" 
+      placeholder="Laisser vide pour conserver l'ancien"
+      [ngClass]="{'is-invalid': userForm.get('password')?.invalid && userForm.get('password')?.touched}">
+    <small class="text-muted">Laissez vide pour ne pas modifier le mot de passe</small>
+    <div class="invalid-feedback" *ngIf="userForm.get('password')?.errors?.['minlength']">
+      Le mot de passe doit contenir au moins 6 caractères.
+    </div>
+  </div>
+</div>
+      <div *ngIf="errorMessage" class="alert alert-danger mt-3">
+        {{ errorMessage }}
+      </div>
+    </form>
+  </div>
+  
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="close()">Annuler</button>
+    <button 
+  type="button" 
+  class="btn btn-primary" 
+  [disabled]="userForm.invalid || submitting" 
+  (click)="isEditMode ? onSubmitEdit() : onSubmit()">
+  <span *ngIf="submitting" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+  {{ isEditMode ? 'Modifier' : 'Enregistrer' }}
+</button>
+  </div>

@@ -1,0 +1,252 @@
+<div class="container">
+    <div class="row">
+      <!-- Formulaire d'information du chauffeur -->
+      <div class="col-md-12 mb-2">
+        <div class="card shadow-sm">
+          <!-- <div class="card-header bg-primary text-white">
+            <h3 class="mb-0">Informations du Chauffeur</h3>
+          </div> -->
+          <div class="card-body">
+            
+            <form [formGroup]="chauffeurForm">
+            <fieldset class="border p-3 mb-4">
+                <legend class="w-auto px-2">Declaration</legend>  
+              <div class="row">
+                  <div class="col-md-4 mb-3">
+                    <label for="nom" class="form-label">Reference declaration </label>
+                    <input type="text" class="form-control" [(ngModel)]="AffectationConteneur.referenceDeclaration" [ngModelOptions]="{standalone: true}" disabled  >
+                   
+                  </div>
+                  <div class="col-md-2 mb-3">
+                    <label  class="form-label">Quittance/Credit</label>
+                    <input type="text" class="form-control"  [(ngModel)]="AffectationConteneur.quittance" [ngModelOptions]="{standalone: true}" disabled >
+                  </div>
+                  <div class="col-md-3 mb-3">
+                    <label  class="form-label">Reference Compagnie</label>
+                    <input type="text" class="form-control"  [(ngModel)]="AffectationConteneur.referenceCompagnie" [ngModelOptions]="{standalone: true}" disabled>
+                  </div>
+                  <div class="col-md-3 mb-3">
+                    <label  class="form-label">Reference AGL</label>
+                    <input type="text" class="form-control"  [(ngModel)]="AffectationConteneur.referenceBolorer" [ngModelOptions]="{standalone: true}" disabled >
+                  </div>
+              </div>
+            </fieldset>  
+            <fieldset class="border p-3 mb-1">
+              <legend class="w-auto px-2">Information du chauffeur</legend> 
+              <div class="row  mb-2">
+                  <div class="col-md-4">
+                    <label for="nom" class="form-label">Nom du Chauffeur</label>
+                    <select class="form-select" id="nom" formControlName="camionChauffeurUuid" (change)="onChauffeurSelectionChange($event)">
+                      <option value="" disabled selected>Sélectionner un chauffeur</option>
+                      <option *ngFor="let camionChauffeur of affectationsCamionChauffeurs" [value]="camionChauffeur.uuid">
+                        {{ camionChauffeur.chauffeur?.nom }} {{ camionChauffeur.chauffeur?.prenom }}
+                      </option>
+                    </select>
+                  <!-- <input type="text" class="form-control" id="nom" formControlName="nom" placeholder="Entrez le nom">
+                  <div class="invalid-feedback" *ngIf="chauffeurForm.get('nom')?.invalid && chauffeurForm.get('nom')?.touched">
+                    Le nom est obligatoire
+                  </div> -->
+                  </div>
+              </div>
+            </fieldset>
+
+            <!-- Section 1: Informations du chauffeur (en gris) -->
+            <div class="row mt-3" *ngIf="chauffeurForm.get('nom')?.value && chauffeurForm.get('nom')?.value !== ''">
+              <div class="col-12">
+                <div class="card border-secondary">
+                  <div class="card-header bg-light">
+                    <h6 class="mb-0 text-secondary">
+                      <i class="fas fa-user"></i>
+                      Informations du Chauffeur
+                    </h6>
+                  </div>
+                  <div class="card-body">
+                    <div class="row">
+                      <div class="col-md-3">
+                        <label class="form-label text-muted">Numéro de permis</label>
+                        <input type="text" class="form-control bg-light" formControlName="numeroPermis" readonly>
+                      </div>
+                      <div class="col-md-3">
+                        <label class="form-label text-muted">Catégorie permis</label>
+                        <input type="text" class="form-control bg-light" formControlName="categoriePermis" readonly>
+                      </div>
+                      <div class="col-md-3">
+                        <label class="form-label text-muted">Téléphone</label>
+                        <input type="text" class="form-control bg-light" formControlName="telephone" readonly>
+                      </div>
+                      <div class="col-md-3">
+                        <label class="form-label text-muted">Statut</label>
+                        <input type="text" class="form-control bg-light" formControlName="statutChauffeur" readonly>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Section 2: Informations du camion (en gris) -->
+            <div class="row mt-3" *ngIf="chauffeurForm.get('nom')?.value && chauffeurForm.get('nom')?.value !== ''">
+              <div class="col-12">
+                <div class="card border-secondary">
+                  <div class="card-header bg-light">
+                    <h6 class="mb-0 text-secondary">
+                      <i class="fas fa-truck"></i>
+                      Informations du Camion
+                    </h6>
+                  </div>
+                  <div class="card-body">
+                    <div class="row">
+                      <div class="col-md-4">
+                        <label class="form-label text-muted">Immatriculation</label>
+                        <input type="text" class="form-control bg-light" formControlName="immatriculation" readonly>
+                      </div>
+                      <div class="col-md-4">
+                        <label class="form-label text-muted">Type de conteneur</label>
+                        <input type="text" class="form-control bg-light" formControlName="typeConteneur" readonly>
+                      </div>
+                      <div class="col-md-4">
+                        <label class="form-label text-muted">Capacité (kg)</label>
+                        <input type="text" class="form-control bg-light" formControlName="capacite" readonly>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Section 3: Commune et Destination (saisie libre) -->
+            <div class="row mt-3" *ngIf="chauffeurForm.get('nom')?.value && chauffeurForm.get('nom')?.value !== ''">
+              <div class="col-12">
+                <div class="card border-primary">
+                  <div class="card-header bg-primary text-white">
+                    <h6 class="mb-0">
+                      <i class="fas fa-map-marker-alt"></i>
+                      Informations de Transport
+                    </h6>
+                  </div>
+                  <div class="card-body">
+                    <div class="row">
+                      <div class="col-md-6">
+                        <label class="form-label">Commune *</label>
+                        <select class="form-select" formControlName="commune">
+                          <option value="">Sélectionner une commune</option>
+                          <option value="Kaloum">Kaloum</option>
+                          <option value="Dixinn">Dixinn</option>
+                          <option value="Matam">Matam</option>
+                          <option value="Ratoma">Ratoma</option>
+                          <option value="Matoto">Matoto</option>
+                        </select>
+                        <div class="invalid-feedback" *ngIf="chauffeurForm.get('commune')?.invalid && chauffeurForm.get('commune')?.touched">
+                          La commune est obligatoire
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <label class="form-label">Destination *</label>
+                        <input type="text" class="form-control" id="destination" formControlName="destination" placeholder="Entrez la destination">
+                        <div class="invalid-feedback" *ngIf="chauffeurForm.get('destination')?.invalid && chauffeurForm.get('destination')?.touched">
+                          La destination est obligatoire
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+  
+              <!-- Destinations pour les conteneurs sélectionnés -->
+              <!-- <div class="row mt-3" *ngIf="selectedConteneurs.length > 0">
+                <div class="col-12">
+                  <h5>Destinations des Conteneurs Sélectionnés</h5>
+                </div>
+                <div class="col-md-6 mb-3" *ngIf="selectedConteneurs.length >= 1">
+                  <label class="form-label">Destination pour {{ selectedConteneurs[0].numConteneur }}</label>
+                  <select class="form-select" formControlName="destination1">
+                    <option value="">Sélectionner une destination</option>
+                    <option *ngFor="let dest of destinations" [value]="dest">{{ dest }}</option>
+                  </select>
+                </div>
+                <div class="col-md-6 mb-3" *ngIf="selectedConteneurs.length >= 2">
+                  <label class="form-label">Destination pour {{ selectedConteneurs[1].reference }}</label>
+                  <select class="form-select" formControlName="destination2">
+                    <option value="">Sélectionner une destination</option>
+                    <option *ngFor="let dest of destinations" [value]="dest">{{ dest }}</option>
+                  </select>
+                </div>
+              </div> -->
+            </form>
+          </div>
+        </div>
+      </div>
+  
+      <!-- Liste des conteneurs -->
+      <div class="col-md-12">
+        <div class="card shadow-sm">
+          <!-- <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h3 class="mb-0">Liste des Conteneurs</h3>
+            <span class="badge bg-warning text-dark">Maximum 2 conteneurs</span>
+          </div> -->
+          <div class="card-body">
+            <fieldset class="border p-3 mb-4">
+              <legend class="w-auto px-2">Liste des Conteneurs</legend> 
+            <div class="table-responsive">
+              <table class="table table-striped table-hover">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Sélection</th>
+                    <th>Référence</th>
+                    <th>Type</th>
+                   
+                    <!-- <th>Destination</th> -->
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let conteneur of conteneurs; let i= index" 
+                      [class.table-primary]="conteneur.selected"
+                      [@moveToTop]="conteneur.selected ? 'moveToTop' : ''"
+                      [@highlightSelected]="conteneur.selected ? 'highlight' : ''">
+                      <th>{{ i + 1 }}</th>
+                    <td>
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox" 
+                               [checked]="conteneur.selected"
+                               (change)="toggleConteneurSelection(conteneur)">
+                        <img class="ms-1" src="assets/images/rdv/container_2.png" height="30px" width="30px" alt="" srcset="">       
+                      </div>
+                    </td>
+                    <td>{{ conteneur.numeroConteneur }}</td>
+                    <!-- <td>{{ conteneur.mark_1 }} {{ conteneur.mark_2 }}</td> -->
+                    <td>{{conteneur.typeConteneur}}</td>
+                   
+                    <!-- <td>
+                      <span *ngIf="conteneur.selected && conteneur === selectedConteneurs[0]">
+                        {{ chauffeurForm.get('destination1')?.value || 'Non définie' }}
+                      </span>
+                      <span *ngIf="conteneur.selected && conteneur === selectedConteneurs[1]">
+                        {{ chauffeurForm.get('destination2')?.value || 'Non définie' }}
+                      </span>
+                      <span *ngIf="!conteneur.selected">-</span>
+                    </td> -->
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            </fieldset>
+          </div>
+        </div>
+      </div>
+  
+      <!-- Boutons d'action -->
+      <div class="col-md-12 mt-4 text-center">
+        <button class="btn btn-lg btn-primary me-3" (click)="genererRecu()" [disabled]="generating">
+          <span *ngIf="!generating">Générer le reçu d'affectation</span>
+          <span *ngIf="generating">
+            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+            Génération en cours...
+          </span>
+        </button>
+        <button class="btn btn-lg btn-outline-secondary" (click)="resetForm()">Réinitialiser</button>
+      </div>
+    </div>
+  </div>

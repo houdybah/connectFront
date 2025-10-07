@@ -1,0 +1,316 @@
+<div class="container-fluid">
+  <!-- Header -->
+  <div class="header">
+    <button class="btn-back" (click)="retour()">
+      <i class="fas fa-arrow-left"></i>
+      Retour
+    </button>
+    <div class="header-content">
+      <h1>
+        <i class="fas fa-layer-group"></i>
+        COMPOSER LA LIGNE
+      </h1>
+      <p class="header-subtitle" *ngIf="ligne">
+        Ligne {{ ligne.numero }} - {{ formatTime(ligne.heure) }} - {{ ligne.date | date:'dd/MM/yyyy' }}
+      </p>
+    </div>
+  </div>
+  
+  <!-- Info ligne -->
+  <div class="ligne-info" *ngIf="ligne">
+    <div class="info-card">
+      <i class="fas fa-clock"></i>
+      <div class="info-content">
+        <span class="info-label">Heure</span>
+        <span class="info-value">{{ formatTime(ligne.heure) }}</span>
+      </div>
+    </div>
+    <div class="info-card">
+      <i class="fas fa-calendar"></i>
+      <div class="info-content">
+        <span class="info-label">Date</span>
+        <span class="info-value">{{ ligne.date | date:'dd/MM/yyyy' }}</span>
+      </div>
+    </div>
+    <div class="info-card">
+      <i class="fas fa-users"></i>
+      <div class="info-content">
+        <span class="info-label">Capacité</span>
+        <span class="info-value">{{ ligne.capacite }} places</span>
+      </div>
+    </div>
+    <div class="info-card">
+      <i class="fas fa-chart-pie"></i>
+      <div class="info-content">
+        <span class="info-label">Occupation</span>
+        <span class="info-value">{{ getOccupation() }}/{{ ligne.capacite }}</span>
+        <div class="occupation-bar">
+          <div class="occupation-fill" [style.width.%]="getOccupationPercentage()"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Formulaire d'ajout -->
+  <div class="add-section">
+    <div class="add-card">
+      <!-- APRÈS -->
+<div class="add-header">
+  <i class="fas fa-plus-circle"></i>
+  <h3>Ajouter une Affectation</h3>
+  <span class="badge bg-info ms-2" *ngIf="affectationsDisponibles.length > 0">
+    {{ affectationsDisponibles.length }} disponible(s)
+  </span>
+  <span class="badge bg-warning ms-2" *ngIf="affectationsDisponibles.length === 0">
+    Aucune disponible
+  </span>
+</div>
+      <div class="add-body">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">
+              <i class="fas fa-link"></i>
+              Affectation Camion-Chauffeur *
+            </label>
+            <select 
+              class="form-control" 
+              [(ngModel)]="affectationSelectionnee"
+              [disabled]="saving">
+              <option value="">-- Sélectionner une affectation --</option>
+              <option *ngFor="let affectation of affectationsDisponibles" [value]="affectation.uuid">
+                {{ affectation.camion?.immatriculation }} - 
+                {{ affectation.chauffeur?.nom }} {{ affectation.chauffeur?.prenom }}
+              </option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">
+              <i class="fas fa-map-marker-alt"></i>
+              Zone/Station
+            </label>
+            <input 
+              type="text" 
+              class="form-control" 
+              [(ngModel)]="zoneStation"
+              placeholder="Ex: Zone A, Station 1..."
+              [disabled]="saving">
+          </div>
+        </div>
+
+        <!-- NOUVEAUX CHAMPS -->
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">
+              <i class="fas fa-box"></i>
+              N° Conteneur
+            </label>
+            <input 
+              type="text" 
+              class="form-control" 
+              [(ngModel)]="numeroConteneur"
+              placeholder="Ex: MSNU 214 628/9"
+              [disabled]="saving">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">
+              <i class="fas fa-calendar-check"></i>
+              Date de Validité
+            </label>
+            <input 
+              type="date" 
+              class="form-control" 
+              [(ngModel)]="validite"
+              [disabled]="saving">
+          </div>
+        </div>
+
+        <div class="form-row">
+        
+          <div class="form-group">
+            <label class="form-label">
+              <i class="fas fa-check-circle"></i>
+              Disponibilité
+            </label>
+            <input 
+              type="text" 
+              class="form-control" 
+              [(ngModel)]="disponibilite"
+              placeholder="Ex: Plateau Vide"
+              [disabled]="saving">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">
+              <i class="fas fa-location-arrow"></i>
+              Position
+            </label>
+            <input 
+              type="text" 
+              class="form-control" 
+              [(ngModel)]="position"
+              placeholder="Ex: PARKING DONKA"
+              [disabled]="saving">
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">&nbsp;</label>
+            <button 
+              class="btn-add" 
+              (click)="ajouterAffectation()"
+              [disabled]="!affectationSelectionnee || saving">
+              <i class="fas fa-spinner fa-spin" *ngIf="saving"></i>
+              <i class="fas fa-plus" *ngIf="!saving"></i>
+              {{ saving ? 'Ajout...' : 'Ajouter' }}
+            </button>
+          </div>
+        </div>
+        
+        <div class="help-text" *ngIf="affectationsDisponibles.length === 0">
+          <i class="fas fa-info-circle"></i>
+          Aucune affectation disponible. Toutes les affectations sont déjà utilisées ou indisponibles.
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Liste des compositions -->
+  <div class="compositions-section">
+    <div class="section-header">
+      <h2>
+        <i class="fas fa-list"></i>
+        Affectations de la ligne ({{ compositions.length }})
+      </h2>
+    </div>
+    
+    <div class="compositions-grid">
+      <div class="composition-card" *ngFor="let composition of compositions; let i = index">
+        <div class="composition-header">
+          <span class="composition-number">#{{ i + 1 }}</span>
+          <button 
+            class="btn-icon btn-remove" 
+            (click)="retirerComposition(composition.uuid!)"
+            title="Retirer">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        
+        <div class="composition-body">
+          <!-- Camion -->
+          <div class="composition-item">
+            <div class="item-icon camion-icon">
+              <i class="fas fa-truck"></i>
+            </div>
+            <div class="item-content">
+              <span class="item-label">Camion</span>
+              <span class="item-value">
+                {{ composition.camionChauffeur?.camion?.immatriculation || 'N/A' }}
+              </span>
+            </div>
+          </div>
+          
+          <!-- Chauffeur -->
+          <div class="composition-item">
+            <div class="item-icon chauffeur-icon">
+              <i class="fas fa-user"></i>
+            </div>
+            <div class="item-content">
+              <span class="item-label">Chauffeur</span>
+              <span class="item-value">
+                {{ composition.camionChauffeur?.chauffeur?.nom }} 
+                {{ composition.camionChauffeur?.chauffeur?.prenom }}
+              </span>
+              <span class="item-detail">
+                <i class="fas fa-phone"></i> 
+                {{ composition.camionChauffeur?.chauffeur?.phone }}
+              </span>
+            </div>
+          </div>
+          
+          <!-- Zone Station -->
+          <div class="composition-item" *ngIf="composition.zoneStation">
+            <div class="item-icon zone-icon">
+              <i class="fas fa-map-marker-alt"></i>
+            </div>
+            <div class="item-content">
+              <span class="item-label">Zone/Station</span>
+              <span class="item-value">{{ composition.zoneStation }}</span>
+            </div>
+          </div>
+
+          <!-- NOUVEAUX CHAMPS AFFICHÉS -->
+          <!-- Numéro Conteneur -->
+          <div class="composition-item" *ngIf="composition.numeroConteneur">
+            <div class="item-icon conteneur-icon">
+              <i class="fas fa-box"></i>
+            </div>
+            <div class="item-content">
+              <span class="item-label">N° Conteneur</span>
+              <span class="item-value">{{ composition.numeroConteneur }}</span>
+            </div>
+          </div>
+
+          <!-- Validité -->
+          <div class="composition-item" *ngIf="composition.validite">
+            <div class="item-icon validite-icon">
+              <i class="fas fa-calendar-check"></i>
+            </div>
+            <div class="item-content">
+              <span class="item-label">Validité</span>
+              <span class="item-value">{{ composition.validite | date:'dd/MM/yyyy' }}</span>
+            </div>
+          </div>
+
+          <!-- Contact -->
+          <div class="composition-item" *ngIf="composition.contact">
+            <div class="item-icon contact-icon">
+              <i class="fas fa-phone"></i>
+            </div>
+            <div class="item-content">
+              <span class="item-label">Contact</span>
+              <span class="item-value">{{ composition.contact }}</span>
+            </div>
+          </div>
+
+          <!-- Disponibilité -->
+          <div class="composition-item" *ngIf="composition.disponibilite">
+            <div class="item-icon dispo-icon">
+              <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="item-content">
+              <span class="item-label">Disponibilité</span>
+              <span class="item-value">{{ composition.disponibilite }}</span>
+            </div>
+          </div>
+
+          <!-- Position -->
+          <div class="composition-item" *ngIf="composition.position">
+            <div class="item-icon position-icon">
+              <i class="fas fa-location-arrow"></i>
+            </div>
+            <div class="item-content">
+              <span class="item-label">Position</span>
+              <span class="item-value">{{ composition.position }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Message si aucune composition -->
+      <div class="empty-state" *ngIf="compositions.length === 0 && !loading">
+        <i class="fas fa-inbox fa-3x"></i>
+        <h4>Aucune affectation</h4>
+        <p>Ajoutez des affectations camion-chauffeur à cette ligne horaire</p>
+      </div>
+    </div>
+    
+    <!-- Loader -->
+    <div *ngIf="loading" class="text-center py-4">
+      <div class="spinner-border text-primary"></div>
+      <p class="mt-2">Chargement...</p>
+    </div>
+  </div>
+</div>

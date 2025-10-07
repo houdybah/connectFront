@@ -1,0 +1,243 @@
+<!-- modification-chauffeur.component.html - Version avec debugging -->
+
+<div class="modal-header bg-primary text-white">
+  <h4 class="modal-title">Modification des informations du chauffeur</h4>
+  <button type="button" class="btn-close btn-close-white" aria-label="Close" (click)="activeModal.dismiss()"></button>
+</div>
+
+<div class="modal-body">
+ 
+
+ 
+
+  <form [formGroup]="modificationForm">
+    <!-- ✅ SECTION 1 - Références de la déclaration (TOUJOURS VISIBLE) -->
+    <fieldset class="border p-3 mb-4 bg-light">
+      <legend class="w-auto px-2 text-muted"><i class="ri-file-text-line"></i> Références de la déclaration</legend>
+      <div class="row">
+        <div class="col-md-3 mb-2">
+          <label class="form-label fw-bold text-muted small">Reference declaration</label>
+          <input type="text" class="form-control form-control-sm bg-light text-muted" 
+                 [value]="conteneurData?.refDeclarant || 'N/A'" disabled readonly>
+        </div>
+        <div class="col-md-3 mb-2">
+          <label class="form-label fw-bold text-muted small">Quittance/Credit</label>
+          <input type="text" class="form-control form-control-sm bg-light text-muted" 
+                 [value]="conteneurData?.quittance || 'N/A'" disabled readonly>
+        </div>
+        <div class="col-md-3 mb-2">
+          <label class="form-label fw-bold text-muted small">Reference Compagnie</label>
+          <input type="text" class="form-control form-control-sm bg-light text-muted" 
+                 [value]="conteneurData?.referenceCompagnie || 'N/A'" disabled readonly>
+        </div>
+        <div class="col-md-3 mb-2">
+          <label class="form-label fw-bold text-muted small">Reference AGL</label>
+          <input type="text" class="form-control form-control-sm bg-light text-muted" 
+                 [value]="conteneurData?.referenceAGL || 'N/A'" disabled readonly>
+        </div>
+        <div class="col-md-3 mb-2">
+          <label class="form-label fw-bold text-muted small">ReferenceRVD</label>
+          <input type="text" class="form-control form-control-sm bg-light text-muted" 
+                 [value]="conteneurData?.numero || 'N/A'" disabled readonly>
+        </div>
+      </div>
+
+    </fieldset>
+ <!-- ✅ ALERTE SI STATUS = TRUE -->
+  <div class="alert alert-warning" *ngIf="conteneurData?.status === true">
+    <strong><i class="ri-alert-triangle-line"></i> Attention !</strong>
+    Ce conteneur est déjà sorti (statut validé). Aucune modification n'est possible.
+  </div>
+    <!-- ✅ SECTION 2 - Conteneurs associés (TOUJOURS VISIBLE) -->
+    
+<fieldset class="border p-3 mb-4 bg-light">
+  <legend class="w-auto px-2 text-muted"><i class="ri-truck-line"></i> Conteneurs associés</legend>
+  
+  <!-- Message si pas de données -->
+  <div *ngIf="!detailAffectationConteneurDtos || detailAffectationConteneurDtos.length === 0" 
+       class="alert alert-info">
+    <i class="ri-information-line"></i> Aucun conteneur associé trouvé
+  </div>
+
+  <!-- Tableau des conteneurs -->
+  <div *ngIf="detailAffectationConteneurDtos && detailAffectationConteneurDtos.length > 0" 
+       class="table-responsive">
+    <table class="table table-sm table-striped">
+      <thead class="table-dark">
+        <tr>
+          <th style="width: 50px">#</th>
+          <th style="width: 120px">Statut</th>
+          <th>Référence</th>
+          <th style="width: 80px">Type</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let conteneur of detailAffectationConteneurDtos; let i = index; trackBy: trackByNumero">
+          <td>{{ i + 1 }}</td>
+          <td>
+            <span class="badge" 
+                  [class.bg-success]="conteneur.selected || conteneur.seleted" 
+                  [class.bg-secondary]="!(conteneur.selected || conteneur.seleted)">
+              <i class="ri-checkbox-circle-fill" *ngIf="conteneur.selected || conteneur.seleted"></i>
+              <i class="ri-stop-circle-line" *ngIf="!(conteneur.selected || conteneur.seleted)"></i>
+              {{ (conteneur.selected || conteneur.seleted) ? 'Sélectionné' : 'Disponible' }}
+            </span>
+          </td>
+          <td class="fw-medium">
+            <span class="text-primary">{{ conteneur.numeroConteneur || conteneur.numero || 'N/A' }}</span>
+          </td>
+          <td><span class="badge bg-info">{{conteneur.typeConteneur}}</span></td>
+        </tr>
+      </tbody>
+    </table>
+    
+    <!-- Résumé des conteneurs -->
+    <div class="mt-2">
+      <small class="text-muted">
+        <i class="ri-information-line"></i>
+        Total: {{ detailAffectationConteneurDtos.length }} conteneur(s) | 
+        Sélectionnés: {{ getSelectedCount() }}
+      </small>
+    </div>
+  </div>
+</fieldset>
+
+    <!-- Formulaire de modification du chauffeur -->
+    <fieldset class="border p-3 mb-4">
+      <legend class="w-auto px-2 text-primary">Informations du chauffeur à modifier</legend>
+      
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label for="nomChauffeur" class="form-label">Nom du Chauffeur *</label>
+          <input 
+            type="text" 
+            class="form-control" 
+            id="nomChauffeur" 
+            formControlName="nomChauffeur"
+            [class.is-invalid]="modificationForm.get('nomChauffeur')?.invalid && modificationForm.get('nomChauffeur')?.touched">
+          <div class="invalid-feedback">
+            Le nom du chauffeur est obligatoire
+          </div>
+        </div>
+
+        <div class="col-md-6 mb-3">
+          <label for="phoneChauffeur" class="form-label">Téléphone du Chauffeur *</label>
+          <input 
+            type="tel" 
+            class="form-control" 
+            id="phoneChauffeur" 
+            formControlName="phoneChauffeur"
+            [class.is-invalid]="modificationForm.get('phoneChauffeur')?.invalid && modificationForm.get('phoneChauffeur')?.touched">
+          <div class="invalid-feedback">
+            Le numéro de téléphone est obligatoire et doit être valide
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label for="permisChauffeur" class="form-label">Permis du Chauffeur *</label>
+          <input 
+            type="text" 
+            class="form-control" 
+            id="permisChauffeur" 
+            formControlName="permisChauffeur"
+            [class.is-invalid]="modificationForm.get('permisChauffeur')?.invalid && modificationForm.get('permisChauffeur')?.touched">
+          <div class="invalid-feedback">
+            Le numéro de permis est obligatoire
+          </div>
+        </div>
+
+        <div class="col-md-6 mb-3">
+          <label for="immatriculation" class="form-label">Immatriculation *</label>
+          <input 
+            type="text" 
+            class="form-control" 
+            id="immatriculation" 
+            formControlName="immatriculation"
+            placeholder="Ex: AB-123-CD"
+            [class.is-invalid]="modificationForm.get('immatriculation')?.invalid && modificationForm.get('immatriculation')?.touched">
+          <div class="invalid-feedback">
+            L'immatriculation est obligatoire
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label for="commune" class="form-label">Commune *</label>
+          <select 
+            id="commune" 
+            formControlName="commune" 
+            class="form-select"
+            [class.is-invalid]="modificationForm.get('commune')?.invalid && modificationForm.get('commune')?.touched">
+           <option value="">Choisir la commune ou la Region</option>
+            <option value="RATOMA">RATOMA</option>
+                    <option value="MATAM">MATAM</option>
+                    <option value="DIXINN">DIXINN</option>
+                    <option value="MATOTO">MATOTO</option>
+                    <option value="TOMBOLIA">TOMBOLIA</option>
+                    <option value="KASSA">KASSA</option>
+                    <option value="LAMBANYI">LAMBANYI</option>
+                    <option value="SONFONIA">SONFONIA</option>
+                    <option value="KAGBELEN">KAGBELEN</option>
+                    <option value="SANOYAH">SANOYAH </option>
+                    <option value="MANEAH">MANEAH</option>
+                    <option value="GBESSIA">GBESSIA</option>
+                    <option value="KALOUM">KALOUM</option>
+                    <option value="BOKE">BOKE</option>
+                    <option value="FARANAH">FARANAH</option>
+                    <option value="KANKAN">KANKAN</option>
+                    <option value="KINDIA">KINDIA</option>
+                    <option value="LABE">LABE</option>
+                    <option value="N'ZEREKORE">N'ZEREKORE</option>
+                    <option value="MAMOU">MAMOU</option>  </select>
+          <div class="invalid-feedback">
+            La commune ou la Region est obligatoire
+          </div>
+        </div>
+
+        <div class="col-md-6 mb-3">
+          <label for="destination" class="form-label">Destination *</label>
+          <input 
+            type="text" 
+            class="form-control" 
+            id="destination" 
+            formControlName="destination"
+            placeholder="Entrez la destination"
+            [class.is-invalid]="modificationForm.get('destination')?.invalid && modificationForm.get('destination')?.touched">
+          <div class="invalid-feedback">
+            La destination est obligatoire
+          </div>
+        </div>
+      </div>
+    </fieldset>
+  </form>
+</div>
+
+<div class="modal-footer">
+  <button type="button" class="btn btn-secondary" (click)="activeModal.dismiss()">
+    <i class="fas fa-times"></i> Annuler
+  </button>
+  <button 
+    type="button" 
+    class="btn btn-primary" 
+    [disabled]="modificationForm.invalid || isLoading || conteneurData?.status === true"
+    (click)="sauvegarder()"
+    *ngIf="conteneurData?.status !== true">
+    <span *ngIf="!isLoading">
+      <i class="fas fa-save"></i> Sauvegarder les modifications
+    </span>
+    <span *ngIf="isLoading">
+      <span class="spinner-border spinner-border-sm me-2"></span>
+      Sauvegarde...
+    </span>
+  </button>
+  <button 
+    type="button" 
+    class="btn btn-secondary" 
+    disabled
+    *ngIf="conteneurData?.status === true">
+    <i class="ri-lock-line"></i> Modification impossible
+  </button>
+</div>

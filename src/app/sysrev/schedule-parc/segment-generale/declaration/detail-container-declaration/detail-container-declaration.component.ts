@@ -3,7 +3,7 @@ import { Component, Input } from '@angular/core';
 import {Declaration_1} from "../../../../models/Declaration_1";
 
 @Component({
-  selector: 'app-detail-Container-Declaration',
+  selector: 'app-detail-container-declaration',
   templateUrl: './detail-Container-Declaration.component.html',
   styleUrl: './detail-Container-Declaration.component.scss',
   animations: [

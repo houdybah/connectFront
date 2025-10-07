@@ -1,0 +1,22 @@
+<div class="container mt-4">
+    <div class="row">
+      <div class="col-12 text-center mb-4">
+        <h1>{{ title }}</h1>
+        <p class="lead">Positionnez un QR code face à la caméra pour le scanner</p>
+      </div>
+    </div>
+    
+    <div class="row">
+      <div class="col-12">
+        <app-qrcode-scanner (scanSuccess)="onScanSuccess($event)"></app-qrcode-scanner>
+      </div>
+    </div>
+    
+    <div class="row mt-4" *ngIf="lastResult">
+      <div class="col-12">
+        <div class="alert alert-success">
+          <p class="mb-0"><strong>Dernier scan réussi!</strong></p>
+        </div>
+      </div>
+    </div>
+  </div>

@@ -18,7 +18,7 @@ export class InfoBonSortieComponent implements OnInit {
     { numero: 'C001', Declaration: 'D12345', liquidation: 10000, type: '40FT', colis: 50, poidsBrut: 1200, numeroBl: 'BL9876' },
     { numero: 'C002', Declaration: 'D67890', liquidation: 8000, type: '20FT', colis: 30, poidsBrut: 800, numeroBl: 'BL5432' }
   ];
-  SysrevDetailBonSortie:DetailBonSortie[] = [];
+  detailBonSortie: DetailBonSortie[] = [];
 
   constructor(private fb: FormBuilder,private ScheduleService: ScheduleService,@Optional() private parent: BonSortieComponent) {
     this.bonSortieForm = this.fb.group({
@@ -57,7 +57,7 @@ export class InfoBonSortieComponent implements OnInit {
     //   const value = JSON.parse(ref);
     //   console.log(typeof value)
     //   this.ScheduleService.getDetailBonSortie(value).subscribe(res => {
-    //     this.SysrevDetailBonSortie = res;
+    //     this.detailBonSortie = res;
     //     console.log(res)
     //   })
     // }

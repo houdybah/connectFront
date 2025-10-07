@@ -1,0 +1,195 @@
+// Chauffeurs SDT - Design simple et classique
+.chauffeurs-sdt-wrapper {
+  padding: 20px;
+  background-color: #f8f9fa;
+  min-height: 100vh;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+// Page Header
+.page-header {
+  margin-bottom: 20px;
+  padding: 20px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.page-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: #2c3e50;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  
+  i {
+    color: #007bff;
+  }
+}
+
+.header-actions {
+  display: flex;
+  gap: 10px;
+}
+
+// Navigation simple
+.sdt-navigation {
+  margin-bottom: 20px;
+  padding: 15px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.nav-links {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: #f8f9fa;
+  border-radius: 6px;
+  text-decoration: none;
+  color: #495057;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s;
+  cursor: pointer;
+  
+  &:hover {
+    background: #007bff;
+    color: white;
+  }
+  
+  i {
+    font-size: 16px;
+  }
+}
+
+// Contenu chauffeurs
+.chauffeurs-content {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  
+  // Masquer le header du composant liste-chauffeurs pour éviter la duplication
+  app-liste-chauffeurs .page-header {
+    display: none;
+  }
+  
+  // Ajuster les marges du contenu
+  app-liste-chauffeurs .chauffeurs-container {
+    padding: 0;
+    background: transparent;
+    min-height: auto;
+  }
+}
+
+// Buttons
+.btn {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  
+  &.btn-primary {
+    background: #007bff;
+    color: white;
+    
+    &:hover:not(:disabled) {
+      background: #0056b3;
+    }
+  }
+  
+  &.btn-secondary {
+    background: #6b7280;
+    color: white;
+    
+    &:hover:not(:disabled) {
+      background: #4b5563;
+    }
+  }
+  
+  &.btn-outline-primary {
+    background: transparent;
+    color: #007bff;
+    border: 1px solid #007bff;
+    
+    &:hover:not(:disabled) {
+      background: #007bff;
+      color: white;
+    }
+  }
+  
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+  .chauffeurs-sdt-wrapper {
+    padding: 16px;
+  }
+  
+  .header-content {
+    flex-direction: column;
+    gap: 16px;
+    align-items: stretch;
+  }
+  
+  .header-actions {
+    justify-content: stretch;
+    
+    .btn {
+      flex: 1;
+      justify-content: center;
+    }
+  }
+  
+  .nav-links {
+    justify-content: center;
+    gap: 10px;
+    
+    .nav-link {
+      flex: 1;
+      justify-content: center;
+      min-width: 120px;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .page-title {
+    font-size: 20px;
+  }
+  
+  .nav-links {
+    flex-direction: column;
+    
+    .nav-link {
+      justify-content: center;
+    }
+  }
+}

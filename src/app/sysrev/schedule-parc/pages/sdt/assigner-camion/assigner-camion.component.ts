@@ -12,7 +12,7 @@ import {ConteneurService} from "../../../../services/conteneur.service";
 })
 export class AssignerCamionComponent implements OnInit {
   ligneUuid: string = '';
-  Ligne: any = null;
+  ligne: any = null;
   rendezVousDisponibles: AffectationConteneur[] = [];
   rendezVousSelectionnes: AffectationConteneur[] = [];
   loading = false;
@@ -36,8 +36,8 @@ export class AssignerCamionComponent implements OnInit {
   loadLigneDetails(): void {
     this.loading = true;
     this.LigneService.getLigneById(this.ligneUuid).subscribe({
-      next: (Ligne) => {
-        this.Ligne = Ligne;
+      next: (ligne) => {
+        this.ligne = ligne;
         this.loading = false;
       },
       error: (error) => {

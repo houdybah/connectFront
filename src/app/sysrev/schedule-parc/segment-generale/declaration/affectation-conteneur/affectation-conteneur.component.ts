@@ -40,7 +40,7 @@ export class AffectationConteneurComponent {
   destinations: string[] = ['Paris', 'Marseille', 'Lyon', 'Bordeaux', 'Lille', 'Nantes', 'Strasbourg', 'Nice'];
   generating = false;
 
-  AffectationConteneur = new AffectationConteneur();
+  affectationConteneur = new AffectationConteneur();
   reference: any;
   affectationsCamionChauffeurs: CamionChauffeur[] = [];
   
@@ -168,19 +168,19 @@ export class AffectationConteneurComponent {
       chauffeur: Chauffeur,
       totalConteneurs: this.selectedConteneurs.length
     };
-    this.AffectationConteneur.destination = this.chauffeurForm.value.destination;
-    this.AffectationConteneur.nomcompletDriver = this.chauffeurForm.value.nom
-    this.AffectationConteneur.phoneDriver = this.chauffeurForm.value.telephone
-    this.AffectationConteneur.immarticulation = this.chauffeurForm.value.immmatriculation
-    this.AffectationConteneur.permitDriver = this.chauffeurForm.value.numeroPermis
-    this.AffectationConteneur.reference = recu.reference
-    this.AffectationConteneur.commune = this.chauffeurForm.value.commune
-    this.AffectationConteneur.numero = recu.reference
-    this.AffectationConteneur.camionChauffeurUuid = this.chauffeurForm.value.camionChauffeurUuid;
+    this.affectationConteneur.destination = this.chauffeurForm.value.destination;
+    this.affectationConteneur.nomcompletDriver = this.chauffeurForm.value.nom
+    this.affectationConteneur.phoneDriver = this.chauffeurForm.value.telephone
+    this.affectationConteneur.immarticulation = this.chauffeurForm.value.immmatriculation
+    this.affectationConteneur.permitDriver = this.chauffeurForm.value.numeroPermis
+    this.affectationConteneur.reference = recu.reference
+    this.affectationConteneur.commune = this.chauffeurForm.value.commune
+    this.affectationConteneur.numero = recu.reference
+    this.affectationConteneur.camionChauffeurUuid = this.chauffeurForm.value.camionChauffeurUuid;
   
-    console.log(this.AffectationConteneur)
+    console.log(this.affectationConteneur)
 
-    this.AffectationService.addConteneur(this.AffectationConteneur).subscribe(res => {
+    this.AffectationService.addConteneur(this.affectationConteneur).subscribe(res => {
        setTimeout(() => {
       this.generating = false;
       
@@ -262,8 +262,8 @@ export class AffectationConteneurComponent {
 
   getAffectationConteneur(reference:string){
     this.AffectationService.getConteneeurByDeclaration(reference).subscribe(res =>{
-       this.AffectationConteneur = res
-       console.log(this.AffectationConteneur)
+       this.affectationConteneur = res
+       console.log(this.affectationConteneur)
        this.conteneurs = res.detailAffectationConteneurDtos
     })
   }

@@ -1,0 +1,187 @@
+<div class="page-container">
+  <!-- Badge rôle utilisateur -->
+  <div class="user-info" *ngIf="userRole">
+    <i class="fas fa-user-shield"></i>
+    Connecté en tant que : <strong>{{ userRole }}</strong>
+  </div>
+
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-content">
+      <h1 class="page-title">
+        <i class="fas fa-ship"></i>
+        Demandes CKT - Terminal Conteneur
+      </h1>
+      <button class="btn btn-primary" (click)="nouvelleDemande()">
+        <i class="fas fa-plus"></i>
+        Nouvelle Demande
+      </button>
+    </div>
+  </div>
+  
+  <!-- Filtres -->
+  <div class="filters-section">
+    <h3 class="filters-title">Filtres</h3>
+    <div class="filters-row">
+      <div class="filter-item">
+        <label class="filter-label">
+          <i class="fas fa-calendar"></i>
+          Date
+        </label>
+        <input 
+          type="date" 
+          class="form-control"
+          [(ngModel)]="selectedDate"
+          (change)="onDateChange()">
+      </div>
+      
+      <div class="filter-item">
+        <label class="filter-label">
+          <i class="fas fa-clock"></i>
+          Horaire
+        </label>
+        <select 
+          class="form-control"
+          [(ngModel)]="selectedHoraire"
+          (change)="onHoraireChange()">
+          <option *ngFor="let opt of horaireOptions" [value]="opt.value">
+            {{ opt.label }}
+          </option>
+        </select>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Statistiques -->
+  <div class="stats-section">
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon">
+          <i class="fas fa-file-alt"></i>
+        </div>
+        <div class="stat-content">
+          <div class="stat-value">{{ stats.total }}</div>
+          <div class="stat-label">Total Demandes</div>
+        </div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-icon">
+          <i class="fas fa-calendar-day"></i>
+        </div>
+        <div class="stat-content">
+          <div class="stat-value">{{ stats.aujourdhui }}</div>
+          <div class="stat-label">Date sélectionnée</div>
+        </div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-icon">
+          <i class="fas fa-box"></i>
+        </div>
+        <div class="stat-content">
+          <div class="stat-value">{{ stats.capaciteTotale }}</div>
+          <div class="stat-label">Capacité Totale</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Liste des demandes -->
+  <div class="content-section">
+    <div class="table-wrapper">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>N° Demande</th>
+            <th>Date</th>
+            <th>Heure</th>
+            <th>Horaire</th>
+            <th>Capacité</th>
+            <th>Lignes</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let demande of filteredDemandes" class="table-row">
+            <td class="demande-cell">
+              <strong>{{ demande.numero }}</strong>
+            </td>
+            <td class="date-cell">
+              <span class="info-badge">
+                <i class="fas fa-calendar"></i>
+                {{ demande.date | date:'dd/MM/yyyy' }}
+              </span>
+            </td>
+            <td class="time-cell">
+              <span class="info-badge">
+                <i class="fas fa-clock"></i>
+                {{ formatTime(demande.heure) }}
+              </span>
+            </td>
+            <td class="horaire-cell">
+              <span class="status-badge" [ngClass]="getHoraireBadgeClass(demande.horaire)">
+                <i class="fas" [ngClass]="getHoraireIcon(demande.horaire)"></i>
+                {{ getHoraireLabel(demande.horaire) }}
+              </span>
+            </td>
+            <td class="capacity-cell">
+              <span class="capacity-info">
+                <i class="fas fa-boxes"></i>
+                {{ demande.capacite }} places
+              </span>
+            </td>
+            <td class="lignes-cell">
+              <span class="lignes-info">
+                <i class="fas fa-list"></i>
+                {{ demande.lignes?.length || 0 }} ligne(s)
+              </span>
+            </td>
+            <td class="actions-cell">
+              <div class="action-buttons">
+                <button 
+                  class="btn-action btn-view" 
+                  (click)="voirLignes(demande.uuid!)" 
+                  title="Voir les lignes"
+                >
+                  <i class="fas fa-list"></i>
+                </button>
+                <button 
+                  class="btn-action btn-edit" 
+                  (click)="modifierDemande(demande.uuid!)" 
+                  title="Modifier"
+                >
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button 
+                  class="btn-action btn-delete" 
+                  (click)="supprimerDemande(demande.uuid!)" 
+                  title="Supprimer"
+                >
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+          
+          <tr *ngIf="filteredDemandes.length === 0 && !loading" class="empty-row">
+            <td colspan="7" class="empty-cell">
+              <div class="empty-state">
+                <i class="fas fa-search"></i>
+                <h4>Aucune demande CKT trouvée</h4>
+                <p *ngIf="selectedDate">Aucune demande pour la date sélectionnée</p>
+                <p *ngIf="!selectedDate">Cliquez sur "Nouvelle Demande" pour créer une demande</p>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      
+      <!-- Loader -->
+      <div *ngIf="loading" class="loading-state">
+        <div class="spinner"></div>
+        <p>Chargement...</p>
+      </div>
+    </div>
+  </div>
+</div>

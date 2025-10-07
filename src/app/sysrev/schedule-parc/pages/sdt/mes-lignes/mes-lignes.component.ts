@@ -14,7 +14,7 @@ export interface LigneWithDemande {
   status?: string;
   demandeCKTUuid?: string;
   horaire?: string;
-  DemandeCKT?: DemandeCKT;
+  demandeCKT?: DemandeCKT;
   nombreRendezVous?: number;
 }
 
@@ -75,7 +75,7 @@ export class MesLignesComponent implements OnInit {
       next: (lignes) => {
         this.lignes = lignes.map(Ligne => ({
           ...Ligne,
-          DemandeCKT: this.demandes.find(d => d.uuid === Ligne.demandeCKTUuid)
+          demandeCKT: this.demandes.find(d => d.uuid === Ligne.demandeCKTUuid)
         }));
         this.applyFilters();
         this.loading = false;
@@ -98,7 +98,7 @@ export class MesLignesComponent implements OnInit {
         if (this.lignes.length > 0) {
           this.lignes = this.lignes.map(Ligne => ({
             ...Ligne,
-            DemandeCKT: this.demandes.find(d => d.uuid === Ligne.demandeCKTUuid)
+            demandeCKT: this.demandes.find(d => d.uuid === Ligne.demandeCKTUuid)
           }));
           this.applyFilters();
         }
@@ -139,7 +139,7 @@ export class MesLignesComponent implements OnInit {
       const term = this.searchTerm.toLowerCase();
       filtered = filtered.filter(Ligne => 
         Ligne.numero?.toLowerCase().includes(term) ||
-        Ligne.DemandeCKT?.numero?.toLowerCase().includes(term) ||
+        Ligne.demandeCKT?.numero?.toLowerCase().includes(term) ||
         Ligne.date?.toLowerCase().includes(term)
       );
     }

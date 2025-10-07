@@ -1,0 +1,121 @@
+<div class="document-container">
+  <!-- En-tête officiel -->
+  <div class="header-section">
+    <div class="ministry-info">
+      <strong>MINISTÈRE DU BUDGET</strong><br>
+      <strong>DIRECTION GÉNÉRALE DES DOUANES</strong><br>
+      <strong>PARC CONTENEUR</strong>
+    </div>
+    <div class="republic-info">
+      <strong>RÉPUBLIQUE DE GUINÉE</strong><br>
+      <span>Travail - Justice - Solidarité</span>
+    </div>
+  </div>
+
+  <!-- Titre principal -->
+  <div class="title-section">
+    <h2><u>STATISTIQUE JOURNALIÈRE DE SORTIE DES CONTENEURS</u></h2>
+  </div>
+
+  <!-- Ligne de service avec date -->
+  <div class="service-line">
+    <span>Service du ................................./....../........{{ serviceDate.split(' ')[3] || '20' }}........au................/......../.......{{ serviceDate.split(' ')[3] || '20' }}</span>
+  </div>
+
+  <!-- Messages d'état -->
+  <div *ngIf="message" class="message" [ngClass]="'message-' + messageType">
+    {{ message }}
+  </div>
+
+  <!-- Loading indicator -->
+  <div *ngIf="isLoading" class="loading">
+    <p>⏳ Chargement des données...</p>
+  </div>
+
+  <!-- Contrôles de date -->
+  <div class="controls-section">
+    <div class="date-controls">
+      <div class="date-group">
+        <label for="dateDebut">Date de début:</label>
+        <input type="date" id="dateDebut" [(ngModel)]="dateDebut" />
+      </div>
+      <div class="date-group">
+        <label for="dateFin">Date de fin:</label>
+        <input type="date" id="dateFin" [(ngModel)]="dateFin" />
+      </div>
+    </div>
+    
+    <div class="button-controls">
+      <button (click)="chargerStatistiquesAujourdhui()" [disabled]="isLoading" class="btn-today">
+        📅 Statistiques aujourd'hui
+      </button>
+    
+      <button (click)="chargerStatistiquesPeriode()" [disabled]="isLoading" class="btn-secondary">
+        📈 Statistiques période
+      </button>
+      <button (click)="previsualiserImpression()" [disabled]="bureauxConfig.length === 0" class="btn-preview">
+        👁️ Prévisualiser
+      </button>
+    </div>
+  </div>
+
+  <!-- Tableau principal format officiel -->
+  <div class="table-container">
+    <table class="statistics-table">
+      <!-- En-tête avec noms des bureaux -->
+      <thead>
+        <tr>
+          <th rowspan="2" class="bureau-header">Bureaux</th>
+          <th *ngFor="let bureau of bureauxConfig" colspan="2" class="bureau-name">
+            {{ bureau.nom }}
+          </th>
+        </tr>
+        <tr>
+          <!-- Ligne TC40/TC20 pour chaque bureau -->
+          <ng-container *ngFor="let bureau of bureauxConfig">
+            <th class="tc-header">TC40</th>
+            <th class="tc-header">TC20</th>
+          </ng-container>
+        </tr>
+      </thead>
+      
+      <tbody>
+        <!-- Ligne principale avec les données -->
+        <tr class="data-row">
+          <td class="row-label">Conteneurs</td>
+          <ng-container *ngFor="let bureau of bureauxConfig">
+            <td class="data-cell">{{ bureau.tc40 || 0 }}</td>
+            <td class="data-cell">{{ bureau.tc20 || 0 }}</td>
+          </ng-container>
+        </tr>
+        
+        <!-- Ligne des totaux par bureau -->
+        <tr class="bureau-totals-row">
+          <td class="row-label">Total par bureau</td>
+          <ng-container *ngFor="let bureau of bureauxConfig">
+            <td colspan="2" class="bureau-total-cell">{{ (bureau.tc40 + bureau.tc20) || 0 }}</td>
+          </ng-container>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Section des totaux uniquement -->
+  <div class="totals-section">
+    <table class="totals-table">
+      <tr>
+        <td class="total-label">Total conteneur 40'</td>
+        <td class="total-value">{{ totalTC40 }}</td>
+      </tr>
+      <tr>
+        <td class="total-label">Total conteneur 20'</td>
+        <td class="total-value">{{ totalTC20 }}</td>
+      </tr>
+      <tr>
+        <td class="total-label">Total des conteneurs sortis</td>
+        <td class="total-value">{{ totalConteneursSortis }}</td>
+      </tr>
+    </table>
+  </div>
+
+</div>

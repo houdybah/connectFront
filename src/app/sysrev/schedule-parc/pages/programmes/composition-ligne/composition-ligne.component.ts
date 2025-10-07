@@ -15,7 +15,7 @@ import {CompositionService} from "../../../../services/composition.service";
 })
 export class CompositionLigneComponent implements OnInit, OnDestroy {
   ligneUuid: string = '';
-  Ligne: Ligne | null = null;
+  ligne: Ligne | null = null;
   compositions: CompositionLigne[] = [];
   affectationsDisponibles: CamionChauffeur[] = [];
   
@@ -58,8 +58,8 @@ export class CompositionLigneComponent implements OnInit, OnDestroy {
   loadLigne(): void {
     this.subscriptions.push(
       this.LigneService.getLigneById(this.ligneUuid).subscribe({
-        next: (Ligne) => {
-          this.Ligne = Ligne;
+        next: (ligneData) => {
+          this.ligne = ligneData;
         },
         error: (error) => {
           console.error('Erreur chargement Ligne:', error);
@@ -185,10 +185,10 @@ export class CompositionLigneComponent implements OnInit, OnDestroy {
   }
 
   getOccupationPercentage(): number {
-    if (!this.Ligne || this.Ligne.capacite === 0) {
+    if (!this.ligne || this.ligne.capacite === 0) {
       return 0;
     }
-    return (this.compositions.length / this.Ligne.capacite) * 100;
+    return (this.compositions.length / this.ligne.capacite) * 100;
   }
 
   formatTime(time: string): string {
@@ -196,8 +196,8 @@ export class CompositionLigneComponent implements OnInit, OnDestroy {
   }
 
   retour(): void {
-    if (this.Ligne?.demandeCKTUuid) {
-      this.router.navigate(['/douane/demandes-ckt/Lignes', this.Ligne.demandeCKTUuid]);
+    if (this.ligne?.demandeCKTUuid) {
+      this.router.navigate(['/douane/demandes-ckt/Lignes', this.ligne.demandeCKTUuid]);
     } else {
       this.router.navigate(['/douane/demandes-ckt']);
     }

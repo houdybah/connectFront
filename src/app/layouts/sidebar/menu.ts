@@ -1440,7 +1440,7 @@ export const MENU: MenuItem[] = [
           {
             id: 1504,
             label: 'Dashboard SDT',
-            link: '/sysrev/schedule-parc/sdt/dashboard',
+            link: '/sysrev/schedule-parc/sdt/Dashboard',
             parentId: 1503
           },
           {
@@ -1458,13 +1458,13 @@ export const MENU: MenuItem[] = [
           {
             id: 1507,
             label: 'Camions SDT',
-            link: '/sysrev/schedule-parc/sdt/camions',
+            link: '/sysrev/schedule-parc/sdt/Camions',
             parentId: 1503
           },
           {
             id: 1508,
             label: 'Chauffeurs SDT',
-            link: '/sysrev/schedule-parc/sdt/chauffeurs',
+            link: '/sysrev/schedule-parc/sdt/Chauffeurs',
             parentId: 1503
           }
         ]
@@ -1544,7 +1544,7 @@ export const MENU: MenuItem[] = [
           {
             id: 1527,
             label: 'Gestion Lignes',
-            link: '/sysrev/schedule-parc/sdt/lignes',
+            link: '/sysrev/schedule-parc/sdt/Lignes',
             parentId: 1525
           },
           {
@@ -1663,6 +1663,12 @@ export const MENU: MenuItem[] = [
         id: 1570,
         label: 'Utilisateurs',
         link: '/sysrev/schedule-parc/utilisateur',
+        parentId: 1501
+      },
+      {
+        id: 1580,
+        label: 'Changer Mot de Passe',
+        link: '/sysrev/schedule-parc/change-password',
         parentId: 1501
       }
     ]

@@ -2,12 +2,11 @@ import { Component, Host, Input } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import Swal from 'sweetalert2';
-import { DeclarationListComponent } from '../segment-generale/Declaration/Declaration-list/Declaration-list.component';
-import { IndexBonComponent } from '../segment-generale/Declaration/index-bon/index-bon.component';
 import {Declaration_1} from "../../models/Declaration_1";
 import {BonBolorer} from "../../models/BonBolorer";
 import {UploadService} from "../../services/upload.service";
 import {DeclarationService} from "../../services/declaration.service";
+import {IndexBonComponent} from "../segment-generale/declaration/index-bon/index-bon.component";
 
 @Component({
   selector: 'app-bon-bolorer',

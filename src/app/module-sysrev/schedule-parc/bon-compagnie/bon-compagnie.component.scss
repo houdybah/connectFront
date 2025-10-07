@@ -1,0 +1,78 @@
+.container {
+    max-width: 700px;
+  }
+  
+  h4 {
+    margin-bottom: 20px;
+  }
+
+
+  /* floating-form.component.scss */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300&display=swap');
+
+.form-floating-container {
+    max-width: 400px;
+    margin: auto;
+  }
+  
+  .custom-border {
+    border: 1px solid rgb(171, 188, 188) !important;
+    border-radius: 8px;
+  }
+  
+  .form-floating > .form-control:focus,
+  .form-floating > .form-select:focus {
+    border-color: rgb(53, 179, 156);
+    box-shadow: 0 0 0 0.2rem rgba(53, 179, 156, 0.25);
+  }
+  
+  .form-floating > label {
+    color: rgb(14, 14, 14);
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 200; /* Extra Light ou Light */
+    font-size: 0.9rem; /* Ajustez selon vos besoins */
+  
+  }
+
+
+  /* floating-form.component.scss */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300&display=swap');
+
+.form-floating-container {
+    max-width: 400px;
+    margin: auto;
+  }
+  
+  .custom-border {
+    border: 1px solid rgb(171, 188, 188) !important;
+    border-radius: 8px;
+  }
+  
+  .form-floating > .form-control:focus,
+  .form-floating > .form-select:focus {
+    border-color: rgb(53, 179, 156);
+    box-shadow: 0 0 0 0.2rem rgba(53, 179, 156, 0.25);
+  }
+  
+  .form-floating > label {
+    color: rgb(14, 14, 14);
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 200; /* Extra Light ou Light */
+    font-size: 0.9rem; /* Ajustez selon vos besoins */
+  
+  }
+
+
+  fieldset.border {
+    border: 1px solid #030404 !important;
+    border-radius: 0.25rem;
+  }
+  
+  legend {
+    float: none;
+    width: auto;
+    font-size: 1rem;
+    margin-bottom: 0;
+    color: black;
+  }
+

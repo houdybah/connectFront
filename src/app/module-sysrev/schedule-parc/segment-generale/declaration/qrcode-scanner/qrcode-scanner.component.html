@@ -1,0 +1,13 @@
+<div class="scanner-container">
+    <zxing-scanner
+      *ngIf="scannerEnabled"
+      [formats]="allowedFormats"
+      (scanSuccess)="onScanSuccess($event)">
+    </zxing-scanner>
+    
+    <div *ngIf="!scannerEnabled" class="text-center mt-3">
+      <button class="btn btn-primary" (click)="resetScanner()">
+        Scanner un autre code QR
+      </button>
+    </div>
+  </div>

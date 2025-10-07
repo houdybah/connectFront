@@ -1,0 +1,152 @@
+<div class="modal-content recu-container">
+    <!-- <div class="modal-header bg-success text-white">
+      <h4 class="modal-title" id="modal-title" @fadeIn>Reçu RDV</h4>
+      <button type="button" class="btn-close btn-close-white" aria-label="Close" (click)="fermer()"></button>
+    </div> -->
+    
+    <div class="modal-body" @fadeIn>
+      <div class="container" id="printable-section">
+        <!-- En-tête du reçu -->
+        <div class="row mb-4">
+          <div class="col-md-8">
+            <img src="assets/images/DGD.png" height="50" width="50" alt="" srcset="">
+            <h2 class="company-name"></h2>
+            <p class="company-details">
+              <!-- 123 Avenue de la Logistique<br>
+              75001 Paris, France<br>
+              Tel: +33 1 23 45 67 89 -->
+            </p>
+          </div>
+          <div class="col-md-4 text-end">
+            <div class="recu-header">
+              <div class="recu-ref">{{ recu.reference }}</div>
+              <div class="recu-date">{{ formatDate(recu.date) }}</div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Informations du chauffeur -->
+        <div class="row mb-4">
+          <div class="col-12">
+            <fieldset class="border p-3 mb-4">
+                <legend class="w-auto px-2">Informations du Chauffeur</legend>
+                <div class="row">
+                    <div class="col-md-4">
+                      <strong>Nom:</strong> {{ recu.chauffeur.nom }}
+                    </div>
+                    <div class="col-md-4">
+                      <strong>Téléphone:</strong> {{ recu.chauffeur.telephone }}
+                    </div>
+                    <div class="col-md-4">
+                      <strong>N° Permis:</strong> {{ recu.chauffeur.numeroPermis }}
+                    </div>
+                    <div class="col-md-4">
+                        <strong>Destination:</strong> {{ recu.chauffeur.destination }}
+                      </div>
+                  </div>
+            </fieldset>
+            <!-- <div class="card border-primary">
+              <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Informations du Chauffeur</h5>
+              </div>
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-md-4">
+                    <strong>Nom:</strong> {{ recu.chauffeur.nom }}
+                  </div>
+                  <div class="col-md-4">
+                    <strong>Téléphone:</strong> {{ recu.chauffeur.telephone }}
+                  </div>
+                  <div class="col-md-4">
+                    <strong>N° Permis:</strong> {{ recu.chauffeur.numeroPermis }}
+                  </div>
+                </div>
+              </div>
+            </div> -->
+          </div>
+        </div>
+        
+        <!-- Liste des conteneurs affectés -->
+        <div class="row mb-4">
+          <div class="col-12">
+            <fieldset class="border p-3 mb-4">
+                <legend class="w-auto px-2">Conteneurs Affectés</legend>
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                      <thead>
+                        <tr>
+                          <th>Numero Conteneur</th>
+                          <th>Titre transport</th>
+                          <th>Type</th>
+                          <!-- <th>Destination</th> -->
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let conteneur of recu.chauffeur.conteneurs">
+                          <td>{{ conteneur.numeroConteneur }}</td>
+                          <td>{{ conteneur.titreTransport }}</td>
+                          <td>{{ conteneur.typeConteneur }}</td>
+                          <!-- <td>{{ conteneur.destination }}</td> -->
+                        </tr>
+                      </tbody>
+                      <!-- <tfoot>
+                        <tr>
+                          <td colspan="2"><strong>Total:</strong></td>
+                          <td><strong>{{ calculerPoidsTotal() }} kg</strong></td>
+                          <td></td>
+                        </tr>
+                      </tfoot> -->
+                    </table>
+                  </div>
+            </fieldset>    
+            <!-- <div class="card border-success">
+              <div class="card-header bg-success text-white">
+                <h5 class="mb-0">Conteneurs Affectés</h5>
+              </div>
+              <div class="card-body">
+                
+              </div>
+            </div> -->
+          </div>
+        </div>
+        
+        <!-- Section QR Code -->
+        <div class="row">
+          <div class="col-md-8">
+            <!-- <div class="card border-info">
+              <div class="card-header bg-info text-white">
+                <h5 class="mb-0">Instructions</h5>
+              </div>
+              <div class="card-body">
+                <p>Ce reçu confirme l'affectation des conteneurs listés ci-dessus au chauffeur désigné. 
+                  Veuillez scanner le QR code pour accéder aux informations détaillées de cette affectation.</p>
+                <p>Pour toute question ou assistance, veuillez contacter notre service logistique au +33 1 23 45 67 89.</p>
+              </div>
+            </div> -->
+          </div>
+          <div class="col-md-4 text-center">
+            <div class="qr-code-container" *ngIf="showQrCode">
+              <qrcode [qrdata]="qrCodeData" [width]="200" [errorCorrectionLevel]="'M'"></qrcode>
+              <div class="mt-2">
+                <small class="text-muted">{{ recu.reference }}</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="modal-footer justify-content-between" @fadeIn>
+      <button type="button" class="btn btn-primary" (click)="imprimer()">
+        <i class="bi bi-printer"></i> Imprimer
+      </button>
+      <div>
+        <button type="button" class="btn btn-outline-secondary me-2" (click)="fermer()">
+          Fermer
+        </button>
+        <button type="button" class="btn btn-success" (click)="fermerEtReinitialiser()">
+          Terminer et nouveau
+        </button>
+      </div>
+    </div>
+  </div>

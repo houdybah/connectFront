@@ -1,0 +1,135 @@
+
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0">Liste des Rendez-vous</h2>
+    <button 
+      class="btn btn-outline-primary" 
+      (click)="toggleValidSyndicat()"
+      [disabled]="loading">
+      <i class="fas fa-sync-alt" [class.fa-spin]="loading"></i>
+      {{ isValidSyndicatLabel }}
+    </button>
+  </div>
+
+  <!-- Filtres -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="alert alert-info">
+            <i class="fas fa-info-circle"></i>
+            Affichage des rendez-vous <strong>{{ isValidSyndicatLabel.toLowerCase() }}</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="text-center py-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Chargement...</span>
+    </div>
+    <p class="mt-2">Chargement des rendez-vous...</p>
+  </div>
+
+  <!-- Erreur -->
+  <div *ngIf="errorMessage" class="alert alert-danger">
+    <i class="fas fa-exclamation-triangle"></i>
+    {{ errorMessage }}
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!loading && rendezVous.length === 0" class="empty-state">
+    <div class="empty-content">
+      <i class="fas fa-calendar-check"></i>
+      <h3>Aucun rendez-vous</h3>
+      <p>Aucun rendez-vous {{ isValidSyndicatLabel.toLowerCase() }} disponible.</p>
+    </div>
+  </div>
+
+  <!-- Rendez-vous List -->
+  <div *ngIf="!loading && rendezVous.length > 0" class="rendez-vous-container">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h5 class="mb-0">Rendez-vous ({{ totalElements }} total)</h5>
+    </div>
+    
+    <div class="rendez-vous-list">
+      <div class="rendez-vous-item" *ngFor="let rdv of rendezVous">
+        <div class="rendez-vous-icon">
+          <i class="fas fa-calendar-check"></i>
+        </div>
+        
+        <div class="rendez-vous-content">
+          <div class="rendez-vous-header">
+            <h4 class="rendez-vous-title">Rendez-vous - {{ rdv.numero }}</h4>
+            <div class="rendez-vous-meta">
+              <span class="rendez-vous-badge badge" [ngClass]="{
+                'bg-success': rdv.status === true,
+                'bg-warning': rdv.status === false
+              }">
+                {{ rdv.status ? 'ACTIF' : 'INACTIF' }}
+              </span>
+              <span class="rendez-vous-badge badge" [ngClass]="{
+                'bg-info': rdv.isValidSYC === true,
+                'bg-secondary': rdv.isValidSYC === false
+              }">
+                {{ rdv.isValidSYC ? 'Validé SYC' : 'Non validé SYC' }}
+              </span>
+            </div>
+          </div>
+          
+          <div class="rendez-vous-body">
+            <div class="rendez-vous-details">
+              <div class="detail-row">
+                <span class="detail-label">Référence Déclaration:</span>
+                <span class="detail-value">{{ rdv.referenceDeclaration || 'N/A' }}</span>
+              </div>
+              <div class="detail-row">
+                <span class="detail-label">Chauffeur:</span>
+                <span class="detail-value">{{ rdv.camionChauffeur?.chauffeur?.nom }} {{ rdv.camionChauffeur?.chauffeur?.prenom || 'N/A' }}</span>
+              </div>
+              <div class="detail-row">
+                <span class="detail-label">Immatriculation:</span>
+                <span class="detail-value">{{ rdv.camionChauffeur?.camion?.immatriculation || 'N/A' }}</span>
+              </div>
+              <div class="detail-row">
+                <span class="detail-label">Destination:</span>
+                <span class="detail-value">{{ rdv.destination || 'N/A' }}</span>
+              </div>
+              <div class="detail-row">
+                <span class="detail-label">Commune:</span>
+                <span class="detail-value">{{ rdv.commune || 'N/A' }}</span>
+              </div>
+              <div class="detail-row">
+                <span class="detail-label">Compagnie:</span>
+                <span class="detail-value">{{ rdv.compagnie || 'N/A' }}</span>
+              </div>
+              <div class="detail-row">
+                <span class="detail-label">Type Conteneur:</span>
+                <span class="detail-value">{{ rdv.camionChauffeur?.camion?.typeConteneur || 'N/A' }}</span>
+              </div>
+              <div class="detail-row">
+                <span class="detail-label">Capacité:</span>
+                <span class="detail-value">{{ rdv.camionChauffeur?.camion?.capacite || 0 }} conteneurs</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="rendez-vous-actions">
+            <button class="btn-action btn-view" (click)="viewRendezVousDetails(rdv)" title="Voir les détails">
+              <i class="fas fa-eye"></i>
+              Détails
+            </button>
+            <button 
+  class="btn-action btn-validate" 
+  [routerLink]="['/douane/rendez-vous/validation-programme', rdv.numero]"  
+  title="Valider le programme"
+  [disabled]="!rdv.numero">
+  <i class="fas fa-clipboard-check"></i>
+  Validation Programme
+</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

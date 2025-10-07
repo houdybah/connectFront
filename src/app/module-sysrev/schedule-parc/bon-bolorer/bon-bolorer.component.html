@@ -1,0 +1,48 @@
+<div class="mt-4">
+  <!-- <h4 class="text-primary">Bon de Sortie de la Compagnie</h4> -->
+  <form [formGroup]="bonSortieForm" (ngSubmit)="onSubmit()">
+    <div class="row">
+      <div class="col-md-6">
+        <div class="mb-3">
+          <div class="form-floating mt-1">
+            <input type="text" id="reference" class="form-control custom-border" formControlName="reference" placeholder="Name">
+            <label for="reference">Reference</label>
+          </div>
+        </div>
+
+
+        <div class="mb-3">
+          <div class="form-floating mt-3" *ngIf="!isDisplay">
+            <input type="file" id="fileUuid" class="form-control custom-border" (change)="onImageUpload($event)">
+            <label for="fileUuid">Joindre fichier</label>
+          </div>
+          <app-pdf-download *ngIf="isDisplay" [base64Data]="childProperty.bonSortieBolorerDto.file" [pdfIcon]="pdfIcon" [resultatFile]="'BON_Manutationaire_'+childProperty.bonSortieBolorerDto.refbonsortie" [title]="'Fichier joint du bon de AGL'"></app-pdf-download>
+        </div>
+
+      </div>
+
+      <div class="col-md-6">
+
+        <div class="mb-3">
+          <div class="form-floating mt-1">
+            <input type="date" id="dateEmission" class="form-control custom-border" formControlName="dateEmission">
+            <label for="dateEmission">Date Emission</label>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <div class="form-floating mt-1">
+            <input type="date" id="dateValidite" class="form-control custom-border" formControlName="dateValidite" (change)="checkDate()">
+            <label for="dateValidite">Date validite</label>
+          </div>
+        </div>
+
+      
+      </div>
+    </div>
+
+    <button  type="submit" class="btn btn-primary mt-3" *ngIf="!isDisplay" [disabled]="!bonSortieForm.valid">
+      Soumettre
+    </button>
+  </form>
+</div>

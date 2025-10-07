@@ -4,7 +4,7 @@ import {BonSortie} from "../../models/BonSortie";
 import {ScheduleService} from "../../services/schedule.service";
 
 @Component({
-  selector: 'app-info-Declaration',
+  selector: 'app-info-declaration',
   templateUrl: './info-Declaration.component.html',
   styleUrl: './info-Declaration.component.scss'
 })

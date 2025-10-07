@@ -4,7 +4,7 @@ import {DetailConteneurAffectationService} from "../../../../services/detail-con
 
 
 @Component({
-  selector: 'app-detail-Container-appure',
+  selector: 'app-detail-container-appure',
   templateUrl: './detail-Container-appure.component.html',
   styleUrl: './detail-Container-appure.component.scss'
 })

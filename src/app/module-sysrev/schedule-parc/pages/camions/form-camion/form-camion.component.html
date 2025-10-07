@@ -1,0 +1,320 @@
+<div class="form-wrapper" (click)="onBackdropClick($event)">
+  <div class="form-container" (click)="$event.stopPropagation()">
+    <!-- Header -->
+    <div class="form-header">
+      <div class="header-content">
+        <div class="header-info">
+          <h2 class="form-title">
+            <i class="fas fa-truck"></i>
+            {{ isEditMode ? 'Modifier' : 'Nouveau' }} Camion
+          </h2>
+          <p class="form-subtitle">Remplissez les informations ci-dessous pour {{ isEditMode ? 'modifier' : 'créer' }} votre camion</p>
+        </div>
+        <button type="button" class="btn-close" (click)="annuler()" title="Fermer">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Form Body -->
+    <form [formGroup]="camionForm" class="form-body">
+      <!-- Progress indicator -->
+      <div class="progress-indicator">
+        <div class="progress-step" [class.active]="true">
+          <div class="step-number">1</div>
+          <div class="step-label">Identité</div>
+        </div>
+        <div class="progress-line"></div>
+        <div class="progress-step" [class.active]="camionForm.get('marque')?.value && camionForm.get('model')?.value">
+          <div class="step-number">2</div>
+          <div class="step-label">Caractéristiques</div>
+        </div>
+        <div class="progress-line"></div>
+        <div class="progress-step" [class.active]="camionForm.get('typeConteneur')?.value && camionForm.get('capacite')?.value">
+          <div class="step-number">3</div>
+          <div class="step-label">Capacité</div>
+        </div>
+      </div>
+
+      <!-- Section 1: Informations d'identité -->
+      <div class="form-section">
+        <div class="section-header">
+          <h3 class="section-title">
+            <i class="fas fa-id-card"></i>
+            Informations d'identité
+          </h3>
+          <span class="section-badge">Étape 1/3</span>
+        </div>
+        
+        <div class="form-field-group">
+          <div class="form-field">
+            <label class="field-label">
+              <i class="fas fa-hashtag"></i>
+              Numéro du camion <span class="required">*</span>
+            </label>
+            <input 
+              type="text" 
+              class="form-input" 
+              formControlName="numero"
+              placeholder="Ex: CAM001"
+              [class.error]="hasError('numero')">
+            <div class="field-error" *ngIf="hasError('numero')">
+              {{ getErrorMessage('numero') }}
+            </div>
+            <span class="field-help">Identifiant unique du camion</span>
+          </div>
+
+          <div class="form-field">
+            <label class="field-label">
+              <i class="fas fa-car"></i>
+              Immatriculation <span class="required">*</span>
+            </label>
+            <input 
+              type="text" 
+              class="form-input" 
+              formControlName="immatriculation"
+              placeholder="Ex: AB-1234-CD"
+              [class.error]="hasError('immatriculation')">
+            <div class="field-error" *ngIf="hasError('immatriculation')">
+              {{ getErrorMessage('immatriculation') }}
+            </div>
+            <span class="field-help">Plaque d'immatriculation officielle</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 2: Caractéristiques techniques -->
+      <div class="form-section">
+        <div class="section-header">
+          <h3 class="section-title">
+            <i class="fas fa-cogs"></i>
+            Caractéristiques techniques
+          </h3>
+          <span class="section-badge">Étape 2/3</span>
+        </div>
+        
+        <div class="form-field-group">
+          <div class="form-field">
+            <label class="field-label">
+              <i class="fas fa-industry"></i>
+              Marque <span class="required">*</span>
+            </label>
+            <div class="select-wrapper">
+              <select 
+                class="form-input" 
+                formControlName="marque"
+                [class.error]="hasError('marque')">
+                <option value="">Sélectionner une marque...</option>
+                <option *ngFor="let marque of marques" [value]="marque">{{ marque }}</option>
+              </select>
+              <i class="fas fa-chevron-down select-icon"></i>
+            </div>
+            <div class="field-error" *ngIf="hasError('marque')">
+              {{ getErrorMessage('marque') }}
+            </div>
+            <span class="field-help">Marque du constructeur</span>
+          </div>
+
+          <div class="form-field">
+            <label class="field-label">
+              <i class="fas fa-car-side"></i>
+              Modèle <span class="required">*</span>
+            </label>
+            <input 
+              type="text" 
+              class="form-input" 
+              formControlName="model"
+              placeholder="Ex: Actros, FH16, TGX..."
+              [class.error]="hasError('model')">
+            <div class="field-error" *ngIf="hasError('model')">
+              {{ getErrorMessage('model') }}
+            </div>
+            <span class="field-help">Modèle du véhicule</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 3: Type et capacité -->
+      <div class="form-section">
+        <div class="section-header">
+          <h3 class="section-title">
+            <i class="fas fa-boxes"></i>
+            Type et capacité
+          </h3>
+          <span class="section-badge">Étape 3/3</span>
+        </div>
+        
+        <div class="form-field-group">
+          <div class="form-field">
+            <label class="field-label">
+              <i class="fas fa-cube"></i>
+              Type de conteneur <span class="required">*</span>
+            </label>
+            <div class="option-cards">
+              <div 
+                *ngFor="let option of typeConteneurOptions"
+                class="option-card"
+                [class.selected]="camionForm.get('typeConteneur')?.value === option.value"
+                (click)="camionForm.patchValue({typeConteneur: option.value})">
+                <div class="option-icon">
+                  <i class="fas fa-{{option.value === 'VINGT_PIEDS' ? 'box' : 'boxes'}}"></i>
+                </div>
+                <div class="option-content">
+                  <span class="option-label">{{ option.label }}</span>
+                  <span class="option-description">{{ getTypeDescription(option.value) }}</span>
+                </div>
+                <div class="option-check" *ngIf="camionForm.get('typeConteneur')?.value === option.value">
+                  <i class="fas fa-check"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-field full-width">
+            <label class="field-label">
+              <i class="fas fa-weight-hanging"></i>
+              Capacité (nombre de conteneurs)
+            </label>
+            <div class="capacity-control">
+              <button 
+                type="button" 
+                class="capacity-btn decrease" 
+                (click)="adjustCapacity(-1)"
+                [disabled]="f['capacite'].value <= 1">
+                <i class="fas fa-minus"></i>
+              </button>
+              <div class="capacity-display">
+                <input 
+                  type="number" 
+                  class="form-input capacity-input" 
+                  formControlName="capacite"
+                  min="1"
+                  max="10">
+                <span class="capacity-unit">conteneurs</span>
+              </div>
+              <button 
+                type="button" 
+                class="capacity-btn increase" 
+                (click)="adjustCapacity(1)"
+                [disabled]="f['capacite'].value >= 10">
+                <i class="fas fa-plus"></i>
+              </button>
+            </div>
+            <div class="capacity-info">
+              <span class="field-help">Entre 1 et 10 conteneurs maximum</span>
+              <div class="capacity-slider">
+                <input 
+                  type="range" 
+                  class="slider" 
+                  min="1" 
+                  max="10" 
+                  [value]="f['capacite'].value"
+                  (input)="onSliderChange($event)">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 4: Résumé -->
+      <div class="form-section summary-section" *ngIf="camionForm.valid">
+        <div class="section-header">
+          <h3 class="section-title">
+            <i class="fas fa-check-circle"></i>
+            Résumé du camion
+          </h3>
+          <span class="section-badge success">Prêt à {{ isEditMode ? 'modifier' : 'créer' }}</span>
+        </div>
+        
+        <div class="form-field-group">
+          <div class="form-field full-width">
+            <div class="summary-preview">
+              <div class="summary-item">
+                <div class="summary-icon">
+                  <i class="fas fa-hashtag"></i>
+                </div>
+                <div class="summary-content">
+                  <span class="summary-label">Numéro</span>
+                  <span class="summary-value">{{ f['numero'].value }}</span>
+                </div>
+              </div>
+              
+              <div class="summary-item">
+                <div class="summary-icon">
+                  <i class="fas fa-car"></i>
+                </div>
+                <div class="summary-content">
+                  <span class="summary-label">Immatriculation</span>
+                  <span class="summary-value">{{ f['immatriculation'].value }}</span>
+                </div>
+              </div>
+              
+              <div class="summary-item">
+                <div class="summary-icon">
+                  <i class="fas fa-industry"></i>
+                </div>
+                <div class="summary-content">
+                  <span class="summary-label">Marque/Modèle</span>
+                  <span class="summary-value">{{ f['marque'].value }} {{ f['model'].value }}</span>
+                </div>
+              </div>
+              
+              <div class="summary-item">
+                <div class="summary-icon">
+                  <i class="fas fa-cube"></i>
+                </div>
+                <div class="summary-content">
+                  <span class="summary-label">Type</span>
+                  <span class="summary-value">{{ getSelectedType()?.label }}</span>
+                </div>
+              </div>
+              
+              <div class="summary-item">
+                <div class="summary-icon">
+                  <i class="fas fa-weight-hanging"></i>
+                </div>
+                <div class="summary-content">
+                  <span class="summary-label">Capacité</span>
+                  <span class="summary-value">{{ f['capacite'].value }} conteneurs</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <!-- Footer -->
+    <div class="form-footer">
+      <div class="footer-content">
+        <div class="form-status" *ngIf="!camionForm.valid">
+          <i class="fas fa-exclamation-triangle"></i>
+          <span>Veuillez remplir tous les champs obligatoires</span>
+        </div>
+        <div class="form-status success" *ngIf="camionForm.valid">
+          <i class="fas fa-check-circle"></i>
+          <span>Formulaire prêt à être soumis</span>
+        </div>
+      </div>
+      <div class="footer-actions">
+        <button 
+          type="button" 
+          class="btn btn-secondary" 
+          (click)="annuler()"
+          [disabled]="loading">
+          <i class="fas fa-times"></i>
+          <span class="btn-text">Annuler</span>
+        </button>
+        <button 
+          type="button" 
+          class="btn btn-primary" 
+          (click)="onSubmit()"
+          [disabled]="loading || camionForm.invalid">
+          <i class="fas fa-spinner fa-spin" *ngIf="loading"></i>
+          <i class="fas fa-save" *ngIf="!loading"></i>
+          <span class="btn-text">{{ isEditMode ? 'Modifier' : 'Créer' }}</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
