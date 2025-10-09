@@ -1,8 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { ReferenceAbonnement } from '../../../../../src/models/reference-abonnement';
-import { ReferenceAbonnementService } from '../../../../../src/services/reference-abonnement.service';
+import { ReferenceAbonnement } from '../../models/reference-abonnement';
+import { ReferenceAbonnementService } from '../../services/reference-abonnement.service';
 import Swal from 'sweetalert2';
 
 @Component({

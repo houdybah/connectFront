@@ -3,13 +3,13 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { debounceTime, distinctUntilChanged, map, Observable, of, startWith, switchMap } from 'rxjs';
 import { AuthenticationService } from 'src/app/core/services/auth.service';
-import { NifUtilisateur } from '../../../../../src/models/nif-utilisateur';
-import { Page } from '../../../../../src/models/Page';
-import { PagedData } from '../../../../../src/models/paged-data';
-import { SituationDeclaration } from '../../../../../src/models/situation-declaration';
-import { Utilisateur } from '../../../../../src/models/Utilisateur';
-import { NifUtilisateurService } from '../../../../../src/services/nif-utilisateur.service';
-import { SituationDeclarationService } from '../../../../../src/services/situation-declaration.service';
+import { NifUtilisateur } from '../../models/nif-utilisateur';
+import { Page } from '../../models/Page';
+import { PagedData } from '../../models/paged-data';
+import { SituationDeclaration } from '../../models/situation-declaration';
+import { Utilisateur } from '../../models/Utilisateur';
+import { NifUtilisateurService } from '../../services/nif-utilisateur.service';
+import { SituationDeclarationService } from '../../services/situation-declaration.service';
 
 @Component({
   selector: 'app-situation-declaration',

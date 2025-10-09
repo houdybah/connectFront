@@ -11,23 +11,35 @@ import { SignatureComponent } from './signature/signature.component';
 
 
 const routes: Routes = [
-    {
-      path: "menuDelaration",
-      component: MenuDeclarationComponent
+  {
+    path: "menu-declaration",
+    component: MenuDeclarationComponent
+  },
+  {
+    path: "situation-decadaire",
+    component: SituationDecadaireComponent
+  },
+  {
+    path: "situation-quitance",
+    component: SituationQuitanceComponent
+  },
+  {
+    path: "signature",
+    component: SignatureComponent
+  },
+  // Aliases pour compatibilité
+  {
+    path: "menuDelaration",
+    redirectTo: "menu-declaration"
   },
   {
     path: "decadaire",
-    component: SituationDecadaireComponent
- }  ,{
- 
-   path: "quitance",
-     component: SituationQuitanceComponent
- },
- {
-    path: "signature",
-    component: SignatureComponent
- }
-
+    redirectTo: "situation-decadaire"
+  },
+  {
+    path: "quitance",
+    redirectTo: "situation-quitance"
+  }
 ];
 
 @NgModule({

@@ -1,11 +1,11 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { QuittanceService } from '../../../../../src/services/quittance.service';
+import { QuittanceService } from '../../services/quittance.service';
 import { catchError, finalize, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { Observable, of, Subject } from 'rxjs';
 import { AuthenticationService } from 'src/app/core/services/auth.service';
-import { Quittance } from '../../../../../src/models/quittance';
-import { PagedData } from '../../../../../src/models/paged-data';
+import { Quittance } from '../../models/quittance';
+import { PagedData } from '../../models/paged-data';
 import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({

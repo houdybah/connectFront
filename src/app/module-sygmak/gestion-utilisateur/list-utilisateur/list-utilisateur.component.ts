@@ -32,16 +32,16 @@ import {
 } from 'src/app/core/services/toast.service';
 import {
   UtilisateurService
-} from '../../../../../src/services/utilisateur.service';
+} from '../../services/utilisateur.service';
 import {
   Utilisateur
-} from '../../../../../src/models/Utilisateur';
+} from '../../models/Utilisateur';
 import {
   Page
-} from '../../../../../src/models/Page';
+} from '../../models/Page';
 import {
   PagedData
-} from '../../../../../src/models/paged-data';
+} from '../../models/paged-data';
 import { AuthenticationService } from 'src/app/core/services/auth.service';
 
 @Component({

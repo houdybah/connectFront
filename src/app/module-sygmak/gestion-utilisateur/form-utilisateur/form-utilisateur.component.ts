@@ -2,11 +2,11 @@ import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import Swal from 'sweetalert2';
-import { UtilisateurService } from '../../../../../src/services/utilisateur.service';
-import { Utilisateur } from '../../../../../src/models/Utilisateur';
-import { EnumRole } from '../../../../../src/models/enum-role';
+import { UtilisateurService } from '../../services/utilisateur.service';
+import { Utilisateur } from '../../models/Utilisateur';
+import { EnumRole } from '../../models/enum-role';
 import { debounceTime, distinctUntilChanged, map, Observable, of, startWith, switchMap } from 'rxjs';
-import { NifUtilisateurService } from '../../../../../src/services/nif-utilisateur.service';
+import { NifUtilisateurService } from '../../services/nif-utilisateur.service';
 import { Router } from '@angular/router';
 
 

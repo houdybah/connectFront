@@ -1,13 +1,13 @@
 import { Component, Input, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { NifUtilisateurService } from '../../../../../src/services/nif-utilisateur.service';
-import { UtilisateurService } from '../../../../../src/services/utilisateur.service';
-import { Utilisateur } from '../../../../../src/models/Utilisateur';
+import { NifUtilisateurService } from '../../services/nif-utilisateur.service';
+import { UtilisateurService } from '../../services/utilisateur.service';
+import { Utilisateur } from '../../models/Utilisateur';
 import Swal from 'sweetalert2';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
-import { NifUtilisateur } from '../../../../../src/models/nif-utilisateur';
+import { NifUtilisateur } from '../../models/nif-utilisateur';
 
 @Component({
   selector: 'app-nif-form',

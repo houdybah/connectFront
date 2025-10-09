@@ -2,9 +2,9 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { Page } from 'src/models/Page';
-import { PagedData } from 'src/models/paged-data';
-import { Quittance } from 'src/models/quittance';
+import { Page } from '../models/Page';
+import { PagedData } from '../models/paged-data';
+import { Quittance } from '../models/quittance';
 
 @Injectable({
   providedIn: 'root'
@@ -602,9 +602,9 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { Page } from 'src/models/Page';
-import { PagedData } from 'src/models/paged-data';
-import { Quittance } from 'src/models/quittance';
+import { Page } from '../models/Page';
+import { PagedData } from '../models/paged-data';
+import { Quittance } from '../models/quittance';
 
 @Injectable({
   providedIn: 'root'

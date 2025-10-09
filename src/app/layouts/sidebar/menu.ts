@@ -1672,6 +1672,58 @@ export const MENU: MenuItem[] = [
         parentId: 1501
       }
     ]
+  },
+
+  // SYGMAK Menu
+  {
+    id: 1700,
+    label: 'SYGMAK',
+    icon: 'ri-oil-line',
+    isCollapsed: true,
+    subItems: [
+      {
+        id: 1701,
+        label: 'Situation Décade',
+        icon: 'ri-file-add-line',
+        link: '/sygmak/stat-marketeur/situation-decadaire',
+        parentId: 1700
+      },
+      {
+        id: 1702,
+        label: 'Situation Déclaration',
+        icon: 'ri-file-list-3-line',
+        link: '/sygmak/stat-marketeur/menu-declaration',
+        parentId: 1700
+      },
+      {
+        id: 1703,
+        label: 'Quittance',
+        icon: 'ri-file-list-3-line',
+        link: '/sygmak/stat-marketeur/situation-quitance',
+        parentId: 1700
+      },
+      {
+        id: 1704,
+        label: 'Signature',
+        icon: 'ri-edit-line',
+        link: '/sygmak/stat-marketeur/signature',
+        parentId: 1700
+      },
+      {
+        id: 1710,
+        label: 'Gestion Utilisateurs',
+        icon: 'ri-user-line',
+        link: '/sygmak/gestion-utilisateur',
+        parentId: 1700
+      },
+      {
+        id: 1720,
+        label: 'Gestion Abonnements',
+        icon: 'ri-database-2-line',
+        link: '/sygmak/gestion-abonnement',
+        parentId: 1700
+      }
+    ]
   }
 
 ];

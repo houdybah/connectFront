@@ -1,6 +1,6 @@
 // Corrections et améliorations pour le modèle Signature
 
-import { SignatureHistory } from "src/services/signature.service";
+import { SignatureHistory } from "../services/signature.service";
 
 export class Signature {
   uuid!: string;  // ⬅️ Changé de uuid à UUID

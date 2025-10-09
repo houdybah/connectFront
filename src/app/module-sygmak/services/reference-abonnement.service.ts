@@ -2,9 +2,9 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, map, Observable, tap, throwError } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { Page } from 'src/models/Page';
-import { PagedData } from 'src/models/paged-data';
-import { ReferenceAbonnement } from 'src/models/reference-abonnement';
+import { Page } from '../models/Page';
+import { PagedData } from '../models/paged-data';
+import { ReferenceAbonnement } from '../models/reference-abonnement';
 
 @Injectable({
   providedIn: 'root'

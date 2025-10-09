@@ -2,12 +2,12 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, map, Observable, tap, throwError } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { Abonnement } from 'src/models/abonnement';
-import { Entreprise } from 'src/models/entreprise';
-import { NifUtilisateur } from 'src/models/nif-utilisateur';
-import { Page } from 'src/models/Page';
-import { PagedData } from 'src/models/paged-data';
-import { Utilisateur } from 'src/models/Utilisateur';
+import { Abonnement } from '../models/abonnement';
+import { Entreprise } from '../models/entreprise';
+import { NifUtilisateur } from '../models/nif-utilisateur';
+import { Page } from '../models/Page';
+import { PagedData } from '../models/paged-data';
+import { Utilisateur } from '../models/Utilisateur';
 
 @Injectable({
   providedIn: 'root'

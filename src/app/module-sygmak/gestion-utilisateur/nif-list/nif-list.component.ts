@@ -4,9 +4,9 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 import Swal from 'sweetalert2';
 
-import { NifUtilisateur } from '../../../../../src/models/nif-utilisateur';
-import { NifUtilisateurService } from '../../../../../src/services/nif-utilisateur.service';
-import { PagedData } from '../../../../../src/models/paged-data';
+import { NifUtilisateur } from '../../models/nif-utilisateur';
+import { NifUtilisateurService } from '../../services/nif-utilisateur.service';
+import { PagedData } from '../../models/paged-data';
 
 @Component({
   selector: 'app-nif-list',

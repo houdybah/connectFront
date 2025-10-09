@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { Utilisateur } from '../../../../../src/models/Utilisateur';
-import { UtilisateurService } from '../../../../../src/services/utilisateur.service';
+import { Utilisateur } from '../../models/Utilisateur';
+import { UtilisateurService } from '../../services/utilisateur.service';
 
 
 @Component({

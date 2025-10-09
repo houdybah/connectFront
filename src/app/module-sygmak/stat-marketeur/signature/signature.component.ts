@@ -3,8 +3,8 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DatePipe } from '@angular/common';
 import { Subscription } from 'rxjs';
 
-import { SignatureService, SignatureHistory } from '../../../../../src/services/signature.service';
-import { Signature } from '../../../../../src/models/signature';
+import { SignatureService, SignatureHistory } from '../../services/signature.service';
+import { Signature } from '../../models/signature';
 import { AuthenticationService } from 'src/app/core/services/auth.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import Swal from 'sweetalert2';
@@ -1290,8 +1290,8 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DatePipe } from '@angular/common';
 import { Subscription } from 'rxjs';
 
-import { SignatureService } from '../../../../../src/services/signature.service';
-import { Signature } from '../../../../../src/models/signature';
+import { SignatureService } from '../../services/signature.service';
+import { Signature } from '../../models/signature';
 import { AuthenticationService } from 'src/app/core/services/auth.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap'; // Assurez-vous d'avoir installé ng-bootstrap
 

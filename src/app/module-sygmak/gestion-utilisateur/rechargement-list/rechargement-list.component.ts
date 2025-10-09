@@ -3,10 +3,10 @@ import { FormControl } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastService } from 'src/app/core/services/toast.service';
 import { AuthenticationService } from 'src/app/core/services/auth.service';
-import { Page } from '../../../../../src/models/Page';
-import { PagedData } from '../../../../../src/models/paged-data';
-import { RechargementSolde } from '../../../../../src/models/rechargement-solde';
-import { EntrepriseService } from '../../../../../src/services/entreprise.service';
+import { Page } from '../../models/Page';
+import { PagedData } from '../../models/paged-data';
+import { RechargementSolde } from '../../models/rechargement-solde';
+import { EntrepriseService } from '../../services/entreprise.service';
 import Swal from 'sweetalert2';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 

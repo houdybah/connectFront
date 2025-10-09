@@ -2,9 +2,9 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { Abonnement } from 'src/models/abonnement';
-import { Page } from 'src/models/Page';
-import { PagedData } from 'src/models/paged-data';
+import { Abonnement } from '../models/abonnement';
+import { Page } from '../models/Page';
+import { PagedData } from '../models/paged-data';
 
 @Injectable({
   providedIn: 'root'

@@ -4,10 +4,10 @@ import { NavigationEnd, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { catchError, debounceTime, distinctUntilChanged, filter, switchMap, throwError } from 'rxjs';
 import { ToastService } from 'src/app/core/services/toast.service';
-import { Abonnement } from '../../../../../src/models/abonnement';
-import { Page } from '../../../../../src/models/Page';
-import { PagedData } from '../../../../../src/models/paged-data';
-import { AbonnementService } from '../../../../../src/services/abonnement.service';
+import { Abonnement } from '../../models/abonnement';
+import { Page } from '../../models/Page';
+import { PagedData } from '../../models/paged-data';
+import { AbonnementService } from '../../services/abonnement.service';
 import Swal from 'sweetalert2';
 
 @Component({

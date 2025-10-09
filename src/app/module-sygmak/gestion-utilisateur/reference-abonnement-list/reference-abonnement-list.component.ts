@@ -2,10 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastService } from 'src/app/core/services/toast.service';
-import { Page } from '../../../../../src/models/Page';
-import { PagedData } from '../../../../../src/models/paged-data';
-import { ReferenceAbonnement } from '../../../../../src/models/reference-abonnement';
-import { ReferenceAbonnementService } from '../../../../../src/services/reference-abonnement.service';
+import { Page } from '../../models/Page';
+import { PagedData } from '../../models/paged-data';
+import { ReferenceAbonnement } from '../../models/reference-abonnement';
+import { ReferenceAbonnementService } from '../../services/reference-abonnement.service';
 import Swal from 'sweetalert2';
 
 @Component({

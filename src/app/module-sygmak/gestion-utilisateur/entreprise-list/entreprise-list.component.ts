@@ -5,10 +5,10 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { catchError, debounceTime, distinctUntilChanged, filter, switchMap, throwError } from 'rxjs';
 import { ToastService } from 'src/app/core/services/toast.service';
 import { AuthenticationService } from 'src/app/core/services/auth.service';
-import { Entreprise } from '../../../../../src/models/entreprise';
-import { Page } from '../../../../../src/models/Page';
-import { PagedData } from '../../../../../src/models/paged-data';
-import { EntrepriseService } from '../../../../../src/services/entreprise.service';
+import { Entreprise } from '../../models/entreprise';
+import { Page } from '../../models/Page';
+import { PagedData } from '../../models/paged-data';
+import { EntrepriseService } from '../../services/entreprise.service';
 import Swal from 'sweetalert2';
 
 @Component({

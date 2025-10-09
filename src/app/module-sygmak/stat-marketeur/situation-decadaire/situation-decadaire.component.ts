@@ -1,11 +1,11 @@
 import { DatePipe } from '@angular/common';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { NifUtilisateur } from '../../../../../src/models/nif-utilisateur';
-import { PagedData } from '../../../../../src/models/paged-data';
-import { SituationDecadaire } from '../../../../../src/models/situation-decadaire';
-import { NifUtilisateurService } from '../../../../../src/services/nif-utilisateur.service';
-import { SituationDecadaireService } from '../../../../../src/services/situation-decadaire.service';
+import { NifUtilisateur } from '../../models/nif-utilisateur';
+import { PagedData } from '../../models/paged-data';
+import { SituationDecadaire } from '../../models/situation-decadaire';
+import { NifUtilisateurService } from '../../services/nif-utilisateur.service';
+import { SituationDecadaireService } from '../../services/situation-decadaire.service';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
 import { Observable, of } from 'rxjs';
@@ -13,7 +13,7 @@ import { debounceTime, distinctUntilChanged, map, startWith, switchMap } from 'r
 
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
-import { Utilisateur } from '../../../../../src/models/Utilisateur';
+import { Utilisateur } from '../../models/Utilisateur';
 
 @Component({
   selector: 'app-situation-decadaire',
@@ -788,11 +788,11 @@ this.filterednomenclature = this.nomenclatureControl.valueChanges.pipe(
 /*import { DatePipe } from '@angular/common';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { NifUtilisateur } from '../../../../../src/models/nif-utilisateur';
-import { PagedData } from '../../../../../src/models/paged-data';
-import { SituationDecadaire } from '../../../../../src/models/situation-decadaire';
-import { NifUtilisateurService } from '../../../../../src/services/nif-utilisateur.service';
-import { SituationDecadaireService } from '../../../../../src/services/situation-decadaire.service';
+import { NifUtilisateur } from '../../models/nif-utilisateur';
+import { PagedData } from '../../models/paged-data';
+import { SituationDecadaire } from '../../models/situation-decadaire';
+import { NifUtilisateurService } from '../../services/nif-utilisateur.service';
+import { SituationDecadaireService } from '../../services/situation-decadaire.service';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
 import { Observable, of } from 'rxjs';
@@ -800,7 +800,7 @@ import { debounceTime, distinctUntilChanged, map, startWith, switchMap } from 'r
 
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
-import { Utilisateur } from '../../../../../src/models/Utilisateur';
+import { Utilisateur } from '../../models/Utilisateur';
 
 @Component({
   selector: 'app-situation-decadaire',

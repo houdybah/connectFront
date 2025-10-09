@@ -2,10 +2,10 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, map, Observable, tap, throwError } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { EnumRole } from 'src/models/enum-role';
-import { Page } from 'src/models/Page';
-import { PagedData } from 'src/models/paged-data';
-import { Utilisateur } from 'src/models/Utilisateur';
+import { EnumRole } from '../models/enum-role';
+import { Page } from '../models/Page';
+import { PagedData } from '../models/paged-data';
+import { Utilisateur } from '../models/Utilisateur';
 
 @Injectable({
   providedIn: 'root'

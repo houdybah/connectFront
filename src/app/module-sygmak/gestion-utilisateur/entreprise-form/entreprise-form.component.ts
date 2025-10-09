@@ -3,11 +3,11 @@ import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { debounceTime, distinctUntilChanged, map, Observable, of, startWith, switchMap } from 'rxjs';
-import { Entreprise } from '../../../../../src/models/entreprise';
-import { Utilisateur } from '../../../../../src/models/Utilisateur';
-import { EntrepriseService } from '../../../../../src/services/entreprise.service';
-import { NifUtilisateurService } from '../../../../../src/services/nif-utilisateur.service';
-import { UtilisateurService } from '../../../../../src/services/utilisateur.service';
+import { Entreprise } from '../../models/entreprise';
+import { Utilisateur } from '../../models/Utilisateur';
+import { EntrepriseService } from '../../services/entreprise.service';
+import { NifUtilisateurService } from '../../services/nif-utilisateur.service';
+import { UtilisateurService } from '../../services/utilisateur.service';
 import Swal from 'sweetalert2';
 
 @Component({

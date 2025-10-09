@@ -8,9 +8,9 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import {
   debounceTime, distinctUntilChanged, Observable, of, switchMap
 } from 'rxjs';
-import { Abonnement } from '../../../../../src/models/abonnement';
-import { AbonnementService } from '../../../../../src/services/abonnement.service';
-import { NifUtilisateurService } from '../../../../../src/services/nif-utilisateur.service';
+import { Abonnement } from '../../models/abonnement';
+import { AbonnementService } from '../../services/abonnement.service';
+import { NifUtilisateurService } from '../../services/nif-utilisateur.service';
 import Swal from 'sweetalert2';
 
 @Component({

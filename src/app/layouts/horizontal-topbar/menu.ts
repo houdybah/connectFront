@@ -4,7 +4,7 @@ export const MENU: MenuItem[] = [
   {
     id: 1,
     label: 'SYGDRD',
-    icon: 'ri-building-line',
+    icon: 'ri-money-dollar-circle-line',
     subItems: [
       {
         id: 2,
@@ -361,9 +361,58 @@ export const MENU: MenuItem[] = [
     ]
   },
   {
+    id: 22,
+    label: 'SYGMAK',
+    icon: 'ri-oil-line',
+    subItems: [
+      {
+        id: 23,
+        label: 'Situation Décade',
+        icon: 'ri-file-add-line',
+        link: '/sygmak/stat-marketeur/situation-decadaire',
+        parentId: 22
+      },
+      {
+        id: 24,
+        label: 'Situation Déclaration',
+        icon: 'ri-file-list-3-line',
+        link: '/sygmak/stat-marketeur/menu-declaration',
+        parentId: 22
+      },
+      {
+        id: 25,
+        label: 'Quittance',
+        icon: 'ri-file-list-3-line',
+        link: '/sygmak/stat-marketeur/situation-quitance',
+        parentId: 22
+      },
+      {
+        id: 26,
+        label: 'Signature',
+        icon: 'ri-edit-line',
+        link: '/sygmak/stat-marketeur/signature',
+        parentId: 22
+      },
+      {
+        id: 27,
+        label: 'Gestion Utilisateurs',
+        icon: 'ri-user-line',
+        link: '/sygmak/gestion-utilisateur',
+        parentId: 22
+      },
+      {
+        id: 28,
+        label: 'Gestion Abonnements',
+        icon: 'ri-database-2-line',
+        link: '/sygmak/gestion-abonnement',
+        parentId: 22
+      }
+    ]
+  },
+  {
     id: 19,
-    label: 'Modules',
-    icon: 'ri-module-line',
+    label: 'DOUANEAPP',
+    icon: 'ri-settings-3-line',
     subItems: [
       {
         id: 20,

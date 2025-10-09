@@ -2,9 +2,9 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, map, Observable, tap, throwError } from 'rxjs';
 import { environment } from 'src/environments/environment.prod';
-import { Page } from 'src/models/Page';
-import { PagedData } from 'src/models/paged-data';
-import { SituationDecadaire } from 'src/models/situation-decadaire';
+import { Page } from '../models/Page';
+import { PagedData } from '../models/paged-data';
+import { SituationDecadaire } from '../models/situation-decadaire';
 
 @Injectable({
   providedIn: 'root'
@@ -137,9 +137,9 @@ export class SituationDecadaireService {
 /*import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, Observable, tap, throwError } from 'rxjs';
-import { Page } from 'src/models/Page';
-import { PagedData } from 'src/models/paged-data';
-import { SituationDecadaire } from 'src/models/situation-decadaire';
+import { Page } from '../models/Page';
+import { PagedData } from '../models/paged-data';
+import { SituationDecadaire } from '../models/situation-decadaire';
 
 @Injectable({
   providedIn: 'root'

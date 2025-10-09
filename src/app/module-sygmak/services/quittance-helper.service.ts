@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Quittance } from 'src/models/quittance';
+import { Quittance } from '../models/quittance';
 
 /**
  * Service utilitaire pour manipuler les objets Quittance
