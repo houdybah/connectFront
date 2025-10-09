@@ -1,0 +1,478 @@
+// <!-- Bouton pour ouvrir le modal -->
+// <button class="btn btn-primary" (click)="openModal(modal)">
+//   <i class="bi bi-plus-circle"></i> Ajouter un utilisateur
+// </button>
+
+// <!-- Modal Structure -->
+// <ng-template #modal let-modal>
+//   <div class="modal-header">
+//     <h5 class="modal-title">Créer un Nouveau Compte</h5>
+//     <button type="button" class="btn-close" aria-label="Close" (click)="closeModal()"></button>
+//   </div>
+
+//   <div class="modal-body">
+//     <div class="container">
+//       <form (ngSubmit)="onSubmit()">
+        
+//         <!-- Champ Email -->
+//         <div class="mb-3">
+//           <label for="useremail" class="form-label">Email <span class="text-danger">*</span></label>
+//           <input type="email" class="form-control" id="useremail" placeholder="Entrez votre adresse e-mail" [(ngModel)]="user.email" name="email" required />
+//           <div *ngIf="email.invalid && email.touched" class="text-danger">Veuillez entrer un email valide.</div>
+//         </div>
+
+//         <!-- Champ Username -->
+//         <div class="mb-3">
+//           <label for="username" class="form-label">Nom d'utilisateur <span class="text-danger">*</span></label>
+//           <input type="text" class="form-control" id="username" placeholder="Entrez votre nom d'utilisateur" [(ngModel)]="user.username" name="username" required />
+//           <div *ngIf="username.invalid && username.touched" class="text-danger">Veuillez entrer un nom d'utilisateur.</div>
+//         </div>
+
+//         <!-- Champ Mot de Passe -->
+//         <div class="mb-3">
+//           <label for="userpassword" class="form-label">Mot de passe <span class="text-danger">*</span></label>
+//           <input type="password" class="form-control" id="userpassword" placeholder="Entrez votre mot de passe" [(ngModel)]="user.password" name="password" required />
+//           <div *ngIf="password.invalid && password.touched" class="text-danger">Veuillez entrer un mot de passe.</div>
+//         </div>
+
+//         <!-- Champ de Confirmation de Mot de Passe -->
+//         <div class="mb-3">
+//           <label for="confirmPassword" class="form-label">Confirmer le mot de passe <span class="text-danger">*</span></label>
+//           <input type="password" class="form-control" id="confirmPassword" placeholder="Confirmez votre mot de passe" [(ngModel)]="user.confirmPassword" name="confirmPassword" required />
+//           <div *ngIf="confirmPassword.invalid && confirmPassword.touched" class="text-danger">Veuillez confirmer votre mot de passe.</div>
+//         </div>
+
+//         <!-- Rôle -->
+//         <div class="mb-3">
+//           <label for="role" class="form-label">Rôle</label>
+//           <select class="form-select" id="role" [(ngModel)]="user.role" name="role">
+//             <option value="admin">Administrateur</option>
+//             <option value="user">Utilisateur</option>
+//           </select>
+//         </div>
+
+//         <!-- Soumettre le Formulaire -->
+//         <div class="d-flex justify-content-end">
+//           <button type="submit" class="btn btn-success" [disabled]="!form.valid">Créer un compte</button>
+//         </div>
+        
+//       </form>
+//     </div>
+//   </div>
+// </ng-template>
+
+
+
+
+
+@media print {
+    body * {
+      visibility: hidden;
+    }
+    
+    #printable-section, #printable-section * {
+      visibility: visible;
+    }
+
+    #printable-section {
+      position: absolute;
+      left: 0;
+      top: 0;
+    }
+  }
+
+
+  /* Styling spécifique pour l'impression */
+  @media print {
+    body {
+      font-family: Arial, sans-serif;
+      font-size: 12px;
+    }
+
+    .d-none {
+      display: block !important;
+    }
+
+    .container-fluid {
+      width: 100%;
+      padding: 0;
+    }
+
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    .table th, .table td {
+      padding: 8px;
+      border: 1px solid #ddd;
+      text-align: left;
+    }
+
+    .printable-header {
+      margin-bottom: 20px;
+    }
+
+    .row-print {
+      display: flex;
+      flex-wrap: wrap;
+    }
+
+    .col-print {
+      flex: 1;
+      padding: 5px;
+    }
+  }
+
+  // CSS pour les modèles d'impression personnalisés
+  
+    .signature-line {
+      border-top: 1px solid #000;
+      width: 80%;
+      margin: 30px auto 0;
+    }
+    
+    .stamp-placeholder {
+      border: 1px dashed #999;
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      margin: 10px auto;
+    }
+    
+    @media print {
+      .modal-footer, .btn-close {
+        display: none !important;
+      }
+      
+      .modal-header {
+        border-bottom: 1px solid #dee2e6;
+        background-color: #fff !important;
+        color: #000 !important;
+      }
+      
+      .modal-content {
+        border: none !important;
+        box-shadow: none !important;
+      }
+    }
+  
+
+    .example-form {
+      min-width: 150px;
+      max-width: 500px;
+      width: 100%;
+    }
+    
+    .example-full-width {
+      width: 100%;
+    }
+    
+    .user-item {
+      font-size: 0.8rem;  /* Réduit la taille du texte */
+      border: 4px;      /* Enlève les bordures */
+      padding: 8px;      /* Ajuste le padding si nécessaire */
+    }
+    
+    .user-item:hover {
+      background-color: #f0f0f0; /* Optionnel : change la couleur de fond au survol */
+    }
+    
+  
+  
+  
+  
+    /* Styles généraux */
+    .nif-form {
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+      max-width: 400px;
+      margin: auto;
+    }
+    
+    /* Champs du formulaire */
+    .form-group {
+      margin-bottom: 15px;
+    }
+    
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 5px;
+      color: #333;
+    }
+    
+    .form-input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-size: 14px;
+      transition: border-color 0.3s ease-in-out;
+    }
+    
+    .form-input:focus {
+      border-color: #2563eb;
+      outline: none;
+    }
+    
+    /* Liste déroulante */
+    .dropdown {
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      margin-top: 5px;
+      max-height: 150px;
+      overflow-y: auto;
+    }
+    
+    .dropdown-item {
+      padding: 10px;
+      cursor: pointer;
+    }
+    
+    .dropdown-item:hover {
+      background: #f0f0f0;
+    }
+    
+    /* Boutons */
+    .form-actions {
+      display: flex;
+      justify-content: space-between;
+    }
+    
+    .btn {
+      padding: 10px 15px;
+      border: none;
+      border-radius: 5px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    
+    .cancel {
+      background: #ddd;
+    }
+    
+    .submit {
+      background: #2563eb;
+      color: white;
+    }
+    
+    .submit:hover {
+      background: #1d4ed8;
+    }
+  
+    
+
+
+
+
+
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 1rem 0;
+}
+
+
+
+
+
+
+
+
+    /* Styles pour le template PDF */
+.pdf-container {
+  font-family: 'Arial', sans-serif;
+  color: #333;
+  padding: 20px;
+  max-width: 210mm; /* Largeur A4 */
+  margin: 0 auto;
+}
+
+/* En-tête */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #004a80;
+  padding-bottom: 10px;
+}
+
+.logo {
+  height: 60px;
+  width: auto;
+}
+
+.title-container {
+  text-align: center;
+  flex-grow: 1;
+}
+
+.title-container h1 {
+  color: #004a80;
+  margin: 0;
+  font-size: 24px;
+}
+
+.title-container h3 {
+  color: #666;
+  margin: 5px 0 0;
+  font-size: 16px;
+}
+
+/* Informations du rapport */
+.report-info {
+  background-color: #f8f9fa;
+  border-radius: 5px;
+  padding: 10px;
+  margin-bottom: 20px;
+}
+
+.info-row {
+  display: flex;
+  margin-bottom: 10px;
+}
+
+.info-col {
+  flex: 1;
+  padding: 0 10px;
+}
+
+.info-label {
+  font-weight: bold;
+  margin-right: 5px;
+  color: #004a80;
+}
+
+.info-value {
+  color: #333;
+}
+
+/* Tableau */
+.table-container {
+  margin-bottom: 30px;
+  overflow-x: auto;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.data-table th {
+  background-color: #004a80;
+  color: white;
+  padding: 8px;
+  text-align: left;
+  border: 1px solid #ddd;
+}
+
+.data-table td {
+  padding: 6px 8px;
+  border: 1px solid #ddd;
+}
+
+.data-table tbody tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+.data-table .align-right {
+  text-align: right;
+}
+
+.total-row {
+  background-color: #e6f3ff !important;
+  font-weight: bold;
+}
+
+/* Signatures */
+.signatures {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 80px;
+  page-break-inside: avoid;
+}
+
+.signature-col {
+  flex: 1;
+  text-align: center;
+  padding: 0 20px;
+}
+
+.signature-title {
+  font-weight: bold;
+  margin-bottom: 50px;
+  font-size: 12px;
+}
+
+.signature-line {
+  border-top: 1px solid #333;
+  margin: 0 auto;
+  width: 70%;
+}
+
+.signature-name {
+  margin-top: 5px;
+  font-size: 11px;
+  color: #666;
+}
+
+/* Pied de page */
+.footer {
+  margin-top: 30px;
+  padding-top: 10px;
+  border-top: 1px solid #ddd;
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: #666;
+}
+
+/* Styles d'impression */
+@media print {
+  .pdf-container {
+    padding: 0;
+    margin: 0;
+  }
+  
+  /* Éviter les coupures dans le tableau entre les pages */
+  tr {
+    page-break-inside: avoid;
+  }
+  
+  /* Force les signatures à rester sur la même page */
+  .signatures {
+    page-break-inside: avoid;
+  }
+  
+  .header, .footer {
+    position: fixed;
+    width: 100%;
+  }
+  
+  .header {
+    top: 0;
+  }
+  
+  .footer {
+    bottom: 0;
+  }
+  
+  @page {
+    size: A4;
+    margin: 20mm 10mm;
+  }
+}
+
+
+  ::ng-deep ngb-pagination {
+  flex-wrap: wrap;
+  overflow-x: auto;
+}

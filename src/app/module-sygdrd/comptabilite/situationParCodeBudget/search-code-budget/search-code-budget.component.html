@@ -1,0 +1,107 @@
+<h6>SITUATION PAR CODE BUDGET</h6>
+<div class="row" id="contactList">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header d-flex align-items-center border-0">
+                <div class="flex-shrink-0">
+                    <div class="flax-shrink-0 hstack gap-2">
+                        <button hidden class="btn btn-primary" >Ajouter</button>
+                        <button hidden class="btn btn-soft-info" >Importer</button>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body border border-dashed border-end-0 border-start-0">
+                <div class="row g-2">
+                    <div class="col-xl-4 col-md-4">
+                        <input type="date" class="form-control" id="dateBebut" name="dateBebut"  
+                        (change)="validateDates()" [(ngModel)]="dateDebut" (ngModelChange)="masquer()"/>
+                    </div>
+                    <div class="col-xl-4 col-md-4">
+                         <input type="date" class="form-control" id="dateFin" name="dateFin" 
+                         (change)="validateDates()" [(ngModel)]="dateFin" (ngModelChange)="masquer()"/>
+                    </div>
+                    <div class="col-xl-4 col-md-4">
+                        <button class="btn btn-success w-100btn" [disabled]="!dateDebut || !dateFin || !validateDates()" title="rechercher"  (click)="selectPeriod();">Valider</button>
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="dateError" class="row g-2 mt-2">
+                <div class="col-12">
+                    <div class="alert alert-danger" role="alert">
+                        {{ dateError}}
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="!periodSelect && !recherche" class="text-center my-3 alert alert-info">
+                Veuillez sélectionner la date début et date fin puis valider pour afficher les données.
+            </div>
+            <div class="d-flex justify-content-center m-4" *ngIf="!periodSelect && recherche">
+                <div class="spinner-border" role="status">
+                    <span class="sr-only">Loading...</span>
+                </div>
+            </div>
+            <div class="card-body border" [hidden]="!periodSelect">
+                <div class="card-body">
+                    <div class="table-responsive table-card">
+                        <table class="table align-middle table-nowrap" id="customerTable">
+                            <thead class="table-light text-muted">
+                                <tr>
+                                    <th class="sort">Taxe code</th>
+                                    <th class="sort">Description</th>
+                                    <th class="sort">Code budget</th>
+                                    <th class="sort">Ligne budget</th>
+                                    <th class="sort">Designation</th>
+                                    <th class="sort">Montant</th>
+                                </tr>
+                            </thead>
+                            <tbody class="list form-check-all">
+                                @for(situation of pagedSituationList; track $index){
+                                <tr>
+                                    <td>{{situation.tax_COD}}</td>
+                                    <td>{{situation.tax_DSC}}</td>
+                                    <td>{{situation.bud_COD}}</td>
+                                    <td>{{situation.bud_LIN}}</td>
+                                    <td>{{situation.bud_DSC}}</td>
+                                    <td>{{situation.sum_AMT_NEW}}</td>
+                                </tr>
+                                }
+                            </tbody>
+                            <tfoot>
+                            <tr>
+                                <td colspan="5" class="text-end"><strong>Total :</strong></td>
+                                <td><strong>{{ getTotalMontantPage() | number:'1.2-2' }}</strong></td>
+                            </tr>
+                        </tfoot>
+                        </table>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center p-2" *ngIf="cfiltreSituationCodeBudgetList.length > 0">
+                        <div class="pagination-info">
+                            Affichage de {{getStartIndex()}} à {{getEndIndex()}} sur {{totalLengthOfCollection}} éléments
+                        </div>
+                        <div class="d-flex align-items-center gap-3">
+                            <select class="form-select" style="width: auto" [(ngModel)]="cpageSize" (ngModelChange)="onPageSizeChange()">
+                                <option [ngValue]="5">5 par page</option>
+                                <option [ngValue]="10">10 par page</option>
+                                <option [ngValue]="25">25 par page</option>
+                                <option [ngValue]="50">50 par page</option>
+                            </select>
+                            <ngb-pagination 
+                                [(page)]="cpage"
+                                [pageSize]="cpageSize"
+                                [collectionSize]="totalLengthOfCollection"
+                                [rotate]="true"
+                                [boundaryLinks]="true"
+                                [maxSize]="5"
+                                (pageChange)="onPageChange()">
+                            </ngb-pagination>
+                        </div>
+                    </div>
+                     <!-- Message si aucune donnée -->
+                    <div *ngIf="periodSelect && cfiltreSituationCodeBudgetList.length === 0" class="text-center my-3 alert alert-warning">
+                        Aucune donnée trouvée pour la période sélectionnée.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

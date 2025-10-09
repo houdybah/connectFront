@@ -1,0 +1,40 @@
+<form [formGroup]="nifUtilisateurForm" (ngSubmit)="saveNifUtilisateur()" class="nif-form">
+  <div class="form-container">
+
+      <!-- Champ NIF -->
+      <div class="form-group">
+        <label for="nif">NIF <span class="text-danger">*</span></label>
+        <input type="text" class="form-input" formControlName="nif" placeholder="Entrer le NIF">
+      </div>
+    </div>
+    <!-- Champ Utilisateur -->
+    <div class="form-group">
+      <label for="utilisateur">Utilisateur<span class="text-danger">*</span></label>
+      <div class="input-wrapper">
+        <input
+          type="text"
+          class="form-input"
+          [formControl]="utilisateurControl"
+          placeholder="Rechercher un utilisateur..."
+          (focus)="showUsersList()"
+        >
+      </div>
+      <!-- Liste des utilisateurs -->
+      <div *ngIf="showUserList" class="dropdown">
+        <div *ngFor="let utilisateur of filteredUtilisateurs | async" 
+             class="dropdown-item" 
+             (click)="setSelectedUser(utilisateur)">
+          {{ utilisateur.email }}
+        </div>
+      </div>
+      <input type="hidden" formControlName="utilisateur_uuid">
+    </div>
+
+  
+
+  <!-- Boutons -->
+  <div class="form-actions">
+    <button type="button" class="btn cancel" (click)="activeModal.dismiss()">Annuler</button>
+    <button type="submit" class="btn submit" [disabled]="nifUtilisateurForm.invalid">Sauvegarder</button>
+  </div>
+</form>

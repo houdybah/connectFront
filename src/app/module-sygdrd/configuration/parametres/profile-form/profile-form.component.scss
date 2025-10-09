@@ -1,0 +1,525 @@
+// Styles simplifiés pour le formulaire de profil
+
+.modal-body {
+  padding: 2rem;
+
+  .container {
+    max-width: 100%;
+  }
+}
+
+// En-tête du formulaire
+.form-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #e5e7eb;
+
+  .form-title {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #1f2937;
+  }
+
+  .status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    background-color: #f3f4f6;
+    font-size: 0.875rem;
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: #6b7280;
+    }
+
+    &.editing {
+      background-color: #dbeafe;
+      color: #1e40af;
+
+      .status-dot {
+        background-color: #3b82f6;
+      }
+    }
+
+    &.viewing {
+      background-color: #f3f4f6;
+      color: #6b7280;
+    }
+  }
+}
+
+// Sections du formulaire
+.form-section {
+  margin-bottom: 2rem;
+
+  .section-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 1.5rem;
+  }
+}
+
+// Champs de formulaire
+.form-label {
+  display: block;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.input-wrapper {
+  position: relative;
+
+  .form-control {
+    width: 100%;
+    padding: 0.75rem 3rem 0.75rem 1rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+
+    &:focus {
+      outline: none;
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    &.is-invalid {
+      border-color: #ef4444;
+    }
+
+    &:disabled {
+      background-color: #f9fafb;
+      color: #6b7280;
+      cursor: not-allowed;
+    }
+  }
+
+  .input-icon {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #9ca3af;
+    pointer-events: none;
+  }
+}
+
+// Messages d'erreur
+.error-message {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  color: #ef4444;
+  font-size: 0.875rem;
+
+  svg {
+    flex-shrink: 0;
+  }
+}
+
+// Toggle switch
+.toggle-wrapper {
+  display: flex;
+  align-items: center;
+
+  .toggle-input {
+    display: none;
+  }
+
+  .toggle-label {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    cursor: pointer;
+    font-weight: 500;
+    color: #374151;
+
+    .toggle-slider {
+      position: relative;
+      width: 3rem;
+      height: 1.5rem;
+      background-color: #d1d5db;
+      border-radius: 1rem;
+      transition: background-color 0.2s;
+
+      &::before {
+        content: '';
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        width: 1.25rem;
+        height: 1.25rem;
+        background-color: white;
+        border-radius: 50%;
+        transition: transform 0.2s;
+      }
+    }
+
+    &:hover .toggle-slider {
+      background-color: #9ca3af;
+    }
+  }
+
+  .toggle-input:checked + .toggle-label .toggle-slider {
+    background-color: #3b82f6;
+
+    &::before {
+      transform: translateX(1.5rem);
+    }
+  }
+
+  .toggle-input:disabled + .toggle-label {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+// Conteneur des rôles
+.roles-container {
+  .success-message {
+    margin-bottom: 1rem;
+    padding: 0.75rem 1rem;
+    background-color: #dcfce7;
+    border-radius: 0.5rem;
+
+    .success-content {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #166534;
+      font-size: 0.875rem;
+
+      .success-icon {
+        flex-shrink: 0;
+      }
+    }
+  }
+
+  .sections-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+
+    &.disabled-container {
+      opacity: 0.6;
+      pointer-events: none;
+    }
+  }
+
+  .section {
+    .section-header {
+      margin-bottom: 1rem;
+
+      .section-title-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 0.5rem;
+
+        .section-title {
+          font-size: 1rem;
+          font-weight: 600;
+          color: #1f2937;
+          margin: 0;
+        }
+
+        .role-count {
+          background-color: #f3f4f6;
+          color: #6b7280;
+          font-size: 0.75rem;
+          font-weight: 600;
+          padding: 0.25rem 0.5rem;
+          border-radius: 0.375rem;
+          min-width: 1.5rem;
+          text-align: center;
+
+          &.assigned-count {
+            background-color: #dbeafe;
+            color: #1e40af;
+          }
+        }
+      }
+
+      .section-description {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #6b7280;
+        font-size: 0.75rem;
+        margin: 0;
+      }
+    }
+
+    .section-content {
+      min-height: 200px;
+    }
+
+    .roles-list {
+      min-height: 200px;
+      padding: 1rem;
+      background-color: #f9fafb;
+      border-radius: 0.5rem;
+      border: 2px dashed #d1d5db;
+
+      .empty-state {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 150px;
+        text-align: center;
+
+        .empty-icon {
+          margin-bottom: 0.75rem;
+          color: #9ca3af;
+        }
+
+        .empty-title {
+          font-weight: 500;
+          color: #6b7280;
+          margin-bottom: 0.25rem;
+        }
+
+        .empty-subtitle {
+          font-size: 0.875rem;
+          color: #9ca3af;
+        }
+      }
+    }
+  }
+}
+
+// Items de rôles
+.role-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  background-color: white;
+  border-radius: 0.5rem;
+  border: 1px solid #e5e7eb;
+  margin-bottom: 0.5rem;
+  transition: all 0.2s;
+
+  &:hover {
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+
+  .drag-handle {
+    color: #9ca3af;
+    cursor: grab;
+
+    &:active {
+      cursor: grabbing;
+    }
+  }
+
+  .role-content {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex: 1;
+
+    .role-badge {
+      color: #6b7280;
+    }
+
+    .role-name {
+      font-weight: 500;
+      color: #374151;
+      font-size: 0.875rem;
+    }
+  }
+
+  .action-button {
+    width: 2rem;
+    height: 2rem;
+    border: none;
+    border-radius: 0.375rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+
+    &.add-button {
+      background-color: #f3f4f6;
+      color: #6b7280;
+
+      &:hover:not(:disabled) {
+        background-color: #3b82f6;
+        color: white;
+      }
+    }
+
+    &.remove-button {
+      background-color: #f3f4f6;
+      color: #6b7280;
+
+      &:hover:not(:disabled) {
+        background-color: #ef4444;
+        color: white;
+      }
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+
+  &.assigned-item {
+    .role-badge.assigned-badge {
+      color: #059669;
+    }
+  }
+}
+
+// Actions du formulaire
+.form-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e5e7eb;
+
+  .actions-left {
+    .edit-hint {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #6b7280;
+      font-size: 0.875rem;
+    }
+  }
+
+  .actions-right {
+    display: flex;
+    gap: 0.75rem;
+  }
+}
+
+// Boutons
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-decoration: none;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  &.btn-primary {
+    background-color: #3b82f6;
+    color: white;
+
+    &:hover:not(:disabled) {
+      background-color: #2563eb;
+    }
+  }
+
+  &.btn-outline {
+    background-color: transparent;
+    color: #6b7280;
+    border: 1px solid #d1d5db;
+
+    &:hover:not(:disabled) {
+      background-color: #f9fafb;
+      border-color: #9ca3af;
+    }
+  }
+
+  &.btn-danger {
+    background-color: #ef4444;
+    color: white;
+
+    &:hover:not(:disabled) {
+      background-color: #dc2626;
+    }
+  }
+}
+
+// Animations
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-0.5rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.success-message {
+  animation: slideIn 0.3s ease-out;
+}
+
+// CDK Drag & Drop
+.cdk-drag-preview {
+  box-sizing: border-box;
+  border-radius: 0.5rem;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+}
+
+.cdk-drag-placeholder {
+  opacity: 0.5;
+}
+
+.cdk-drag-animating {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.cdk-drop-list-dragging .role-item:not(.cdk-drag-placeholder) {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .modal-body {
+    padding: 1rem;
+  }
+
+  .form-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .sections-container {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .form-actions {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+
+    .actions-right {
+      justify-content: center;
+    }
+  }
+}

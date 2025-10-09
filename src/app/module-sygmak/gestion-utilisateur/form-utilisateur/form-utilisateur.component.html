@@ -1,0 +1,114 @@
+<div class="modal-body">
+    <div class="container">
+      <form  [formGroup]="utilisateurForm" >
+          <div *ngIf="isAdmin">
+        <!-- Champ Email   -->
+        <!-- <div class="mb-3">
+          <label for="useremail" class="form-label">Email <span class="text-danger">*</span></label>
+          <input type="email" class="form-control" id="useremail" formControlName="email" placeholder="Entrez votre adresse e-mail"  />
+          <div *ngIf="utilisateurForm.get('email')?.touched && utilisateurForm.get('email')?.invalid" class="text-danger">
+            Le mail est requis
+           </div>
+        </div> -->
+
+
+ <div class="mb-3">
+  <label for="useremail" class="form-label">Email <span class="text-danger">*</span></label>
+  <input type="email" class="form-control" id="useremail" formControlName="email" placeholder="Entrez votre adresse e-mail" />
+
+  <div *ngIf="utilisateurForm.get('email')?.touched && utilisateurForm.get('email')?.invalid" class="text-danger">
+    
+    <!-- Si vide -->
+    <div *ngIf="utilisateurForm.get('email')?.errors?.['required']">
+      Le mail est requis
+    </div>
+
+    <!-- Si le format est invalide -->
+    <div *ngIf="utilisateurForm.get('email')?.errors?.['pattern']">
+      Le format de l'adresse email est invalide
+    </div>
+
+  </div>
+</div>
+
+        
+
+      
+
+        <!-- Rôle -->
+
+        <div class="mb-3">
+          <label for="role" class="form-label">Rôle <span class="text-danger">*</span></label>
+          <select class="form-select" id="role" formControlName="roles">
+            <option *ngFor="let role of EnumRoleList" [value]="role">
+              {{ role }}
+            </option>
+          </select>
+          <div *ngIf="utilisateurForm.get('roles')?.touched && utilisateurForm.get('roles')?.invalid" class="text-danger">
+            Le Rôle est requise
+           </div>
+        </div>
+        
+         
+ 
+<div class="mb-3" *ngIf="isMarketeur()">
+  <label for="nif" class="form-label fw-bold">Code NIF <span class="text-danger">*</span></label>
+  <div class="form-group">
+    <div class="input-wrapper">
+      <input
+        type="text"
+        class="form-control"
+        [formControl]="nifControl"
+        placeholder="Rechercher un NIF..."
+        (focus)="showUsersList()"
+      />
+    </div>
+
+    <div *ngIf="showUserList">
+      <div *ngIf="filterednif | async as nifList" class="dropdown">
+        <div *ngFor="let nif of nifList"
+             class="dropdown-item"
+             (click)="setSelectedUser(nif)">
+          {{ nif.nif }} - {{ nif.nomEntreprise }}
+        </div>
+      </div>
+    </div>
+
+    <input type="hidden" formControlName="nif" />
+
+    <div *ngIf="nifControlValue.length >= 6 && nifNotFound" class="text-danger mt-2">
+  Entreprise inexistante, veuillez la créer s'il vous plait.
+</div>
+  </div>
+
+
+</div>
+
+</div>
+
+
+  <!-- Champ Mot de Passe -->
+        <div class="mb-3">
+          <label for="userpassword" class="form-label">Mot de passe <span class="text-danger">*</span></label>
+          <input type="password" class="form-control" id="userpassword" formControlName="password" placeholder="Entrez votre mot de passe" />
+          <div *ngIf="utilisateurForm.get('password')?.touched && utilisateurForm.get('password')?.invalid" class="text-danger">
+            Le mot de passe est requis
+           </div>
+        </div>
+
+        <!-- Champ de Confirmation de Mot de Passe -->
+        <div class="mb-3">
+          <label for="confirmPassword" class="form-label">Confirmer le mot de passe </label>
+          <input type="password" class="form-control" id="confirmPassword" formControlName="password" placeholder="Confirmez votre mot de passe"   />
+          <div *ngIf="utilisateurForm.get('password')?.touched && utilisateurForm.get('password')?.invalid" class="text-danger">
+           La Confirmation du mot de passe est requise
+          </div>
+        </div>
+        <!-- Soumettre le Formulaire -->
+        <div class="d-flex justify-content-end">
+          <button type="submit" class="btn btn-success"  (click)="saveUtilisateur()" [disabled]="utilisateurForm.invalid" >Créer un compte</button>
+        </div>
+        
+      </form>
+    </div>
+  </div>

@@ -1,0 +1,98 @@
+<div class="card shadow rounded-4">
+  <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center rounded-top-4">
+    <h5 class="mb-0">
+      <i class="fas fa-wallet me-2"></i> Liste des Rechargements
+    </h5>
+      <input
+        type="text"
+        [formControl]="rechercheParDateControl"
+        placeholder="Rechercher par Date ou Nif"
+        class="form-control"
+        style="max-width: 250px;"
+      />
+<button *ngIf="isAdmin()" class="btn btn-light text-primary fw-semibold shadow-sm" (click)="openModal(modal, null)">
+  <i class="fas fa-plus-circle me-1"></i> Ajouter
+</button>
+
+  </div>
+
+  <div class="card-body bg-white">
+    <table class="table table-bordered text-center mb-0">
+      
+    <thead class="table-light">
+  <tr>
+    <th scope="col">N°</th>
+    <th scope="col">NIF</th>
+    <th scope="col">Montant</th>
+    <th scope="col">Date Rechargement</th>
+    <th scope="col">Utilisateur</th>
+    <th scope="col" style="min-width:120px;" *ngIf="isAdmin()">Actions</th>
+  </tr>
+</thead>
+<tbody>
+  <tr *ngFor="let rechargement of pageData.content; let i = index">
+
+    <td>{{ (pageData.pageNumber) * pageData.pageSize + i + 1 }}</td>
+
+    <td>{{ rechargement.nif }}</td>
+    <td>{{ rechargement.montant | number:'1.0-0' }} GNF</td>
+    <td>{{ rechargement.dateRechargement | date:'dd/MM/yyyy HH:mm' }}</td>
+    <td>{{ rechargement.utilisateur }}</td>
+    <td *ngIf="isAdmin()">
+      <!-- Bouton pour modifier -->
+      <button class="btn btn-sm btn-primary me-2" (click)="openModal(modal, rechargement)">
+        <i class="fas fa-edit"></i> Modifier
+      </button>
+    </td>
+  </tr>
+  <tr *ngIf="!pageData.content || pageData.content.length === 0">
+    <td colspan="6" class="text-center text-muted fst-italic">Aucun rechargement disponible.</td>
+  </tr>
+</tbody>
+
+    </table>
+
+    
+  </div>
+
+  
+</div>
+ <div class="d-flex justify-content-between align-items-center p-3 mt-3 bg-white rounded shadow-sm flex-wrap gap-2">
+  <ngb-pagination
+    [collectionSize]="nombreTotalEnregistrement"
+    [(page)]="pageSelectionne"
+    [pageSize]="nombreElementParPage"
+    [maxSize]="5"
+    [rotate]="true"
+    [boundaryLinks]="true"
+    (pageChange)="onPageChange($event)">
+  </ngb-pagination>
+  <!-- Sélecteur de taille de page -->
+  <select
+    class="form-select form-select-sm w-auto"
+    [(ngModel)]="nombreElementParPage"
+    (change)="onPageSizeChange()">
+    <option [ngValue]="5">5 éléments par page</option>
+    <option [ngValue]="10">10 éléments par page</option>
+    <option [ngValue]="20">20 éléments par page</option>
+  </select>
+ </div>
+
+<!-- Pagination NgBootstrap -->
+
+  
+
+
+<!-- MODAL -->
+<ng-template #modal let-modal>
+  <div class="modal-header bg-primary text-white">
+    <h5 class="modal-title"><i class="fas fa-edit me-2"></i> Rechargement Solde</h5>
+    <button type="button" class="btn-close btn-close-white" aria-label="Close" (click)="closeModal()"></button>
+  </div>
+  <div class="modal-body bg-light">
+
+    <app-rechargement-form [rechargementSoldePassed]="rechargementParam"></app-rechargement-form>
+
+
+  </div>
+</ng-template>

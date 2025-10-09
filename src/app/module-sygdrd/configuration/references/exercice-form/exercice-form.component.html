@@ -1,0 +1,43 @@
+<div class="modal-body">
+    <div class="container">
+        <form  [formGroup]="exerciceForm" >
+
+            <div class="mb-3">
+                <label for="annee" class="form-label">Année d'exercice <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="annee" formControlName="annee" placeholder="Entrez l'année de l'exercice"  />
+                <div *ngIf="exerciceForm.get('annee')?.touched && exerciceForm.get('annee')?.invalid" class="text-danger">
+                    L'année est requis
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="objectif" class="form-label">Objectif Initiale<span class="text-danger">*</span></label>
+                <input type="number" class="form-control" id="objectif" formControlName="objectif" placeholder="Entrez l'objectif Initial" [readonly]="isEdit" />
+                <div *ngIf="exerciceForm.get('objectif')?.touched && exerciceForm.get('objectif')?.invalid" class="text-danger">
+                    L'objectif Initial est requis
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="ajustement" class="form-label">Nouvelle objectif <span class="text-danger">*</span></label>
+                <input type="number" class="form-control" id="ajustement" formControlName="ajustement" placeholder="Entrez le nouvel objectif"  />
+                <div *ngIf="exerciceForm.get('ajustement')?.touched && exerciceForm.get('ajustement')?.invalid" class="text-danger">
+                    Le nouvel objectif est requis
+                </div>
+            </div>
+
+            <hr>
+
+
+            <!-- Soumettre le Formulaire -->
+            <div class="d-flex justify-content-end">
+                <button  class="btn btn-secondary "  [disabled]="isEnable" (click)="activer($event)" >Modifier</button>
+                <button type="submit" class="btn btn-danger " [disabled]="!isEdit || !isEnable " (click)="delete(exercice)" >Supprimer</button>
+                <button type="submit" class="btn btn-success " [disabled]="!isEnable" (click)="Onsave()" >Valider</button>
+            </div>
+
+            <hr>
+
+        </form>
+    </div>
+</div>

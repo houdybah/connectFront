@@ -1,0 +1,30 @@
+<div class="card">
+    <div class="card-body">
+        <ul ngbNav #Arrow="ngbNav" [activeId]="1" [destroyOnHide]="false" class="nav nav-pills arrow-navtabs nav-success bg-light mb-3">
+            <li [ngbNavItem]="1">
+                <a ngbNavLink>
+                    <span class="d-block d-sm-none"><i class="mdi mdi-home-variant"></i></span>
+                    <span class="d-sm-block">Quotas Annuels</span>
+                </a>
+                <ng-template ngbNavContent>
+                    <app-quaota-annuel-list [unite]="innerUnite"></app-quaota-annuel-list>
+                </ng-template>
+            </li>
+            <li [ngbNavItem]="3" [disabled]="!isEdit">
+                <a ngbNavLink>
+                    <span class="d-block d-sm-none"><i class="mdi mdi-focus-auto"></i></span>
+                    <span class="d-sm-block">Quotas Mensuels</span>
+                </a>
+                <ng-template ngbNavContent>
+                    <app-mensualisation-list [unite]="innerUnite"></app-mensualisation-list>
+                </ng-template>
+            </li>
+
+        </ul>
+        <!-- Tab panes -->
+        <div class="tab-content text-muted">
+            <div [ngbNavOutlet]="Arrow"></div>
+        </div>
+    </div><!-- end card-body -->
+</div>
+

@@ -1,0 +1,358 @@
+<!-- Modifications dans realisation-en-date.component.html -->
+
+<app-breadcrumbs title="{{recetteTitle}}" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
+
+<div class="row" id="contactList">
+    <div class="col-lg-12">
+        <div class="card">
+
+            <div class="card-body border border-dashed border-end-0 border-start-0">
+                <div class="row g-2">
+
+                    <!-- Suppression du champ périodicité -->
+                    <!-- Le champ periodicité n'est plus affiché car fixé à JOUR -->
+
+                    <div class="col-xl-8 col-md-8">
+                        <div class="input-group">
+                            <span class="input-group-text">Du début du mois à la date du :</span>
+                            <input type="date"
+                                   class="form-control"
+                                   name="debut"
+                                   id="debut"
+                                   [(ngModel)]="debut"
+                                   (change)="onDateChange()"
+                                   placeholder="Sélectionner une date"
+                                   [max]="getMaxDate()"
+                                   [min]="getMinDate()"
+                                   [readonly]="isDebutReadonly"/>
+                            <!--
+                            <button class="btn btn-outline-secondary"
+                                    type="button"
+                                    (click)="toggleDebutReadonly()"
+                                    title="{{ isDebutReadonly ? 'Modifier' : 'Verrouiller' }}">
+                                <i class="{{ isDebutReadonly ? 'fas fa-edit' : 'fas fa-lock' }}"></i>
+                            </button>
+                            -->
+                        </div>
+
+                        <!-- Bouton pour réinitialiser à hier (optionnel)
+                        <div class="mt-1" *ngIf="!isDebutReadonly">
+                            <button class="btn btn-sm btn-outline-info"
+                                    type="button"
+                                    (click)="resetToYesterday()"
+                                    title="Réinitialiser à la date d'hier">
+                                <i class="fas fa-calendar-minus me-1"></i>
+                                Hier (J-1)
+                            </button>
+                        </div>-->
+                    </div>
+
+                    <div class="col-xl-4 col-md-4">
+                        <button class="btn btn-success w-100"
+                                (click)="rechercherRealisation()"
+                                [disabled]="isLoading || dateError || !debut">
+                            <span *ngIf="isLoading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                            {{ isLoading ? 'Chargement...' : 'Filtrer' }}
+                        </button>
+                    </div>
+
+                </div>
+
+                <div *ngIf="dateError" class="row g-2 mt-2">
+                    <div class="col-12">
+                        <div class="alert alert-danger" role="alert">
+                            {{ dateError }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Le reste du template reste inchangé -->
+            <div class="card-body border border-dashed border-end-0 border-start-0">
+                <div class="row g-2">
+                    <!--
+                    <div class="col-xl-2 col-md-2">
+                        <button class="btn btn-ghost-success w-100" (click)="exportToExcel()" [disabled]="isLoading || !isData || isExporting">
+                            <span *ngIf="isExporting" class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+                            {{ isExporting ? 'Export...' : 'Excel' }}
+                        </button>
+                    </div>
+                    <div class="col-xl-2 col-md-2">
+                        <button class="btn btn-ghost-info w-100" (click)="openAnalyseModal(analyseModalContent)" [disabled]="isLoading || !isData || isAnalysing">
+                            <span *ngIf="isAnalysing" class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+                            {{ isAnalysing ? 'Analyse...' : 'Analyser' }}
+                        </button>
+                    </div>
+                    -->
+                    <div class="col-xl-2 col-md-2">
+                        <button class="btn btn-ghost-secondary w-100" (click)="print()" [disabled]="isLoading || !isData || isPrinting">
+                            <span *ngIf="isPrinting" class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+                            {{ isPrinting ? 'Génération...' : 'PDF' }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div *ngIf="isData " class="estimation-view">
+                <div class="estimation-container">
+
+                    <!-- Titre principal
+                    <div class="main-title">
+                        SITUATION DES RECETTES
+                    </div>
+
+                     -->
+
+                    <!-- Section A - Recettes des Produits Pétroliers -->
+                    <div class="section-title">A - RECETTES DES PRODUITS PETROLIERS</div>
+
+                    <div class="subsection-title">A1 RECETTES REALISEES</div>
+                    <div class="line-item normal">
+                        <span>Compte 41-11-242 au 24/04/2025</span>
+                        <span class="dotted-line"></span>
+                        <span class="amount" id="recette-pp">{{ pageData!.data!.at(0)!.recettePP }}</span>
+                    </div>
+
+                    <div class="line-item bold">
+                        <span>Total A1</span>
+                        <span class="dotted-line"></span>
+                        <span class="amount" id="total-a1">{{ pageData!.data!.at(0)!.recettePP }}</span>
+                    </div>
+
+                    <div class="line-item bold">
+                        <span>Taux de Réalisation (A) à date</span>
+                        <span class="dotted-line"></span>
+                        <span class="amount" id="taux-a">{{ pageData!.data!.at(0)!.recettePP/(pageData!.data!.at(0)!.recettePP+4444555) }} %</span>
+                    </div>
+
+                    <div class="subsection-title">A2 RECETTES ATTENDUES (Décades à l'Encaisser)</div>
+                    <div class="line-item bold">
+                        <span>Total A= (A1+A2)</span>
+                        <span class="dotted-line"></span>
+                        <span class="amount" id="total-a">0,00</span>
+                    </div>
+
+                    <div class="line-item bold">
+                        <span>Prévision (A) du mois d'Avril 2025 (Hors CTSS)</span>
+                        <span class="dotted-line"></span>
+                        <span class="amount" id="prevision-a">{{pageData!.data!.at(0)!.recettePP+4444555}}</span>
+                    </div>
+
+                    <!-- Section B - Recettes Minières -->
+                    <div class="section-title">B - RECETTES MINIERES</div>
+
+                    <div class="subsection-title">B1 RECETTES REALISEES</div>
+                    <div class="line-item normal">
+                        <span>Compte 41-11-069 (Taxes sur l'exportation de l'Or)</span>
+                        <span class="dotted-line"></span>
+                        <span class="amount" id="taxes-or">-</span>
+                    </div>
+                    <div class="line-item normal">
+                        <span>Compte 41-11-242 (LES Particuliers OR)</span>
+                        <span class="dotted-line"></span>
+                        <span class="amount" id="particuliers-or">-</span>
+                    </div>
+                    <div class="line-item normal">
+                        <span>Compte 41-11-069 (Taxes sur l'export et l'extractions des Bauxites)</span>
+                        <span class="dotted-line"></span>
+                        <span class="amount" id="taxes-bauxite">-</span>
+                    </div>
+                    <div class="line-item normal">
+                        <span>Compte 20-12-02-00-39 (Gouv RG ACCORD SINO-GUINEEN)</span>
+                        <span class="dotted-line"></span>
+                        <span class="amount" id="accord-sino">-</span>
+                    </div>
+                    <div class="line-item normal">
+                        <span>Compte 20-12-01-0-109 (Contournante BOKé)</span>
+                        <span class="dotted-line"></span>
+                        <span class="amount" id="contournante-boke">-</span>
+                    </div>
+                    <div class="line-item normal">
+                        <span>Compte 41-11-242 au 24/04/2025(COBAD)</span>
+                        <span class="dotted-line"></span>
+                        <span class="amount" id="cobad">-</span>
+                    </div>
+
+                    <div class="line-item bold">
+                        <span>Total B1</span>
+                        <span class="dotted-line"></span>
+                        <span class="amount" id="total-b1">{{pageData!.data!.at(0)!.tme}}</span>
+                    </div>
+
+                    <div class="line-item bold">
+                        <span>Taux de Réalisation (B1/B) à date</span>
+                        <span class="dotted-line"></span>
+                        <span class="amount" id="taux-b">{{pageData!.data!.at(0)!.tme/(pageData!.data!.at(0)!.tme+122222)}}%</span>
+                    </div>
+
+                    <div class="subsection-title">B2 RECETTES ATTENDUES (Restes à realiser)</div>
+                    <div class="line-item bold">
+                        <span>Prévision (B) du mois d'Avril 2025 (Hors CTSS)</span>
+                        <span class="dotted-line"></span>
+                        <span class="amount" id="prevision-b">{{pageData!.data!.at(0)!.tme+122222}}</span>
+                    </div>
+
+                    <!-- Section C - Recettes sur Autres Produits -->
+                    <div class="section-title">C - RECETTES SUR AUTRES PRODUITS</div>
+
+                    <div class="subsection-title">C1 RECETTES REALISEES</div>
+                    <div class="line-item normal">
+                        <span>Compte 41-11-242 au 24/04/2025</span>
+                        <span class="dotted-line"></span>
+                        <span class="amount" id="recette-ap">-</span>
+                    </div>
+                    <div class="line-item normal">
+                        <span>Bordereau de liaison ADT/RSD( 39065)contentieux</span>
+                        <span class="dotted-line"></span>
+                        <span class="amount" id="contentieux">-</span>
+                    </div>
+                    <div class="line-item normal">
+                        <span>Provinces</span>
+                        <span class="dotted-line"></span>
+                        <span class="amount" id="provinces">-</span>
+                    </div>
+                    <div class="line-item normal">
+                        <span>Virements attendus (Compte 5114)</span>
+                        <span class="dotted-line"></span>
+                        <span class="amount" id="virements">-</span>
+                    </div>
+
+                    <div class="line-item bold">
+                        <span>Total C1</span>
+                        <span class="dotted-line"></span>
+                        <span class="amount" id="total-c1">{{pageData!.data!.at(0)!.recetteAP}}</span>
+                    </div>
+
+                    <div class="line-item bold">
+                        <span>Taux de Réalisation (C1/C) à date</span>
+                        <span class="dotted-line"></span>
+                        <span class="amount" id="taux-c">{{pageData!.data!.at(0)!.recetteAP/(pageData!.data!.at(0)!.recetteAP+3434)}} %</span>
+                    </div>
+
+                    <div class="subsection-title">C2 RECETTES ATTENDUES (Restes à realiser)</div>
+                    <div class="line-item bold">
+                        <span>Total C2</span>
+                        <span class="dotted-line"></span>
+                        <span class="amount" id="total-c2">-</span>
+                    </div>
+                    <div class="line-item bold">
+                        <span>Total C= (C1+C2)</span>
+                        <span class="dotted-line"></span>
+                        <span class="amount" id="total-c">{{pageData!.data!.at(0)!.recetteAP}}</span>
+                    </div>
+                    <div class="line-item bold">
+                        <span>Prévision (C) du mois d'Avril 2025 (Hors CTSS)</span>
+                        <span class="dotted-line"></span>
+                        <span class="amount" id="prevision-c">{{pageData!.data!.at(0)!.recetteAP+3434}}</span>
+                    </div>
+
+                    <!-- Récapitulatif -->
+                    <div class="recapitulatif">
+                        <div class="section-title">D - RECAPITULATIF</div>
+
+                        <div class="line-item bold">
+                            <span>C1 Prévisions globales hors CTSS Avril 2025</span>
+                            <span class="dotted-line"></span>
+                            <span class="amount highlight" id="previsions-globales">{{ pageData!.data!.at(0)!.recettePP + pageData!.data!.at(0)!.recetteAP + pageData!.data!.at(0)!.tme + 3434 + 122222 + 4444555 }}</span>
+                        </div>
+
+                        <div class="line-item bold">
+                            <span>C2 Réalisations globales hors CTSS à Date</span>
+                            <span class="dotted-line"></span>
+                            <span class="amount highlight" id="realisations-globales">{{ pageData!.data!.at(0)!.recettePP + pageData!.data!.at(0)!.recetteAP + pageData!.data!.at(0)!.tme }}</span>
+                        </div>
+
+                        <div class="line-item bold">
+                            <span>C3 Taux de réalisations globales hors CTSS à date</span>
+                            <span class="dotted-line"></span>
+                            <span class="amount highlight" id="taux-global">{{ (pageData!.data!.at(0)!.recettePP + pageData!.data!.at(0)!.recetteAP + pageData!.data!.at(0)!.tme) / (pageData!.data!.at(0)!.recettePP + pageData!.data!.at(0)!.recetteAP + pageData!.data!.at(0)!.tme + 3434 + 122222 + 4444555) }}%</span>
+                        </div>
+                    </div>
+
+                    <!-- Notes -->
+                    <div class="note-section">
+                        <div class="note-title">NB1:</div>
+                        <div class="note-item">
+                            <span>Total encaissé au Compte 41-11-242 a</span>
+                            <span style="float: right;" id="nb1-total">0,00</span>
+                        </div>
+                        <div class="note-item">
+                            <span>Encaissements du mois</span>
+                            <span style="float: right;" id="nb1-mois">0,00</span>
+                        </div>
+                        <div class="note-item">
+                            <span>Virements régularisés</span>
+                            <span style="float: right;" id="nb1-virements">-</span>
+                        </div>
+                        <div class="note-item">
+                            <span>Subventions/Carburant</span>
+                            <span style="float: right;" id="nb1-subventions">0,00</span>
+                        </div>
+
+                        <div class="note-title">NB2:</div>
+                        <div class="note-item">
+                            <span>Subventions/Carburant</span>
+                            <span style="float: right;" id="nb2-subventions">-</span>
+                        </div>
+
+                        <div class="note-title">NB3:</div>
+                        <div class="note-item">
+                            <span>Subventions/Carburant</span>
+                            <span style="float: right;" id="nb3-subventions">-</span>
+                        </div>
+
+                        <div class="note-title">NB4:</div>
+                        <div class="note-item">
+                            <span>Subventions/Carburant</span>
+                            <span style="float: right;" id="nb4-subventions">-</span>
+                        </div>
+                    </div>
+
+                    <!-- Section finale -->
+                    <div class="final-section">
+                        <div class="final-item">
+                            <span>Prévisions globales yc RER et CTSS </span>
+                            <span id="previsions-avec-rer">-</span>
+                        </div>
+                        <div class="final-item">
+                            <span>Réalisations globales yc RER et CTSS à Date</span>
+                            <span id="realisations-avec-rer">-</span>
+                        </div>
+                        <div class="final-item">
+                            <span>Taux de réalisations globales Avec RER ET CTSS à date</span>
+                            <span id="taux-avec-rer">-</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- Le modal d'analyse reste inchangé -->
+<ng-template #analyseModalContent let-modal>
+    <div class="modal-header">
+        <h5 class="modal-title" id="analyseModalLabel">Analyse des Réalisations</h5>
+        <button type="button" class="btn-close" (click)="modal.dismiss('Cross click')" aria-label="Close"></button>
+    </div>
+    <div class="modal-body">
+        <div *ngIf="isAnalysing" class="text-center">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Analyse en cours...</span>
+            </div>
+            <p>Analyse en cours, veuillez patienter...</p>
+        </div>
+        <div *ngIf="!isAnalysing && analysisError" class="alert alert-danger">
+            {{ analysisError }}
+        </div>
+        <div *ngIf="!isAnalysing && !analysisError && analysisResult" [innerHTML]="analysisResult | safeHtml">
+        </div>
+        <div *ngIf="!isAnalysing && !analysisError && !analysisResult" class="alert alert-info">
+            Aucune analyse disponible pour le moment.
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Fermer</button>
+    </div>
+</ng-template>

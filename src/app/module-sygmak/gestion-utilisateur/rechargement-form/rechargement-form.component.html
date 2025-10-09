@@ -1,0 +1,65 @@
+<div class="modal-body">
+  <div class="container">
+    <form [formGroup]="entrepriseForm">
+      
+      <!-- Champ NIF -->
+      <div class="mb-3">
+        <label for="nif" class="form-label fw-bold">
+          Code NIF <span class="text-danger">*</span>
+        </label>
+        <div class="form-group">
+          <input
+            type="text"
+            class="form-control"
+            [formControl]="nifControl"
+            placeholder="Rechercher un NIF..."
+            (focus)="showUsersList()"
+          />
+
+          <div *ngIf="showUserList">
+            <div *ngIf="filterednif | async as nifList" class="dropdown">
+              <div *ngFor="let nif of nifList"
+                   class="dropdown-item"
+                   (click)="setSelectedUser(nif)">
+                {{ nif.nif }} - {{ nif.nomEntreprise }}
+              </div>
+            </div>
+          </div>
+
+          <input type="hidden" formControlName="nif" />
+
+          <div *ngIf="nifControlValue.length >= 6 && nifNotFound" class="text-danger mt-2">
+            Entreprise inexistante, veuillez la créer s'il vous plaît.
+          </div>
+        </div>
+      </div>
+
+      <!-- Champ Token -->
+      <!-- <div class="mb-3">
+        <label class="form-label">Saisir le Token <span class="text-danger">*</span></label>
+        <input type="text" class="form-control" formControlName="token" placeholder="Entrez le token" />
+        <div *ngIf="entrepriseForm.get('token')?.touched && entrepriseForm.get('token')?.invalid" class="text-danger">
+          Le token est requis
+        </div>
+      </div> -->
+
+      <!-- Champ Montant -->
+      <div class="mb-3">
+        <label class="form-label">Montant <span class="text-danger">*</span></label>
+        <input type="number" class="form-control" formControlName="montant" placeholder="Entrez le montant" />
+        <div *ngIf="entrepriseForm.get('montant')?.touched && entrepriseForm.get('montant')?.invalid" class="text-danger">
+          Le solde est requis
+        </div>
+      </div>
+
+      <!-- Bouton -->
+      <div class="d-flex justify-content-end">
+        <button type="submit" class="btn btn-success"
+                (click)="saveRechargementSolde()"
+                [disabled]="entrepriseForm.invalid">
+          Valider
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

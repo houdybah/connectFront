@@ -1,0 +1,17 @@
+<!-- Modal pour afficher le message après le chargement du fichier csv du FT BCRG  <h2><p class="text-success">{{data.message}}</p></h2>-->
+ 
+    <div class="modal-header">
+        <h4 class="modal-title">LOG DE CHARGEMENT DU FICHIER</h4>
+        <button type="button" class="btn-close" (click)="activeModal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+        <p>{{data.details[data.details.length-1]}}</p>
+        <p> <strong>Fichier : </strong> {{ data.filename }} </p>
+        <p *ngFor="let item of data.details"  class="text-danger" >
+            <b *ngIf="data.details.indexOf(item) < data.details.length-1">{{item}} ligne :{{data.details.indexOf(item) + 1}}</b>
+        </p>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="activeModal.close('Close click')">Close</button>
+    </div>
+

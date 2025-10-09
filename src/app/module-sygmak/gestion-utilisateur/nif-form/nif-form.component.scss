@@ -1,0 +1,107 @@
+.example-form {
+    min-width: 150px;
+    max-width: 500px;
+    width: 100%;
+  }
+  
+  .example-full-width {
+    width: 100%;
+  }
+  
+  .user-item {
+    font-size: 0.8rem;  /* Réduit la taille du texte */
+    border: 4px;      /* Enlève les bordures */
+    padding: 8px;      /* Ajuste le padding si nécessaire */
+  }
+  
+  .user-item:hover {
+    background-color: #f0f0f0; /* Optionnel : change la couleur de fond au survol */
+  }
+  
+
+
+
+
+  /* Styles généraux */
+  .nif-form {
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    max-width: 400px;
+    margin: auto;
+  }
+  
+  /* Champs du formulaire */
+  .form-group {
+    margin-bottom: 15px;
+  }
+  
+  label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 5px;
+    color: #333;
+  }
+  
+  .form-input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+    transition: border-color 0.3s ease-in-out;
+  }
+  
+  .form-input:focus {
+    border-color: #2563eb;
+    outline: none;
+  }
+  
+  /* Liste déroulante */
+  .dropdown {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-top: 5px;
+    max-height: 150px;
+    overflow-y: auto;
+  }
+  
+  .dropdown-item {
+    padding: 10px;
+    cursor: pointer;
+  }
+  
+  .dropdown-item:hover {
+    background: #f0f0f0;
+  }
+  
+  /* Boutons */
+  .form-actions {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .btn {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  
+  .cancel {
+    background: #ddd;
+  }
+  
+  .submit {
+    background: #2563eb;
+    color: white;
+  }
+  
+  .submit:hover {
+    background: #1d4ed8;
+  }
+
+  

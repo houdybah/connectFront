@@ -1,0 +1,34 @@
+<div class="card border m-1">
+    <div class="card-header">
+        <h3><u>Situations par code budget</u></h3>
+    </div>
+     <div class="table-responsive table-card">
+                    <table class="table align-middle table-nowrap" id="customerTable">
+                        <thead class="table-light text-muted">
+                        <tr>
+                            <th scope="col">Taxe code</th>
+                            <th scope="col">Description</th>
+                            <th scope="col">Code budget</th>
+                            <th scope="col">Ligne budget</th>
+                            <th scope="col">Designation</th>
+                             <th scope="col">Montant</th>
+                        </tr>
+                        </thead>
+                        <!--end thead <td>{{situation.finAmtDty | number:'1.0'}}</td>-->
+                        <tbody class="list form-check-all">
+                            @for(situation of situationCodeBudget; track $index){
+                            <tr>
+                                <td>{{situation.tax_COD}}</td>
+                                <td>{{situation.tax_DSC}}</td>
+                                <td>{{situation.bud_COD}}</td>
+                                <td>{{situation.bud_LIN}}</td>
+                                <td>{{situation.bud_DSC}}</td>
+                                <td>{{situation.sum_AMT_NEW}}</td>
+                                <!--<td>{{situation.finAmtDty | number:'1.0'}}</td>-->
+                            </tr>
+                            }
+                        </tbody>
+                    </table>
+                    <!--end table-->
+            </div>
+</div>

@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Liste des Transactions</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+</head>
+
+<body>
+  <div class=" mt-4">
+    <div class="card shadow-sm">
+      <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+        <h5><i class="fas fa-list"></i> Bulletin Global Décadaire</h5>
+      </div>
+
+      <!-- Formulaire de filtrage -->
+    
+      <form [formGroup]="decadaireForm" (ngSubmit)="onSubmit()" class="p-4 border rounded shadow-sm bg-light">
+        <div class="row g-4">
+          <!-- Première ligne -->
+          <div class="col-md-4">
+            <label for="bureau" class="form-label fw-bold">Bureau <span class="text-danger">*</span></label>
+             <select class="form-control" formControlName="bureau">
+              <option [ngValue]="null" disabled>
+                   Selectionner un Bureau</option>
+              <option  value="GNB04">GNB04</option>
+             
+          </select> 
+
+          <div *ngIf="formSubmitted && decadaireForm.get('bureau')?.hasError('required')" class="text-danger">
+            Le Bureau est requis
+          </div>
+            <!-- <input type="text" id="bureau" class="form-control" formControlName="bureau" placeholder="Saisir le bureau"> -->
+          </div>
+          
+          <div class="col-md-4">
+            <label for="nif" class="form-label fw-bold">Code NIF <span class="text-danger">*</span></label>
+            <div class="form-group">
+              <div class="input-wrapper">
+                <input
+                  type="text"
+                  class="form-control"
+                  [formControl]="nifControl"
+                  placeholder="Rechercher un nif..."
+                  (focus)="showUsersList()"
+                />
+              </div>    
+              <!-- Liste des utilisateurs -->
+              <div *ngIf="showUserList">
+                <div *ngIf="filterednif | async as nifList" class="dropdown">
+                  <div *ngFor="let nif of nifList" 
+                       class="dropdown-item" 
+                       (click)="setSelectedUser(nif)">
+                    {{ nif.nif }}
+                    {{ nif.nifNom }}
+                  </div>
+                </div>
+              </div>
+              
+              
+              <input type="hidden" formControlName="nif">
+            </div>
+            
+            <div *ngIf="formSubmitted && decadaireForm.get('nif')?.hasError('required')" class="text-danger" >
+              Le nif est requis
+            </div>
+          </div>
+          
+      
+           
+         <div class="col-md-4">
+            <label for="nomenclature" class="form-label fw-bold">Code nomenclature <span class="text-danger">*</span></label>
+            <div class="form-group">
+              <div class="input-wrapper">
+                <input
+                  type="text"
+                  class="form-control"
+                  [formControl]="nomenclatureControl"
+                  placeholder="Rechercher la nomenclature..."
+                  (focus)="showUsersListnomenclature()"
+                />
+              </div>    
+        
+              <div *ngIf="showUserListnomenclature">
+                <div *ngIf="filterednomenclature | async as nomenclatureList" class="dropdown">
+                  <div *ngFor="let nomenclature of nomenclatureList" 
+                       class="dropdown-item" 
+                       (click)="setSelectednomenclature(nomenclature)">
+                    {{ nomenclature.nomenclature }}   {{ nomenclature.tar_dsc }}  
+                    
+                  </div>
+                </div>
+              </div>
+              
+              
+              <input type="hidden" formControlName="nomenclature">
+            </div>
+            
+            <div *ngIf="formSubmitted && decadaireForm.get('nomenclature')?.hasError('required')" class="text-danger" >
+              La nomenclature est requis
+            </div>
+          </div>
+
+
+          <!-- Deuxième ligne -->
+         <div class="col-md-4">
+            <label for="regime" class="form-label fw-bold">Régime</label>
+            <input type="text" id="regime" class="form-control" formControlName="regime" placeholder="Saisir le régime">
+           
+          </div> 
+
+
+           <div class="col-md-4">
+  <label for="dateDebut">Date début <span class="text-danger">*</span></label>
+  <input type="date" id="dateDebut" formControlName="dateDebut" class="form-control"
+         [class.is-invalid]="formSubmitted && (decadaireForm.get('dateDebut')?.invalid || decadaireForm.errors?.['dateRangeInvalid'] || decadaireForm.errors?.['startDateFuture'])">
+  
+  <!-- Erreur champ requis -->
+  <div *ngIf="formSubmitted && decadaireForm.get('dateDebut')?.hasError('required')" class="text-danger">
+    La date de début est requise
+  </div>
+  
+  <!-- Erreur date dans le futur -->
+  <div *ngIf="formSubmitted && decadaireForm.errors?.['startDateFuture']" class="text-danger">
+    La date de début ne peut pas être dans le futur
+  </div>
+  
+  <!-- Erreur plage de dates invalide (affiché seulement sur le champ début) -->
+  <div *ngIf="formSubmitted && decadaireForm.errors?.['dateRangeInvalid']" class="text-danger">
+    La date de début ne peut pas être supérieure à la date de fin
+  </div>
+</div>
+
+<div class="col-md-4">
+  <label for="dateFin">Date fin <span class="text-danger">*</span></label>
+  <input type="date" id="dateFin" formControlName="dateFin" class="form-control"
+         [class.is-invalid]="formSubmitted && (decadaireForm.get('dateFin')?.invalid || decadaireForm.errors?.['dateRangeInvalid'] || decadaireForm.errors?.['endDateFuture'])">
+  
+  <!-- Erreur champ requis -->
+  <div *ngIf="formSubmitted && decadaireForm.get('dateFin')?.hasError('required')" class="text-danger">
+    La date de fin est requise
+  </div>
+  
+  <!-- Erreur date dans le futur -->
+  <div *ngIf="formSubmitted && decadaireForm.errors?.['endDateFuture']" class="text-danger">
+    La date de fin ne peut pas être dans le futur
+  </div>
+  
+  <!-- Message informatif pour la plage (optionnel, ou vous pouvez l'enlever si déjà affiché sur dateDebut) -->
+  <div *ngIf="formSubmitted && decadaireForm.errors?.['dateRangeInvalid']" class="text-warning">
+    Vérifiez que la période sélectionnée est cohérente
+  </div>
+</div>
+          <!-- Boutons d'action -->
+          <div class="col-md-4 d-flex justify-content-end mt-4">
+            <button type="submit" class="btn btn-primary w-100 me-2" >
+              <i class="fas fa-search"></i> Rechercher
+            </button>
+          </div>
+      
+         
+
+           <div class="col-md-4 d-flex justify-content-start mt-4">
+            <button type="button" class="btn btn-info w-100" (click)="exportToPdf()"   [disabled]="!pageData?.content?.length">
+              <i class="fas fa-file-pdf"></i> PDF
+            </button>
+          </div>
+             
+          <div class="col-md-3 d-flex justify-content-start mt-4">
+            <button type="button" class="btn btn-warning w-100" (click)="exportToExcel1()"   [disabled]="!pageData?.content?.length">
+              <i class="fas fa-file-excel"></i> Excel
+            </button>
+          </div>
+          
+        </div>
+      </form>
+      
+    
+      <br>
+   <div *ngIf="isLoading" class="d-flex justify-content-center my-3">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Chargement...</span>
+    </div>
+  </div>
+
+      <!-- Tableau des transactions -->
+      <div class="table-responsive">
+        <table class="table table-bordered">
+          <thead class="table-light">
+            <tr>
+           <th class="col-md-0.5">N°</th>
+              <th>Repertoire</th>
+              <th>Regime</th>
+              <th>N° d'enregistrement</th>
+              <th>Date</th>
+              <th>N° liq</th>
+              <th>Date</th>
+              <th>Valeur</th>
+              <th>Litrage 15</th>
+              <td>Bureau</td>
+              <th>Droit et Taxe</th>
+              <!-- <th>Actions</th> -->
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let transaction of pageData?.content; let i = index">
+              <td>{{ (pageSelectionne - 1) * nombreElementParPage + i + 1 }}</td>
+              <td>{{ transaction?.repertoire || '-' }}</td>
+              <td>{{ transaction?.regime || '-' }}</td>
+              <td>{{ transaction?.enregistrement || '-' }}</td>
+              <td>{{ transaction?.dateEnregistrement || '-' }}</td>
+              <td>{{ transaction?.liquidation || '-' }}</td>
+              <td>{{ transaction?.dateLiquidation || '-' }}</td>
+              <td>{{ transaction?.valeur || '-' }}</td>
+              <td>{{ transaction?.litrage15 || '-' }}</td>
+              <td>{{ transaction?.bureau || '-' }}</td>
+             
+              <td>{{ transaction?.droitstaxes | number:'1.0-0' }} GNF</td>
+              
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+     <div class="d-flex flex-wrap justify-content-between align-items-center mt-3">
+  <ngb-pagination
+    [collectionSize]="pageData.totalElements"
+    [(page)]="pageSelectionne"
+    [pageSize]="nombreElementParPage"
+    (pageChange)="onPageChange($event)"
+    [maxSize]="5"        
+    [rotate]="true"
+    [boundaryLinks]="true"
+    [ellipses]="true"
+    size="sm"
+    class="mb-2"
+  >
+  </ngb-pagination>
+
+  <div class="ms-3">
+    <select class="form-select form-select-sm"
+            style="width: auto; min-width: 180px;"
+            [(ngModel)]="nombreElementParPage"
+            (change)="onPageSizeChange()">
+      <option [ngValue]="5">5 éléments par page</option>
+      <option [ngValue]="10">10 éléments par page</option>
+      <option [ngValue]="20">20 éléments par page</option>
+    </select>
+  </div>
+</div>
+
+    <!-- Affichage du message d'erreur -->
+  <div *ngIf="errorMessage" class="alert alert-danger mt-3">
+    <i class="fas fa-exclamation-circle"></i> {{ errorMessage }}
+  </div>
+    </div>
+  <!-- </div> -->
+
+  <div id="printable-section" class="d-none">
+    <!-- En-tête imprimable -->
+    <div class="printable-header">
+      <div class="card-header bg-primary text-white d-flex justify-content-center align-items-center">
+        <h2><i class="fas fa-list"></i> Bulletin Global Décadaire</h2>
+      </div>
+      
+    
+      <div class="row g-3 mt-4">
+        <!-- Première ligne (3 éléments en haut) -->
+        <div class="col-4 mb-3">
+          <strong>Bureau : </strong>
+          {{ decadaireForm.value.bureau }}
+        </div>
+        <div class="col-4 mb-3">
+          <strong>Code NIF : </strong>
+          {{ decadaireForm.value.nifCode }}
+        </div>
+        <div class="col-4 mb-3">
+          <strong>Nomenclature : </strong>
+          {{ decadaireForm.value.nomenclature    }}
+          <tr *ngFor="let transaction of pageData?.content">
+            <td>{{ transaction?.gds_dsc || '-' }}</td>
+          </tr>
+          
+        </div>
+      </div>
+
+      <div class="row g-3 mt-4">
+        <!-- Première ligne (3 éléments en haut) -->
+        <div class="col-4 mb-3">
+          <strong>Régime : </strong>
+          {{ decadaireForm.value.regime }}
+        </div>
+        <div class="col-4 mb-3">
+          <strong>Date de début : </strong>
+          {{ decadaireForm.value.dateDebut | date }}
+          
+        </div>
+        <div class="col-4 mb-3">
+          <strong>Date de fin : </strong>
+          {{ decadaireForm.value.dateFin | date }}
+        </div>
+      </div>
+      
+    
+     
+    
+  
+    <!-- Tableau des transactions -->
+     
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>N°</th>
+          <th class="col-md-2">Repertoire</th>
+          <th class="col-md-2" >Regime</th>
+          <th class="col-md-2">N° reg</th>
+          <th class="col-md-2">Date</th>
+          <th class="col-md-2">N° liq</th>
+          <th class="col-md-2">Date</th>
+          <!-- <th>Bureau</th> -->
+          <th class="col-md-3">Valeur</th>
+          <th class="col-md-2">Litrage 15</th>
+          <th class="col-md-3">Droit et Taxe</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let transaction of pageData?.content; let i = index">
+          <td class="col-md-0.5">{{ (pageSelectionne - 1) * nombreElementParPage + i + 1 }}</td>
+          <td class="col-md-3">{{ transaction?.repertoire || '-' }}</td>
+          <td class="col-md-2">{{ transaction?.regime || '-' }}</td>
+          <td class="col-md-2">{{ transaction?.enregistrement || '-' }}</td>
+          <td class="col-md-2">{{ transaction?.dateEnregistrement || '-' }}</td>
+          <td class="col-md-2">{{ transaction?.liquidation || '-' }}</td>
+          <td class="col-md-2">{{ transaction?.dateLiquidation || '-' }}</td>
+          <!-- <td>{{ transaction?.bureau || '-' }}</td> -->
+          <td class="col-md-3">{{ transaction?.valeur || '-' }}</td>
+          <td class="col-md-2">{{ transaction?.litrage15 || '-' }}</td>
+          <td class="col-md-3">{{ transaction?.droitstaxes || '-' }}</td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <!-- Lignes pour les totaux -->
+        <tr>
+          <td colspan="7" class="text-end"><strong>Total Entreprise:</strong></td>
+          <td><strong>{{ getTotalValeur() }}</strong></td>
+          <td><strong>{{ getTotalLitrage() | number }}</strong></td>
+          <td><strong>{{ getTotalDroitsTaxes() }}</strong></td>
+        </tr>
+      </tfoot>
+    </table>
+  
+    <!-- Informations pour signatures sur la même ligne -->
+     <br>
+     <br>
+    <div class="row">
+      <div class="col-12 d-flex justify-content-between">
+        <div class="col-4">
+          <strong>LE CHEF COMPTABLE :</strong><br><br>
+        </div>
+        <div class="col-4">
+          <strong>REPRESENTANT SGP :</strong><br><br>
+        </div>
+        <div class="col-4">
+          <strong>LE CHEF DE BUREAU :</strong><br><br>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+  <!--Ajouter des modals pour l'impression de la declaration et du quittance -->
+
+  <!-- Modal pour l'impression de la déclaration -->
+<div class="modal fade" id="declarationModal" tabindex="-1" aria-labelledby="declarationModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title" id="declarationModalLabel">Impression de la Déclaration</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="declaration-print-content">
+          <div class="text-center mb-4">
+            <h4>Déclaration de Douane</h4>
+            <h5>N° {{ transactionSelectionnee?.enregistrement }}</h5>
+          </div>
+          
+          <div class="row mb-3">
+            <div class="col-6">
+              <strong>Répertoire:</strong> {{ transactionSelectionnee?.repertoire }}
+            </div>
+            <div class="col-6">
+              <strong>Régime:</strong> {{ transactionSelectionnee?.regime }}
+            </div>
+          </div>
+          
+          <div class="row mb-3">
+            <div class="col-6">
+              <strong>Date d'enregistrement:</strong> {{ transactionSelectionnee?.dateEnregistrement }}
+            </div>
+            <div class="col-6">
+              <strong>Bureau:</strong> {{ transactionSelectionnee?.bureau }}
+            </div>
+          </div>
+          
+          <div class="row mb-3">
+            <div class="col-6">
+              <strong>Valeur:</strong> {{ transactionSelectionnee?.valeur }}
+            </div>
+            <div class="col-6">
+              <strong>Litrage 15:</strong> {{ transactionSelectionnee?.litrage15 }}
+            </div>
+          </div>
+          
+          <div class="row mb-3">
+            <div class="col-12">
+              <strong>Droits et Taxes:</strong> {{ transactionSelectionnee?.droitstaxes }}
+            </div>
+          </div>
+          
+          <div class="row mt-5">
+            <div class="col-6 text-center">
+              <p><strong>Signature du Déclarant</strong></p>
+              <div class="signature-line"></div>
+            </div>
+            <div class="col-6 text-center">
+              <p><strong>Signature du Douanier</strong></p>
+              <div class="signature-line"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+        <button type="button" class="btn btn-primary" (click)="imprimerContenuDeclaration()">
+          <i class="fas fa-print"></i> Imprimer
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal pour l'impression de la quittance -->
+<div class="modal fade" id="quittanceModal" tabindex="-1" aria-labelledby="quittanceModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header bg-success text-white">
+        <h5 class="modal-title" id="quittanceModalLabel">Impression de la Quittance</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="quittance-print-content">
+          <div class="text-center mb-4">
+            <h4>Quittance de Paiement</h4>
+            <h5>N° {{ transactionSelectionnee?.liquidation }}</h5>
+          </div>
+          
+          <div class="row mb-3">
+            <div class="col-6">
+              <strong>Référence déclaration:</strong> {{ transactionSelectionnee?.enregistrement }}
+            </div>
+            <div class="col-6">
+              <strong>Date de liquidation:</strong> {{ transactionSelectionnee?.dateLiquidation }}
+            </div>
+          </div>
+          
+          <div class="row mb-3">
+            <div class="col-6">
+              <strong>Bureau:</strong> {{ transactionSelectionnee?.bureau }}
+            </div>
+            <div class="col-6">
+              <strong>Régime:</strong> {{ transactionSelectionnee?.regime }}
+            </div>
+          </div>
+          
+          <div class="row mb-4">
+            <div class="col-12">
+              <strong>Montant payé:</strong> {{ transactionSelectionnee?.droitstaxes }}
+            </div>
+          </div>
+          
+          <div class="row mb-3">
+            <div class="col-12">
+              <p class="text-center font-italic">Quittance certifiant le règlement des droits et taxes douanières</p>
+            </div>
+          </div>
+          
+          <div class="row mt-5">
+            <div class="col-6 text-center">
+              <p><strong>Signature du Caissier</strong></p>
+              <div class="signature-line"></div>
+            </div>
+            <div class="col-6 text-center">
+              <p><strong>Cachet du Service</strong></p>
+              <div class="stamp-placeholder"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+        <button type="button" class="btn btn-success" (click)="imprimerContenuQuittance()">
+          <i class="fas fa-print"></i> Imprimer
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+
+
+
+

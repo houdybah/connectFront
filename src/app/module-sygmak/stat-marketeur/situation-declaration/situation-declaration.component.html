@@ -1,0 +1,320 @@
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Liste des Transactions</title>
+ 
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+ 
+</head>
+
+  <div class="card shadow-sm">
+    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+      <h5><i class="fas fa-list"></i> Situations de toute les Declarations</h5>
+    </div>
+ 
+    <form [formGroup]="nifForm" (ngSubmit)="onSubmit()" class="p-4 border rounded shadow-sm bg-light">
+      <div class="row g-4">
+
+
+
+        
+       
+        <div class="col-md-4">
+          <label for="nif" class="form-label fw-bold">Code NIF <span class="text-danger">*</span></label>
+        <div class="form-group">
+          <div class="input-wrapper">
+            <input
+              type="text"
+              class="form-control"
+              [formControl]="nifControl"
+              placeholder="Rechercher un nif..."
+              (focus)="showUsersList()"
+            />
+          </div>
+          
+          <!-- Liste des utilisateurs -->
+          <div *ngIf="showUserList">
+            <div *ngIf="filterednif | async as nifList" class="dropdown">
+              <div *ngFor="let nif of nifList" 
+                   class="dropdown-item" 
+                   (click)="setSelectedUser(nif)">
+                {{ nif.nif }}
+                   {{ nif.nifNom }}
+              </div>
+            </div>
+          </div>
+          
+          
+          <input type="hidden" formControlName="nif">
+        </div>
+
+
+        <div *ngIf="formSubmitted && nifForm.get('nif')?.hasError('required')" class="text-danger" >
+              Le nif est requi
+            </div>
+        </div>
+        
+    
+       
+        <div class="col-md-4">
+          <label for="statut" class="form-label fw-bold">Statut <span class="text-danger">*</span></label>
+
+          
+          <select class="form-control" formControlName="statut">
+         
+            <option [ngValue]="null" disabled>
+                 Selectionner un Statut</option>
+            <option  value="ALL">tout</option>
+            <option  value="NOT_NULL">quitance</option>
+            <option  value="NULL">nonquitance</option>
+        </select>
+         
+        </div>
+
+
+                 <div class="col-md-4">
+            <label for="nomenclature" class="form-label fw-bold">Code Produit <span class="text-danger">*</span></label>
+            <div class="form-group">
+              <div class="input-wrapper">
+                <input
+                  type="text"
+                  class="form-control"
+                  [formControl]="nomenclatureControl"
+                  placeholder="Rechercher la nomenclature..."
+                  (focus)="showUsersListnomenclature()"
+                />
+              </div>    
+        
+              <div *ngIf="showUserListnomenclature">
+                <div *ngIf="filterednomenclature | async as nomenclatureList" class="dropdown">
+                  <div *ngFor="let nomenclature of nomenclatureList" 
+                       class="dropdown-item" 
+                       (click)="setSelectednomenclature(nomenclature)">
+                    {{ nomenclature.nomenclature }}   {{ nomenclature.tar_dsc }}  
+                    
+                  </div>
+                </div>
+              </div>
+              
+              
+              <input type="hidden" formControlName="nomenclature">
+            </div>
+            
+            <div *ngIf="formSubmitted && nifForm.get('nomenclature')?.hasError('required')" class="text-danger" >
+              La nomenclature est requis
+            </div>
+          </div>
+    
+        
+    
+       <div class="col-md-3">
+  <label for="dateDebut">Date début <span class="text-danger">*</span></label>
+  <input type="date" id="dateDebut" formControlName="dateDebut" class="form-control"
+         [class.is-invalid]="formSubmitted && (nifForm.get('dateDebut')?.invalid || nifForm.errors?.['dateRangeInvalid'] || nifForm.errors?.['startDateFuture'])">
+  
+  <!-- Erreur champ requis -->
+  <div *ngIf="formSubmitted && nifForm.get('dateDebut')?.hasError('required')" class="text-danger">
+    La date de début est requise
+  </div>
+  
+  <!-- Erreur date dans le futur -->
+  <div *ngIf="formSubmitted && nifForm.errors?.['startDateFuture']" class="text-danger">
+    La date de début ne peut pas être dans le futur
+  </div>
+  
+  <!-- Erreur plage de dates invalide (affiché seulement sur le champ début) -->
+  <div *ngIf="formSubmitted && nifForm.errors?.['dateRangeInvalid']" class="text-danger">
+    La date de début ne peut pas être supérieure à la date de fin
+  </div>
+</div>
+
+<div class="col-md-3">
+  <label for="dateFin">Date fin <span class="text-danger">*</span></label>
+  <input type="date" id="dateFin" formControlName="dateFin" class="form-control"
+         [class.is-invalid]="formSubmitted && (nifForm.get('dateFin')?.invalid || nifForm.errors?.['dateRangeInvalid'] || nifForm.errors?.['endDateFuture'])">
+  
+  <!-- Erreur champ requis -->
+  <div *ngIf="formSubmitted && nifForm.get('dateFin')?.hasError('required')" class="text-danger">
+    La date de fin est requise
+  </div>
+  
+  <!-- Erreur date dans le futur -->
+  <div *ngIf="formSubmitted && nifForm.errors?.['endDateFuture']" class="text-danger">
+    La date de fin ne peut pas être dans le futur
+  </div>
+  
+  <!-- Message informatif pour la plage (optionnel, ou vous pouvez l'enlever si déjà affiché sur dateDebut) -->
+  <div *ngIf="formSubmitted && nifForm.errors?.['dateRangeInvalid']" class="text-warning">
+    Vérifiez que la période sélectionnée est cohérente
+  </div>
+</div>
+
+      
+        <div class="col-md-3 d-flex align-items-end">
+          <button class="btn btn-primary w-100" type="submit" >
+            <i class="fas fa-search"></i> Rechercher
+          </button>
+        </div>
+         <!-- Boutons d'export -->
+      <div class="col-md-3 d-flex align-items-end mt-3 gap-2">
+        <button class="btn btn-info w-50" type="button"   [disabled]="!pageData?.content?.length" (click)="exportToTPdf()">
+          <i class="fas fa-print"></i> PDF
+        </button>
+        <button class="btn btn-info w-50" type="button"   [disabled]="!pageData?.content?.length" (click)="exportToTExcel()">
+          <i class="fas fa-file-excel"></i> EXCEL
+        </button>
+      </div>
+       
+      </div>
+    </form>
+    
+    
+
+
+<div *ngIf="!isAuthorized" class="alert alert-danger mt-3">
+  <i class="fas fa-exclamation-circle"></i> {{ errorMessage }}
+</div>
+
+
+  <div *ngIf="isLoading" class="d-flex justify-content-center my-3">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Chargement...</span>
+    </div>
+  </div>
+
+
+
+
+
+<div *ngIf="isAuthorized" class="card mb-4">
+  <div class="card-header bg-primary text-white">
+    <h5 class="mb-0"><i class="fas fa-table"></i> Liste de toute les Declarations</h5>
+  </div>
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table table-bordered table-striped">
+        <thead class="table-light">
+          <tr>
+            <th class="col-md-0.5">N°</th>
+              <th class="col-md-2">Entreprise</th>
+              <th class="col-md-1">Code NIF</th>
+              <th class="col-md-0.5">Bureau</th>
+              <th class="col-md-0">Déc.</th>
+              <th class="col-md-2">Nom Déc</th>
+              <th class="col-md-1">Déc Eng</th>
+              <th class="col-md-1">Date Eng</th>
+              <th class="col-md-1">Déc Liq</th>
+              <th class="col-md-1">Date Liq</th>
+              <th class="col-md-0">Quit</th>
+              <th class="col-md-1">Date</th>
+              <th class="col-md-1">taxe</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let declaration of pageData.content; let i = index">
+            <td>{{ (pageSelectionne - 1) * nombreElementParPage + i + 1 }}</td>
+           
+               <td>{{ declaration.cmp_con_nam }}</td>
+              <td>{{ declaration.cmp_con_cod }}</td>
+                  <td>{{ declaration.ideCuoCod }}</td>
+              <td>{{ declaration.decCod }}</td>
+              <td>{{ declaration.decNam }}</td>
+              <td>{{ declaration.enregistrement }}</td>
+              <td>{{ declaration.ideRegDat | date: 'yyyy-MM-dd' }}</td>
+              <td>{{ declaration.liquidation }}</td>
+              <td>{{ declaration.ideAstDat | date: 'yyyy-MM-dd' }}</td>
+              <td>{{ declaration.quittance }}</td>
+              <td>{{ declaration.ideRcpDat | date: 'yyyy-MM-dd' }}</td>
+              <td>{{ declaration.droitstaxes | number:'1.0-0' }} GNF</td>
+          </tr>
+           <tr *ngIf="!pageData.content || pageData.content.length === 0">
+              <td colspan="12" class="text-center py-3">Aucune déclaration trouvée</td>
+            </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+
+
+  <!-- Bloc Pagination et Sélection du nombre d'éléments par page -->
+  <div class="d-flex justify-content-between align-items-center p-2" *ngIf="!isLoading && nombreTotalEnregistrement > 0">
+    <!-- Information sur les résultats -->
+    <div>
+      <span class="text-muted">
+        Affichage de {{ (pageSelectionne - 1) * nombreElementParPage + 1 }} à 
+        {{ pageSelectionne * nombreElementParPage > nombreTotalEnregistrement ? nombreTotalEnregistrement : pageSelectionne * nombreElementParPage }}
+        sur {{ nombreTotalEnregistrement }} entrées
+      </span>
+    </div>
+    
+    <!-- Pagination -->
+    <nav aria-label="Navigation des pages">
+      <ul class="pagination mb-0">
+        <!-- Bouton première page -->
+        <li class="page-item" [class.disabled]="pageSelectionne === 1">
+          <a class="page-link" href="javascript:void(0)" (click)="goToFirstPage()" aria-label="Première">
+            <span aria-hidden="true">&laquo;&laquo;</span>
+          </a>
+        </li>
+        
+        <!-- Bouton page précédente -->
+        <li class="page-item" [class.disabled]="pageSelectionne === 1">
+          <a class="page-link" href="javascript:void(0)" (click)="goToPreviousPage()" aria-label="Précédent">
+            <span aria-hidden="true">&laquo;</span>
+          </a>
+        </li>
+        
+        <!-- Numéros de pages -->
+        <ng-container *ngFor="let page of pages">
+          <li *ngIf="page !== -1" class="page-item" [class.active]="pageSelectionne === page">
+            <a class="page-link" href="javascript:void(0)" (click)="goToPage(page)">{{ page }}</a>
+          </li>
+          <li *ngIf="page === -1" class="page-item disabled">
+            <span class="page-link">...</span>
+          </li>
+        </ng-container>
+        
+        <!-- Bouton page suivante -->
+        <li class="page-item" [class.disabled]="pageSelectionne === totalPages || totalPages === 0">
+          <a class="page-link" href="javascript:void(0)" (click)="goToNextPage()" aria-label="Suivant">
+            <span aria-hidden="true">&raquo;</span>
+          </a>
+        </li>
+        
+        <!-- Bouton dernière page -->
+        <li class="page-item" [class.disabled]="pageSelectionne === totalPages || totalPages === 0">
+          <a class="page-link" href="javascript:void(0)" (click)="goToLastPage()" aria-label="Dernière">
+            <span aria-hidden="true">&raquo;&raquo;</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+    
+    <!-- Sélection du nombre d'éléments par page -->
+<div class="ms-3">
+    
+      <select 
+      class="form-select form-select-sm" 
+      style="width: auto;" 
+      [(ngModel)]="nombreElementParPage"
+       (change)="onPageSizeChange()">
+         <option [ngValue]="5">5 éléments par page</option>
+      <option [ngValue]="10">10 éléments par page</option>
+      <option [ngValue]="20">20 éléments par page</option>
+      </select>
+    </div>
+  </div>
+
+    <!-- Affichage du message d'erreur -->
+  <div *ngIf="errorMessage" class="alert alert-danger mt-3">
+    <i class="fas fa-exclamation-circle"></i> {{ errorMessage }}
+  </div>
+
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>

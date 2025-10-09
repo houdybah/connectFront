@@ -1,0 +1,113 @@
+.budget-container {
+  padding: 20px;
+
+  h2 {
+    margin-bottom: 5px;
+    color: #333;
+  }
+
+  .controls {
+    margin-bottom: 15px;
+
+    button {
+      margin-right: 10px;
+    }
+  }
+
+  .table-responsive {
+    overflow-x: auto;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+
+    th {
+      background-color: #343a40;
+      color: white;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      text-align: center;
+    }
+
+    td, th {
+      padding: 8px;
+      vertical-align: middle;
+    }
+
+    input {
+      width: 100%;
+      padding: 5px;
+      border: 1px solid #ced4da;
+      border-radius: 4px;
+
+      &:focus {
+        outline: none;
+        border-color: #80bdff;
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+      }
+
+      &.text-right {
+        text-align: right;
+      }
+    }
+
+    .text-right {
+      text-align: right;
+    }
+
+    .subtotal-row {
+      background-color: #f8f9fa;
+      font-weight: bold;
+
+      td {
+        border-top: 2px solid #dee2e6;
+        border-bottom: 2px solid #dee2e6;
+      }
+    }
+
+    .total-row {
+      background-color: rgba(0, 123, 255, 0.1);
+      font-weight: bold;
+
+      td {
+        border-top: 2px solid #007bff;
+        border-bottom: 2px solid #007bff;
+      }
+    }
+
+    .special-row {
+      background-color: #fff3cd;
+
+      td {
+        padding: 5px;
+      }
+    }
+  }
+
+  .btn-danger {
+    color: #fff;
+    background-color: #dc3545;
+    border-color: #dc3545;
+
+    &:hover {
+      background-color: #c82333;
+      border-color: #bd2130;
+    }
+  }
+}
+
+// Animation pour les changements de valeur
+@keyframes highlight {
+  0% {
+    background-color: rgba(255, 193, 7, 0.5);
+  }
+  100% {
+    background-color: transparent;
+  }
+}
+
+.highlight-change {
+  animation: highlight 1s ease-in-out;
+}

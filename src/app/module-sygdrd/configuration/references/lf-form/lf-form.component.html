@@ -1,0 +1,64 @@
+<div class="modal-body">
+    <div class="container">
+        <form  [formGroup]="loisFinanceForm" >
+
+            <div class="row mb-3">
+                <div class="col-6">
+                    <label for="uuidEexercice" class="form-label">Exercice <span class="text-danger">*</span></label>
+                    <select class="form-control" id="uuidEexercice" formControlName="uuidEexercice">
+                        <option disabled>Selectionner l'exercice</option>
+                        <option *ngFor="let exercice of exercices" value="{{exercice.uuid}}">{{exercice.annee}}</option>
+                    </select>
+                    <div *ngIf="loisFinanceForm.get('uuidEexercice')?.touched && loisFinanceForm.get('uuidEexercice')?.invalid" class="text-danger">
+                        L'Exercice est requis
+                    </div>
+                </div>
+
+                <div class="col-6">
+                    <label for="type" class="form-label">Type <span class="text-danger">*</span></label>
+                    <select class="form-control" id="type" formControlName="type">
+                        <option disabled>Selectionner le type</option>
+                        <option *ngFor="let typeLoisFinance of typesLoisFinances" value="{{typeLoisFinance}}">{{typeLoisFinance}}</option>
+                    </select>
+                    <div *ngIf="loisFinanceForm.get('type')?.touched && loisFinanceForm.get('type')?.invalid" class="text-danger">
+                        Le type est requis
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-6">
+                    <label for="reference" class="form-label">Reference <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="reference" formControlName="reference" placeholder="Entrez la refrence de loisFinance"  />
+                    <div *ngIf="loisFinanceForm.get('reference')?.touched && loisFinanceForm.get('reference')?.invalid" class="text-danger">
+                        La reference est requise
+                    </div>
+                </div>
+
+                <div class="col-6">
+                    <label for="qta" class="form-label">Total Quota Douanes <span class="text-danger">*</span></label>
+                    <input type="number" class="form-control" id="qta" formControlName="qta" placeholder="Entrez le quota de loisFinance"  />
+                    <div *ngIf="loisFinanceForm.get('qta')?.touched && loisFinanceForm.get('qta')?.invalid" class="text-danger">
+                        La description est requise
+                    </div>
+                </div>
+            </div>
+
+            <hr>
+
+
+
+
+            <hr>
+            <!-- Soumettre le Formulaire -->
+            <div class="d-flex justify-content-end">
+                <button  class="btn btn-secondary "  [disabled]="isEnable" (click)="activer($event)" >Modifier</button>
+                <button type="submit" class="btn btn-danger " [disabled]="!isEdit || !isEnable " (click)="delete(loisFinance)" >Supprimer</button>
+                <button type="submit" class="btn btn-success " [disabled]="!isEnable" (click)="Onsave()" >Valider</button>
+            </div>
+
+            <hr>
+
+        </form>
+    </div>
+</div>

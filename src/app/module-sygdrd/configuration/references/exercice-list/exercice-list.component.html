@@ -1,0 +1,110 @@
+    <div class="row" id="contactList">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header d-flex align-items-center border-0">
+                <div class="flex-shrink-0">
+                    <div class="flax-shrink-0 hstack gap-2">
+                        <button class="btn btn-primary" (click)="openModal(content,null)">Ajouter</button>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body border border-dashed border-end-0 border-start-0">
+                <div class="row g-2">
+                    <div class="col-xl-4 col-md-6">
+                        <div class="search-box">
+                            <input type="text" name="searchTerm" class="form-control search" 
+                            [(ngModel)]="key" (ngModelChange)="getExercices();rechercherExercice();" placeholder="Rechercher..." >
+                            <i class="ri-search-line search-icon"></i>
+                        </div>
+                    </div>
+                    
+                </div>
+                
+                <!--end row-->
+            </div>
+            <div class="card-body">
+                <div class="table-responsive table-card">
+                    <table class="table align-middle table-nowrap" id="customerTable">
+                        <thead class="table-light text-muted">
+                        <tr>
+                            <th class="sort">Année</th>
+                            <th class="sort">Objectif</th>
+                            <th class="sort">Ajustement</th>
+                            <th>Action</th>
+                        </tr>
+                        </thead>
+                        <!--end thead-->
+                        <tbody class="list form-check-all">
+                            @for(exercice of pageData.data; track $index){
+                                <tr>
+                                    <td class="order_date">{{exercice.annee}}</td>
+                                    <td class="order_date">{{exercice.objectif }}</td> 
+                                    <td class="order_date">{{exercice.ajustement | number:'1.2-2'}}</td>
+                                    <td><a><i class="ri-edit-2-line" (click)="openModal(content,exercice)"></i></a></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    <!--end table-->
+                </div>
+                <div class="row justify-content-md-end align-items-md-center mt-3">
+                    <!-- Pagination -->
+                    <div class="col col-sm-6">
+                        <nav aria-label="Page navigation example">
+                            <ul class="pagination">
+                                <li class="page-item">
+                                    <!-- [hidden]="this.pageData.page.pageNumber>0" -->
+                                    <a class="page-link" aria-label="Previous" (click)="precedentPage()" >
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" aria-label="Previous">
+                                        {{this.pageData.page.pageNumber+1}}   sur  {{totalPage}}
+                                    </a>
+                                </li>
+                                <li class="page-item">
+                                    <!-- [hidden]="pageNumber<this.pageData.page.totalPages" -->
+                                    <a class="page-link"  aria-label="Next" (click)="prochainePage()" >
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                    <div class="col col-sm-6">
+                        <div class="text-md-right float-md-end listjs-pagination">
+                            <select class="form-select " style="width: auto; height: 2%;" [(ngModel)]="size" (change)="changeSize()">
+                                <option  value="10">10 elements par page</option>
+                                <option value="30">30 elements par page</option>
+                                <option value="50">50 elements par page</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- End Pagination -->
+                </div>
+            </div>
+
+        </div>
+        <!--end card-->
+    </div>
+    <!--end col-->
+</div>
+<!--end row-->
+
+<ng-template #content role="document" let-modal >
+    <div class="modal-header bg-primary p-3">
+        <h5 class="modal-title" id="exampleModalLabel">Formulaire Exercice</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <app-exercice-form [innerExercice]="outerExercice"></app-exercice-form>
+</ng-template>
+
+<ng-template #contentImpLF role="document" let-modal >
+    <div class="modal-header bg-primary p-3">
+        <h5 class="modal-title" id="imp">Importation LoisFinance</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal-Imp" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <app-lf-import></app-lf-import>
+</ng-template>

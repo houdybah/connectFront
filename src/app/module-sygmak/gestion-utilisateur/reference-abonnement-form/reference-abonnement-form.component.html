@@ -1,0 +1,47 @@
+<form [formGroup]="referenceAbonnementForm" (ngSubmit)="saveReferenceAbonnementForm()" class="p-4 bg-white rounded shadow-sm">
+  <div class="mb-3">
+    <label for="enumAbonnement" class="form-label fw-semibold">Type d'abonnement <span class="text-danger">*</span></label>
+    <select class="form-select" formControlName="enumAbonnement" id="enumAbonnement" aria-describedby="enumAbonnementHelp">
+      <option value="" disabled selected>-- Sélectionner --</option>
+      <option value="MENSUEL">Mensuel</option>
+      <option value="ANNUEL">Annuel</option>
+           <!-- <option value="JOURNALIER">Journalier</option> -->
+      <option value="TRIMESTRIEL">Trimestriel</option>
+    </select>
+    <div *ngIf="formSubmitted && referenceAbonnementForm.get('enumAbonnement')?.invalid" class="text-danger mt-1 small">
+      Veuillez sélectionner un type d'abonnement.
+    </div>
+  </div>
+
+  <div class="mb-3">
+    <label for="actif" class="form-label fw-semibold">Statut actif <span class="text-danger">*</span></label>
+    <select class="form-select" formControlName="actif" id="actif">
+      <option [value]="true">Actif</option>
+      <option [value]="false">Inactif</option>
+    </select>
+    <div *ngIf="formSubmitted && referenceAbonnementForm.get('actif')?.invalid" class="text-danger mt-1 small">
+      Veuillez sélectionner un statut.
+    </div>
+  </div>
+
+  <div class="mb-3">
+    <label for="montant" class="form-label fw-semibold">Montant (GNF) <span class="text-danger">*</span></label>
+    <input type="number" class="form-control" formControlName="montant" id="montant" placeholder="Entrer le montant">
+    <div *ngIf="formSubmitted && referenceAbonnementForm.get('montant')?.invalid" class="text-danger mt-1 small">
+      Veuillez entrer un montant valide.
+    </div>
+  </div>
+
+  <div class="mb-4">
+    <label for="dureeJours" class="form-label fw-semibold">Durée (en jours) <span class="text-danger">*</span></label>
+    <input type="number" class="form-control" formControlName="dureeJours" id="dureeJours" placeholder="Entrer la durée en jours">
+    <div *ngIf="formSubmitted && referenceAbonnementForm.get('dureeJours')?.invalid" class="text-danger mt-1 small">
+      Veuillez entrer une durée valide.
+    </div>
+  </div>
+
+  <div class="d-flex justify-content-end gap-2">
+    <button type="button" class="btn btn-outline-secondary" (click)="activeModal.dismiss()">Annuler</button>
+    <button type="submit" class="btn btn-primary" [disabled]="referenceAbonnementForm.invalid">Sauvegarder</button>
+  </div>
+</form>

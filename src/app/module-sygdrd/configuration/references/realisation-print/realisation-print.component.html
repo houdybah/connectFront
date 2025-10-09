@@ -1,0 +1,6 @@
+<div class="row control-box m-2">
+    <div class="pull-right btn-group col-4">
+        <button class="btn btn-outline-primary btn-lg" (click)="print()">Imprimer</button>
+    </div>
+</div>
+<a [hidden]="!reportResult.name" href="assets/reports/{{reportResult.name}}" target="_blank">Cliquer Ici pour Imprimer !</a>

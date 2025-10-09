@@ -10,40 +10,40 @@
         <i class="fas fa-layer-group"></i>
         COMPOSER LA LIGNE
       </h1>
-      <p class="header-subtitle" *ngIf="ligne">
-        Ligne {{ ligne.numero }} - {{ formatTime(ligne.heure) }} - {{ ligne.date | date:'dd/MM/yyyy' }}
+      <p class="header-subtitle" *ngIf="Ligne">
+        Ligne {{ Ligne.numero }} - {{ formatTime(Ligne.heure) }} - {{ Ligne.date | date:'dd/MM/yyyy' }}
       </p>
     </div>
   </div>
   
   <!-- Info ligne -->
-  <div class="ligne-info" *ngIf="ligne">
+  <div class="ligne-info" *ngIf="Ligne">
     <div class="info-card">
       <i class="fas fa-clock"></i>
       <div class="info-content">
         <span class="info-label">Heure</span>
-        <span class="info-value">{{ formatTime(ligne.heure) }}</span>
+        <span class="info-value">{{ formatTime(Ligne.heure) }}</span>
       </div>
     </div>
     <div class="info-card">
       <i class="fas fa-calendar"></i>
       <div class="info-content">
         <span class="info-label">Date</span>
-        <span class="info-value">{{ ligne.date | date:'dd/MM/yyyy' }}</span>
+        <span class="info-value">{{ Ligne.date | date:'dd/MM/yyyy' }}</span>
       </div>
     </div>
     <div class="info-card">
       <i class="fas fa-users"></i>
       <div class="info-content">
         <span class="info-label">Capacité</span>
-        <span class="info-value">{{ ligne.capacite }} places</span>
+        <span class="info-value">{{ Ligne.capacite }} places</span>
       </div>
     </div>
     <div class="info-card">
       <i class="fas fa-chart-pie"></i>
       <div class="info-content">
         <span class="info-label">Occupation</span>
-        <span class="info-value">{{ getOccupation() }}/{{ ligne.capacite }}</span>
+        <span class="info-value">{{ getOccupation() }}/{{ Ligne?.capacite }}</span>
         <div class="occupation-bar">
           <div class="occupation-fill" [style.width.%]="getOccupationPercentage()"></div>
         </div>

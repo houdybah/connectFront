@@ -1,0 +1,108 @@
+<head>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+
+<div class="card shadow-lg rounded-4">
+  <div class="card-header bg-primary text-white rounded-top-4">
+    <div class="d-flex justify-content-between align-items-center">
+      <h5 class="mb-0">
+        <i class="fas fa-building me-2"></i> Liste des Abonnenements
+      </h5>
+      <input
+        type="text"
+        [formControl]="rechercheParDateControl"
+        placeholder="Rechercher par Date ou Nif"
+        class="form-control"
+        style="max-width: 250px;"
+      />
+      <button class="btn btn-light text-primary fw-bold shadow-sm" (click)="openModal(modal, null)">
+        <i class="bi bi-plus-circle me-1"></i> Ajouter
+      </button>
+    </div>
+    <h2 class="mt-2 mb-0 small text-black-50 fst-italic">
+      <i class="fas fa-info-circle me-1"></i> Visualisez et gérez facilement les abonnements actifs de votre entreprise.
+    </h2>
+  </div>
+
+  <div class="card-body bg-light">
+    <table class="table table-bordered text-center mb-0">
+      <thead class="table-light">
+        <tr>
+          <th scope="col">N°</th>
+          <th scope="col">Abonnement</th>
+          <th scope="col">NIF</th>
+          <th scope="col">Date Début</th>
+          <th scope="col">Date Fin</th>
+          <th scope="col">Statut</th>
+          <th scope="col">Votre Solde</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let entreprise of pageData.content; let i = index">
+          <td>{{ (pageSelectionne - 1) * nombreElementParPage + i + 1 }}</td>
+          <td>{{ entreprise.enumAbonnement }}</td>
+          <td>{{ entreprise.nif }}</td>
+          <td>{{ entreprise.dateDebut }}</td>
+          <td>{{ entreprise.dateFin }}</td>
+          <td>
+            <span class="badge bg-success" *ngIf="entreprise.statut === 'VALIDE'">{{ entreprise.statut }}</span>
+            <span class="badge bg-secondary" *ngIf="entreprise.statut !== 'VALIDE'">{{ entreprise.statut }}</span>
+          </td>
+          <td>
+            <span class="fw-semibold text-success">
+              {{ entreprise.solde | number:'1.0-2' }}
+            </span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Contrôles de pagination -->
+<div class="d-flex justify-content-between align-items-center p-3 mt-3 bg-white rounded shadow-sm flex-wrap gap-2">
+  <!-- Informations sur la pagination -->
+  <div class="text-muted small">
+    Affichage de {{ (pageSelectionne - 1) * nombreElementParPage + 1 }} à 
+    {{ Math.min(pageSelectionne * nombreElementParPage, nombreTotalEnregistrement) }} 
+    sur {{ nombreTotalEnregistrement }} résultat(s)
+  </div>
+
+  <!-- Pagination NgBootstrap -->
+  <ngb-pagination
+    [collectionSize]="nombreTotalEnregistrement"
+    [(page)]="pageSelectionne"
+    [pageSize]="nombreElementParPage"
+    [maxSize]="5"
+    [rotate]="true"
+    [boundaryLinks]="true"
+    (pageChange)="onPageChange($event)">
+  </ngb-pagination>
+
+  <!-- Sélecteur de taille de page -->
+  <select
+    class="form-select form-select-sm w-auto"
+    [(ngModel)]="nombreElementParPage"
+    (change)="onPageSizeChange()">
+    <option [ngValue]="5">5 éléments par page</option>
+    <option [ngValue]="10">10 éléments par page</option>
+    <option [ngValue]="20">20 éléments par page</option>
+  </select>
+</div>
+
+<!-- Modal existant -->
+<ng-template #modal let-modal>
+  <div class="modal-header bg-primary text-white">
+    <h5 class="modal-title"><i class="fas fa-plus-circle me-2"></i>Souscription Abonnement</h5>
+    <button
+      type="button"
+      class="btn-close btn-close-white"
+      aria-label="Close"
+      (click)="closeModal()">
+    </button>
+  </div>
+
+  <div class="modal-body bg-light">
+    <app-abonnement-form [abonnementPassed]="abonnementParam"></app-abonnement-form>
+  </div>
+</ng-template>

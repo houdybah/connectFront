@@ -1,0 +1,747 @@
+<div class="container-fluid">
+  <!-- En-tête avec boutons d'action -->
+  <div class="card">
+    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+      <h2>Gestion des Signatures</h2>
+      <div>
+        <!-- Nouveaux boutons adaptés au service -->
+        <button class="btn btn-light me-2" (click)="testSignatureSelection()" [disabled]="isLoading">
+          <i class="fa fa-search"></i> Tester la Sélection
+        </button>
+
+        <!--button class="btn btn-light me-2" (click)="openValidationModal()" [disabled]="isLoading">
+          <i class="fa fa-check-circle"></i> Valider Signature
+        </button -->
+
+        <button class="btn btn-light me-2" (click)="refreshSignatureCache()" [disabled]="isLoading" *ngIf="isAdmin">
+          <i class="fa fa-sync"></i> Rafraîchir Cache
+        </button>
+
+        <!-- button class="btn btn-light me-2" (click)="toggleAdvancedFilters()" [disabled]="isLoading">
+          <i class="fa fa-filter"></i> Filtres {{ showAdvancedFilters ? 'Simples' : 'Avancés' }}
+        </button -->
+
+        <button class="btn btn-light me-2" (click)="exportSignatures()" [disabled]="isLoading">
+          <i class="fa fa-download"></i> Exporter CSV
+        </button>
+
+        <button class="btn btn-light me-2" (click)="fullRefresh()" [disabled]="isLoading" *ngIf="isAdmin">
+          <i class="fa fa-refresh"></i> Actualisation Complète
+        </button>
+
+        <!-- Bouton existant -->
+        <button class="btn btn-light" (click)="resetForm()" *ngIf="isEditMode">
+          <i class="fa fa-plus"></i> Nouvelle Signature
+        </button>
+      </div>
+    </div>
+
+    <!-- Formulaire d'ajout/édition -->
+    <div class="card-body">
+      <div class="alert alert-success" *ngIf="successMessage">
+        {{ successMessage }}
+      </div>
+      <div class="alert alert-danger" *ngIf="errorMessage">
+        {{ errorMessage }}
+      </div>
+
+      <form [formGroup]="signatureForm" (ngSubmit)="onSubmit()">
+        <input type="hidden" formControlName="uuid">
+
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label for="signatoryName" class="form-label">Nom du Signataire*</label>
+            <input type="text" id="signatoryName" formControlName="signatoryName" class="form-control"
+              [class.is-invalid]="formSubmitted && signatureForm.get('signatoryName')?.errors">
+            <div class="invalid-feedback"
+              *ngIf="formSubmitted && signatureForm.get('signatoryName')?.errors?.['required']">
+              Le nom du signataire est requis.
+            </div>
+            <div class="invalid-feedback"
+              *ngIf="formSubmitted && signatureForm.get('signatoryName')?.errors?.['minlength']">
+              Le nom du signataire doit contenir au moins 3 caractères.
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <label for="position" class="form-label">Poste/Fonction*</label>
+            <input type="text" id="position" formControlName="position" class="form-control"
+              [class.is-invalid]="formSubmitted && signatureForm.get('position')?.errors">
+            <div class="invalid-feedback" *ngIf="formSubmitted && signatureForm.get('position')?.errors?.['required']">
+              La fonction est requise.
+            </div>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label for="ideCuoCod" class="form-label">Bureau de Douane*</label>
+            <select id="ideCuoCod" formControlName="ideCuoCod" class="form-control"
+              [class.is-invalid]="formSubmitted && signatureForm.get('ideCuoCod')?.errors">
+              <option value="">Sélectionner un bureau</option>
+              <option value="ALL">Tous les bureaux (ALL)</option>
+              <option *ngFor="let bureau of bureaux" [value]="bureau.code">
+                {{ bureau.code }} - {{ bureau.nom }}
+              </option>
+            </select>
+            <small class="form-text text-muted">
+              Utilisez "ALL" pour une signature applicable à tous les bureaux
+            </small>
+            <div class="invalid-feedback" *ngIf="formSubmitted && signatureForm.get('ideCuoCod')?.errors?.['required']">
+              Le bureau de douane est requis.
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <label for="file" class="form-label">Image de Signature* <small *ngIf="isEditMode">(Optionnel pour la mise à
+                jour)</small></label>
+            <input type="file" id="file" #fileInput class="form-control" accept="image/*"
+              (change)="onFileSelected($event)" [class.is-invalid]="formSubmitted && !isEditMode && !selectedFile">
+            <div class="invalid-feedback" *ngIf="formSubmitted && !isEditMode && !selectedFile">
+              Une image de signature est requise.
+            </div>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label for="validFrom" class="form-label">Valide à partir de</label>
+            <input type="date" id="validFrom" formControlName="validFrom" class="form-control">
+            <small class="form-text text-muted">
+              Laissez vide pour une validité immédiate
+            </small>
+          </div>
+
+          <div class="col-md-6">
+            <label for="validTo" class="form-label">Valide jusqu'à</label>
+            <input type="date" id="validTo" formControlName="validTo" class="form-control"
+              [class.is-invalid]="formSubmitted && signatureForm.errors?.['dateRangeInvalid']">
+            <small class="form-text text-muted">
+              Laissez vide pour une validité permanente
+            </small>
+            <div class="invalid-feedback" *ngIf="formSubmitted && signatureForm.errors?.['dateRangeInvalid']">
+              La date de fin doit être postérieure à la date de début.
+            </div>
+          </div>
+        </div>
+
+        <!-- Prévisualisation de l'image -->
+        <div class="row mb-3" *ngIf="showPreview">
+          <div class="col-md-6 offset-md-3">
+            <div class="card">
+              <div class="card-header d-flex justify-content-between align-items-center">
+                <span>Prévisualisation de la signature</span>
+                <button type="button" class="btn btn-sm btn-outline-secondary" (click)="closePreview()">
+                  <i class="fa fa-times"></i>
+                </button>
+              </div>
+              <div class="card-body text-center">
+                <img [src]="previewUrl || selectedImageUrl" alt="Prévisualisation de la signature" class="img-fluid"
+                  style="max-height: 150px; max-width: 300px;">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-12 text-center">
+            <button type="submit" class="btn btn-primary me-2" [disabled]="isLoading">
+              <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-1" role="status"
+                aria-hidden="true"></span>
+              <i class="fa fa-save"></i> {{ isEditMode ? 'Mettre à jour' : 'Enregistrer' }}
+            </button>
+            <button type="button" class="btn btn-secondary" (click)="cancelEdit()" [disabled]="isLoading">
+              <i class="fa fa-times"></i> Annuler
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Guide d'utilisation des signatures -->
+  <div class="card mt-4">
+    <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
+      <h4><i class="fa fa-info-circle"></i> Guide d'utilisation des signatures</h4>
+      <button class="btn btn-outline-light" (click)="toggleHelpSection()">
+        {{ showHelp ? 'Masquer' : 'Afficher' }}
+      </button>
+    </div>
+
+    <div class="card-body" *ngIf="showHelp">
+      <div class="row">
+        <div class="col-md-4">
+          <h5>Gestion des périodes de validité</h5>
+          <p>Les signatures peuvent être configurées avec des périodes de validité spécifiques :</p>
+          <ul>
+            <li><strong>Date de début</strong> : Date à partir de laquelle la signature sera utilisée</li>
+            <li><strong>Date de fin</strong> : Date jusqu'à laquelle la signature sera utilisée</li>
+            <li>Si vous laissez ces champs vides, la signature sera valide indéfiniment</li>
+          </ul>
+
+          <h5>Signatures par bureau</h5>
+          <ul>
+            <li>Signature spécifique : valide uniquement pour un bureau</li>
+            <li>Signature générique (ALL) : valable pour tous les bureaux</li>
+          </ul>
+        </div>
+
+        <div class="col-md-4">
+          <h5>Ordre de priorité (aligné avec le contrôleur)</h5>
+          <p>Le système recherche les signatures dans cet ordre :</p>
+          <ol>
+            <li><strong>Signature actuelle</strong> : Signature spécifique au bureau ET actuellement valide</li>
+            <li><strong>Dernière signature valide</strong> : Plus récente signature valide pour le bureau</li>
+            <li><strong>Signature avec priorité</strong> : Priorité aux signatures sans date de fin</li>
+            <li><strong>Signature générique (ALL)</strong> : Si aucune signature spécifique</li>
+          </ol>
+
+          <h5>Types de test disponibles</h5>
+          <ul>
+            <li><strong>Dernière valide</strong> : Trouve la dernière signature valide</li>
+            <li><strong>Actuelle</strong> : Signature actuellement active</li>
+            <li><strong>Avec priorité</strong> : Priorité aux signatures permanentes</li>
+          </ul>
+        </div>
+
+        <div class="col-md-4">
+          <h5>Nouvelles fonctionnalités</h5>
+          <ul>
+            <li><strong>Validation</strong> : Vérifier si une signature est valide à une date</li>
+            <li><strong>Filtres avancés</strong> : Filtrer par bureau, date, validité</li>
+            <li><strong>Statuts enrichis</strong> : Active, Expirée, En attente, etc.</li>
+            <li><strong>Alertes d'expiration</strong> : Signatures expirant bientôt</li>
+            <li><strong>Export CSV</strong> : Exporter les données des signatures</li>
+            <li><strong>Tri intelligent</strong> : Trier par différents critères</li>
+          </ul>
+
+          <h5>Conseils d'utilisation</h5>
+          <ul>
+            <li>Testez toujours vos signatures après les avoir créées</li>
+            <li>Rafraîchissez le cache après modifications importantes</li>
+            <li>Surveillez les dates d'expiration</li>
+            <li>Utilisez les filtres pour organiser vos signatures</li>
+            <li>Exportez régulièrement pour backup</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filtres avancés -->
+  <div class="card mt-4" *ngIf="showAdvancedFilters">
+    <div class="card-header bg-warning text-dark">
+      <h4><i class="fa fa-filter"></i> Filtres Avancés</h4>
+    </div>
+    <div class="card-body">
+      <form [formGroup]="filterForm">
+        <div class="row">
+          <div class="col-md-3">
+            <label for="filterOffice" class="form-label">Bureau</label>
+            <select id="filterOffice" formControlName="filterOffice" class="form-control">
+              <option value="">Tous les bureaux</option>
+              <option value="ALL">Signatures génériques (ALL)</option>
+              <option *ngFor="let bureau of bureaux" [value]="bureau.code">
+                {{ bureau.code }} - {{ bureau.nom }}
+              </option>
+            </select>
+          </div>
+
+          <div class="col-md-3">
+            <label for="filterDate" class="form-label">Valides à la date</label>
+            <input type="date" id="filterDate" formControlName="filterDate" class="form-control">
+          </div>
+
+          <div class="col-md-3">
+            <label for="searchTerm" class="form-label">Recherche</label>
+            <input type="text" id="searchTerm" formControlName="searchTerm" class="form-control"
+              placeholder="Nom, poste, bureau...">
+          </div>
+
+          <div class="col-md-3">
+            <label class="form-label">&nbsp;</label>
+            <div class="form-check">
+              <input type="checkbox" id="showOnlyValid" formControlName="showOnlyValid" class="form-check-input">
+              <label class="form-check-label" for="showOnlyValid">Seulement les valides</label>
+            </div>
+            <div class="form-check">
+              <input type="checkbox" id="showOnlyExpiring" formControlName="showOnlyExpiring" class="form-check-input">
+              <label class="form-check-label" for="showOnlyExpiring">Expire dans 30 jours</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="row mt-3">
+          <div class="col-12">
+            <button type="button" class="btn btn-primary me-2" (click)="applyFilters()">
+              <i class="fa fa-search"></i> Appliquer les filtres
+            </button>
+            <button type="button" class="btn btn-secondary me-2" (click)="resetFilters()">
+              <i class="fa fa-times"></i> Réinitialiser
+            </button>
+            <button type="button" class="btn btn-info" (click)="loadSignaturesByFilter()">
+              <i class="fa fa-download"></i> Charger les signatures filtrées
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Liste des signatures -->
+  <div class="card mt-4">
+    <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
+      <h3>Liste des Signatures ({{ filteredSignatures.length }} / {{ signatures.length }})</h3>
+      <div class="d-flex" *ngIf="!showAdvancedFilters">
+        <input type="text" class="form-control me-2" placeholder="Rechercher..." (input)="filterSignatures($event)">
+        <select class="form-control" (change)="loadSignaturesByBureau($event)">
+          <option value="">Tous les bureaux</option>
+          <option value="ALL">Génériques (ALL)</option>
+          <option *ngFor="let bureau of bureaux" [value]="bureau.code">
+            {{ bureau.code }}
+          </option>
+        </select>
+      </div>
+    </div>
+
+    <div class="card-body">
+      <div class="text-center my-3" *ngIf="isLoading">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Chargement...</span>
+        </div>
+      </div>
+
+      <!-- Boutons de tri 
+      <div class="mb-3" *ngIf="filteredSignatures.length && !isLoading">
+        <small class="text-muted">Trier par :</small>
+        <div class="btn-group btn-group-sm ms-2" role="group">
+          <button type="button" class="btn btn-outline-secondary" (click)="sortSignatures('name')">
+            <i class="fa fa-sort-alpha-asc"></i> Nom
+          </button>
+          <button type="button" class="btn btn-outline-secondary" (click)="sortSignatures('bureau')">
+            <i class="fa fa-building"></i> Bureau
+          </button>
+          <button type="button" class="btn btn-outline-secondary" (click)="sortSignatures('validFrom')">
+            <i class="fa fa-calendar"></i> Date début
+          </button>
+          <button type="button" class="btn btn-outline-secondary" (click)="sortSignatures('validTo')">
+            <i class="fa fa-calendar-times"></i> Date fin
+          </button>
+          <button type="button" class="btn btn-outline-secondary" (click)="sortSignatures('status')">
+            <i class="fa fa-check-circle"></i> Statut
+          </button>
+        </div>
+      </div>
+   -->
+      <div class="table-responsive" *ngIf="filteredSignatures.length && !isLoading">
+        <table class="table table-striped table-hover">
+          <thead>
+            <tr>
+              <th>Image</th>
+              <th>Nom</th>
+              <th>Fonction</th>
+              <th>Bureau</th>
+              <th>Période de validité</th>
+              <th>Statut</th>
+              <th>Alertes</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let signature of filteredSignatures" [class.table-warning]="isSignatureExpiring(signature)"
+              [class.table-danger]="!isSignatureCurrentlyValid(signature)"
+              [class.table-info]="isSignaturePending(signature)">
+              <td class="text-center">
+                <img [src]="getImageUrl(signature)" alt="Signature de {{ signature.signatory_name }}"
+                  class="img-thumbnail cursor-pointer" style="max-height: 60px; max-width: 120px;"
+                  (click)="previewSignature(signature)" title="Cliquez pour agrandir">
+              </td>
+              <td>
+                <strong>{{ signature.signatory_name }}</strong>
+                <br>
+                <small class="text-muted">{{ signature.signatory_name }}</small>
+              </td>
+              <td>{{ signature.position }}</td>
+              <td>
+                <span class="badge" [class.bg-primary]="signature.customs_office_code === 'ALL'"
+                  [class.bg-secondary]="signature.customs_office_code !== 'ALL'">
+                  {{ getBureauName(signature.customs_office_code) }}
+                </span>
+                <br>
+                <small class="text-muted" *ngIf="isBureauSpecific(signature)">Spécifique</small>
+                <small class="text-muted" *ngIf="!isBureauSpecific(signature)">Générique</small>
+              </td>
+              <td>
+                <small>{{ getValidityDescription(signature) }}</small>
+                <br>
+                <small class="text-muted">
+                  Du {{ formatDate(signature.validFrom) }} au {{ formatDate(signature.validTo) }}
+                </small>
+              </td>
+              <td>
+                <span class="badge rounded-pill"
+                  [class.bg-success]="isSignatureCurrentlyValid(signature) && !isSignatureExpiring(signature)"
+                  [class.bg-warning]="isSignatureExpiring(signature) && isSignatureCurrentlyValid(signature)"
+                  [class.bg-danger]="!isSignatureCurrentlyValid(signature) && !isSignaturePending(signature)"
+                  [class.bg-info]="isSignaturePending(signature)">
+                  {{ getValidityStatus(signature) }}
+                </span>
+              </td>
+              <td class="text-center">
+                <i class="fa fa-exclamation-triangle text-warning"
+                  *ngIf="isSignatureExpiring(signature) && isSignatureCurrentlyValid(signature)"
+                  title="Expire dans les 30 jours"></i>
+                <i class="fa fa-check-circle text-success"
+                  *ngIf="isSignatureCurrentlyValid(signature) && !isSignatureExpiring(signature)"
+                  title="Signature valide"></i>
+                <i class="fa fa-times-circle text-danger"
+                  *ngIf="!isSignatureCurrentlyValid(signature) && !isSignaturePending(signature)"
+                  title="Signature invalide ou expirée"></i>
+                <i class="fa fa-clock text-info" *ngIf="isSignaturePending(signature)"
+                  title="En attente d'activation"></i>
+              </td>
+              <td>
+                <div class="btn-group-vertical btn-group-sm" role="group">
+                  <div class="btn-group btn-group-sm" role="group">
+                    <!-- button class="btn btn-info" (click)="editSignature(signature)" [disabled]="isLoading" title="Modifier">
+                      <i class="fa fa-edit"></i>
+                    </button -->
+                    <!-- button class="btn btn-warning" (click)="getCurrentValidSignature(signature.ideCuoCod)" [disabled]="isLoading" title="Vérifier validité actuelle">
+                      <i class="fa fa-check"></i>
+                    </button>
+                    <button class="btn btn-success" (click)="getBestSignatureForOffice(signature.ideCuoCod)" [disabled]="isLoading" title="Meilleure signature">
+                      <i class="fa fa-star"></i>
+                    </button>
+                  </div>
+                  <div class="btn-group btn-group-sm mt-1" role="group">
+                    <button class="btn btn-secondary" (click)="getSignatureSummary(signature.ideCuoCod)" [disabled]="isLoading" title="Résumé du bureau">
+                      <i class="fa fa-list"></i>
+                    </button>
+                    <button class="btn btn-primary" (click)="hasValidSignatures(signature.ideCuoCod)" [disabled]="isLoading" title="Vérifier validité bureau">
+                      <i class="fa fa-search"></i>
+                    </button >
+                    <button class="btn btn-danger" (click)="deleteSignature(signature.uuid)" [disabled]="isLoading" title="Supprimer">
+                      <i class="fa fa-trash"></i>
+                    </button-->
+                    <!-- div class="btn-group-vertical btn-group-sm" role="group">
+                      <!-- 🚨 AJOUTEZ CES 2 LIGNES DE DEBUG >
+                      <div style="background: yellow; font-size: 10px; padding: 2px;">
+                        UUID: "{{signature.UUID}}" | Type: {{signature.constructor.name}}
+                      </div>
+
+                      <div class="btn-group btn-group-sm" role="group">
+                        <button class="btn btn-info" (click)="editSignature(signature)" [disabled]="isLoading"
+                          title="Modifier">
+                          <i class="fa fa-edit"></i>
+                        </button>
+
+                        <button class="btn btn-danger" (click)="deleteSignature(signature.UUID)" [disabled]="isLoading"
+                          title="Supprimer">
+                          <i class="fa fa-trash"></i>
+                        </button>
+                      </div>
+                    </div-->
+                   
+                    <!-- Vos boutons normaux -->
+                    <div class="btn-group btn-group-sm" role="group">
+                      <button class="btn btn-info" (click)="editSignature(signature)" [disabled]="isLoading"
+                        title="Modifier">
+                        <i class="fa fa-edit"></i>
+                      </button>
+                      <button class="btn btn-danger" (click)="deleteSignature(signature.uuid)" [disabled]="isLoading"
+                        title="Supprimer">
+                        <i class="fa fa-trash"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="alert alert-info text-center" *ngIf="!filteredSignatures.length && !isLoading && signatures.length">
+        Aucune signature ne correspond aux critères de filtrage.
+        <button class="btn btn-link" (click)="resetFilters()">Réinitialiser les filtres</button>
+      </div>
+
+      <div class="alert alert-info text-center" *ngIf="!signatures.length && !isLoading">
+        Aucune signature trouvée.
+        <button class="btn btn-primary" (click)="loadSignatures()">Charger les signatures</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODALES -->
+
+<!-- Modale de test de signature -->
+<ng-template #testSignatureModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">Tester la sélection de signature</h4>
+    <button type="button" class="btn-close" aria-label="Fermer" (click)="modal.dismiss()"></button>
+  </div>
+
+  <div class="modal-body">
+    <form [formGroup]="testForm">
+      <div class="mb-3">
+        <label for="testBureau" class="form-label">Bureau de douane</label>
+        <select id="testBureau" formControlName="ideCuoCod" class="form-control">
+          <option value="">Sélectionner un bureau</option>
+          <option *ngFor="let bureau of bureaux" [value]="bureau.code">
+            {{ bureau.code }} - {{ bureau.nom }}
+          </option>
+        </select>
+        <div class="invalid-feedback" *ngIf="testForm.get('ideCuoCod')?.invalid && testForm.get('ideCuoCod')?.touched">
+          Le bureau est requis
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label for="testType" class="form-label">Type de test</label>
+        <select id="testType" formControlName="testType" class="form-control">
+          <option value="latest">Dernière signature valide</option>
+          <option value="current">Signature actuelle</option>
+          <option value="priority">Signature avec priorité</option>
+        </select>
+        <small class="form-text text-muted">
+          <strong>Dernière :</strong> Plus récente valide à la date<br>
+          <strong>Actuelle :</strong> Valide maintenant<br>
+          <strong>Priorité :</strong> Priorité aux signatures sans fin
+        </small>
+      </div>
+
+      <div class="mb-3">
+        <label for="testDate" class="form-label">Date de test</label>
+        <input type="date" id="testDate" formControlName="testDate" class="form-control">
+        <div class="invalid-feedback" *ngIf="testForm.get('testDate')?.invalid && testForm.get('testDate')?.touched">
+          La date est requise
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Annuler</button>
+    <button type="button" class="btn btn-primary" (click)="submitTestForm()" [disabled]="testForm.invalid || isLoading">
+      <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+      Tester
+    </button>
+  </div>
+</ng-template>
+
+<!-- Modale de résultat du test -->
+<ng-template #testResultModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">Résultat du test de sélection</h4>
+    <button type="button" class="btn-close" aria-label="Fermer" (click)="modal.dismiss()"></button>
+  </div>
+
+  <div class="modal-body">
+    <div *ngIf="testResult">
+      <div class="row mb-3">
+        <div class="col-6"><strong>Bureau:</strong> {{ testResult.customsOfficeCode }}</div>
+        <div class="col-6"><strong>Date:</strong> {{ formatDate(testResult.testDate) }}</div>
+      </div>
+      <div class="row mb-3">
+        <div class="col-6"><strong>Type de test:</strong> {{ testResult.testType }}</div>
+        <div class="col-6">
+          <span class="badge" [class.bg-success]="testResult.success" [class.bg-danger]="!testResult.success">
+            {{ testResult.success ? 'Succès' : 'Échec' }}
+          </span>
+        </div>
+      </div>
+
+      <div *ngIf="testResult.success && testResult.signature" class="mt-4">
+        <div class="alert alert-success">
+          <strong><i class="fa fa-check-circle"></i> Signature trouvée!</strong>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h5>Détails de la signature sélectionnée</h5>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-8">
+                <table class="table table-borderless">
+                  <tr>
+                    <th>UUID:</th>
+                    <td><code>{{ testResult.signature.uuid }}</code></td>
+                  </tr>
+                  <tr>
+                    <th>Signataire:</th>
+                    <td>{{ testResult.signature.signatoryName }}</td>
+                  </tr>
+                  <tr>
+                    <th>Poste:</th>
+                    <td>{{ testResult.signature.position }}</td>
+                  </tr>
+                  <tr>
+                    <th>Bureau:</th>
+                    <td>{{ getBureauName(testResult.signature.ideCuoCod) }}</td>
+                  </tr>
+                  <tr>
+                    <th>Valide du:</th>
+                    <td>{{ formatDate(testResult.signature.validFrom) }}</td>
+                  </tr>
+                  <tr>
+                    <th>Valide au:</th>
+                    <td>{{ formatDate(testResult.signature.validTo) }}</td>
+                  </tr>
+                  <tr>
+                    <th>Statut:</th>
+                    <td>
+                      <span class="badge" [ngClass]="getStatusClass(testResult.signature)">
+                        {{ getValidityStatus(testResult.signature) }}
+                      </span>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+              <div class="col-4 text-center" *ngIf="testResult.signature.signatureImage">
+                <img [src]="getImageUrl(testResult.signature)" alt="Signature" class="img-fluid"
+                  style="max-height: 100px;">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="!testResult.success" class="mt-4">
+        <div class="alert alert-danger">
+          <strong><i class="fa fa-times-circle"></i> Aucune signature trouvée!</strong>
+        </div>
+        <p>{{ testResult.error || "Aucune signature valide n'est disponible pour ce bureau et cette date." }}</p>
+
+        <div class="alert alert-info">
+          <strong>Suggestions:</strong>
+          <ul>
+            <li>Vérifiez que des signatures existent pour ce bureau</li>
+            <li>Assurez-vous que les dates de validité incluent la date testée</li>
+            <li>Vérifiez qu'il existe une signature générique (ALL) en fallback</li>
+            <li>Utilisez les filtres pour voir toutes les signatures disponibles</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Fermer</button>
+    <button type="button" class="btn btn-primary" *ngIf="testResult?.success"
+      (click)="editSignature(testResult.signature); modal.dismiss()">
+      Modifier cette signature
+    </button>
+    <button type="button" class="btn btn-info" *ngIf="testResult?.success"
+      (click)="previewSignature(testResult.signature); modal.dismiss()">
+      Prévisualiser
+    </button>
+  </div>
+</ng-template>
+
+<!-- Modale de validation -->
+<ng-template #validationModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">Valider une signature à une date</h4>
+    <button type="button" class="btn-close" aria-label="Fermer" (click)="modal.dismiss()"></button>
+  </div>
+
+  <div class="modal-body">
+    <form [formGroup]="validationForm">
+      <div class="mb-3">
+        <label for="signatureUuid" class="form-label">Signature à valider</label>
+        <select id="signatureUuid" formControlName="signatureUuid" class="form-control">
+          <option value="">Sélectionner une signature</option>
+          <option *ngFor="let signature of signatures" [value]="signature.uuid">
+            {{ signature.signatory_name }} ({{ signature.customs_office_code }}) - {{ signature.position }}
+          </option>
+        </select>
+        <div class="invalid-feedback"
+          *ngIf="validationForm.get('signatureUuid')?.invalid && validationForm.get('signatureUuid')?.touched">
+          Veuillez sélectionner une signature
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label for="validationDate" class="form-label">Date de validation</label>
+        <input type="date" id="validationDate" formControlName="validationDate" class="form-control">
+        <small class="form-text text-muted">
+          Date à laquelle vous voulez vérifier la validité de la signature
+        </small>
+        <div class="invalid-feedback"
+          *ngIf="validationForm.get('validationDate')?.invalid && validationForm.get('validationDate')?.touched">
+          La date est requise
+        </div>
+      </div>
+    </form>
+
+    <div *ngIf="validationResult !== null" class="mt-4">
+      <div class="alert" [class.alert-success]="validationResult" [class.alert-danger]="!validationResult">
+        <strong>Résultat de validation:</strong>
+        <span *ngIf="validationResult">
+          <i class="fa fa-check-circle"></i> La signature est <strong>VALIDE</strong> à la date spécifiée.
+        </span>
+        <span *ngIf="!validationResult">
+          <i class="fa fa-times-circle"></i> La signature est <strong>INVALIDE</strong> à la date spécifiée.
+        </span>
+      </div>
+
+      <div *ngIf="!validationResult" class="alert alert-info">
+        <strong>Raisons possibles d'invalidité :</strong>
+        <ul>
+          <li>La signature a été supprimée</li>
+          <li>La date est antérieure à la date de début de validité</li>
+          <li>La date est postérieure à la date de fin de validité</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Fermer</button>
+    <button type="button" class="btn btn-primary" (click)="validateSignature()"
+      [disabled]="validationForm.invalid || isLoading">
+      <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+      Valider
+    </button>
+  </div>
+</ng-template>
+
+<!-- Modale de prévisualisation d'image -->
+<ng-template #previewModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">Prévisualisation de la signature</h4>
+    <button type="button" class="btn-close" aria-label="Fermer" (click)="modal.dismiss()"></button>
+  </div>
+
+  <div class="modal-body text-center">
+    <div *ngIf="selectedSignature">
+      <h5>{{ selectedSignature.signatory_name }}</h5>
+      <p class="text-muted">{{ selectedSignature.position }} - {{ getBureauName(selectedSignature.customs_office_code) }}</p>
+      <img [src]="getImageUrl(selectedSignature)" alt="Signature de {{ selectedSignature.signatory_name }}"
+        class="img-fluid" style="max-width: 100%; max-height: 400px;">
+      <div class="mt-3">
+        <span class="badge" [ngClass]="getStatusClass(selectedSignature)">
+          {{ getValidityStatus(selectedSignature) }}
+        </span>
+      </div>
+      <div class="mt-2">
+        <small class="text-muted">{{ getValidityDescription(selectedSignature) }}</small>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Fermer</button>
+    <button type="button" class="btn btn-primary" *ngIf="selectedSignature"
+      (click)="editSignature(selectedSignature); modal.dismiss()">
+      Modifier cette signature
+    </button>
+    <button type="button" class="btn btn-success" *ngIf="selectedSignature"
+      (click)="getCurrentValidSignature(selectedSignature.customs_office_code); modal.dismiss()">
+      Vérifier validité
+    </button>
+  </div>
+</ng-template>

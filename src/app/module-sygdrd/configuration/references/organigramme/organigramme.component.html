@@ -1,0 +1,78 @@
+<!-- organigramme-douanes.component.html -->
+<div class="organigramme-container">
+    <div class="toolbar">
+        <!--<h4 class="title">Organigramme Unités de Recettes</h4>-->
+        <div class="controls">
+            <button class="control-btn" (click)="zoomIn()" title="Zoom avant">
+                <i class="fa fa-search-plus"></i> Zoom +
+            </button>
+            <button class="control-btn" (click)="zoomOut()" title="Zoom arrière">
+                <i class="fa fa-search-minus"></i> Zoom -
+            </button>
+            <button class="control-btn" (click)="resetView()" title="Réinitialiser la vue">
+                <i class="fa fa-sync"></i> Réinitialiser
+            </button>
+            <button class="control-btn" (click)="expandAll()" title="Développer tout">
+                <i class="fa fa-expand"></i> Tout développer
+            </button>
+            <button class="control-btn" (click)="collapseAll()" title="Réduire tout">
+                <i class="fa fa-compress"></i> Tout réduire
+            </button>
+
+            <div class="search-container">
+                <input type="text" class="search-input" [(ngModel)]="searchText" placeholder="Rechercher une unité...">
+                <button class="search-btn" (click)="searchUnite()">
+                    <i class="fa fa-search"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="org-chart-wrapper" [style.transform]="'scale(' + currentZoom + ')'">
+        <div class="org-chart-container" #orgChartContainer
+             (mousedown)="startPan($event)"
+             (mousemove)="pan($event)"
+             (mouseup)="endPan()"
+             (mouseleave)="endPan()"
+             [style.transform]="'translate(' + panX + 'px, ' + panY + 'px)'">
+            <ng-container *ngIf="hierarchyData">
+                <div class="node-tree">
+                    <ng-container *ngTemplateOutlet="nodeTemplate; context: { $implicit: hierarchyData, isRoot: true }"></ng-container>
+                </div>
+            </ng-container>
+        </div>
+    </div>
+
+
+
+    <div class="mobile-notice">
+        <p>Pour une meilleure expérience, visualisez l'organigramme sur un écran plus grand.</p>
+    </div>
+</div>
+
+<!-- Template récursif pour les nœuds de l'organigramme -->
+<ng-template #nodeTemplate let-node let-isRoot="isRoot">
+    <div class="org-node" [class.highlighted]="node.uuid === highlightedNodeId">
+        <div class="node-box" [ngClass]="node.typeUnite === 'CAPITALE' ? 'capitale' : 'province'" (click)="openNodeDetails($event, node)" >
+
+            <div class="node-title">{{ node.nomUnite }}</div>
+            <div class="node-code">{{ node.codeUnite }}</div>
+            <div class="node-type">{{ node.typeUnite }}</div>
+            <div class="node-toggle" *ngIf="node.children && node.children.length > 0">
+                <i class="fa" [ngClass]="node.collapsed ? 'fa-plus-circle' : 'fa-minus-circle'"></i>
+                <span class="child-count">{{ node.childCount || node.children.length }}</span>
+            </div>
+        </div>
+
+        <ng-container *ngIf="node.children && node.children.length > 0 && !node.collapsed">
+            <div class="connector"></div>
+            <div class="children-container" [ngClass]="{'single-child': node.children.length === 1}">
+                <div class="child-wrapper" *ngFor="let child of node.children">
+                    <ng-container *ngTemplateOutlet="nodeTemplate; context: { $implicit: child }"></ng-container>
+                </div>
+            </div>
+        </ng-container>
+    </div>
+</ng-template>
+
+

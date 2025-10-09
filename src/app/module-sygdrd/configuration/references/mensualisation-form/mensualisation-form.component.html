@@ -1,0 +1,128 @@
+<div class="modal-body">
+    <div class="container">
+        <form  [formGroup]="mensualisationForm" >
+
+            <div class="row mb-3">
+                <div class="col-6">
+                    <label for="quotaAnnuelUuid" class="form-label">Exercice <span class="text-danger">*</span></label>
+                    <select class="form-control" id="quotaAnnuelUuid" formControlName="quotaAnnuelUuid">
+                        <option disabled>Selectionner l'quotaAnnuel</option>
+                        <option *ngFor="let quotaAnnuel of quotaAnnuels" value="{{quotaAnnuel.uuid}}">{{quotaAnnuel.exercice}}</option>
+                    </select>
+                    <div *ngIf="mensualisationForm.get('quotaAnnuelUuid')?.touched && mensualisationForm.get('quotaAnnuelUuid')?.invalid" class="text-danger">
+                        L'Exercice est requis
+                    </div>
+                </div>
+
+                <div class="col-6">
+                    <label for="mois" class="form-label">Mois <span class="text-danger">*</span></label>
+                    <input type="month" class="form-control" id="mois" formControlName="mois" placeholder="Entrez le quota Initial"  />
+                    <div *ngIf="mensualisationForm.get('mois')?.touched && mensualisationForm.get('mois')?.invalid" class="text-danger">
+                        Le mois est requis
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-6">
+                    <label for="montant" class="form-label">Quota </label>
+                    <input type="number" class="form-control" id="montant" formControlName="montant" placeholder="Entrez le quota Rectificatif"  />
+                    <div *ngIf="mensualisationForm.get('montant')?.touched && mensualisationForm.get('montant')?.invalid" class="text-danger">
+                        Le Quota est requis
+                    </div>
+                </div>
+
+                <div class="col-6">
+
+                </div>
+            </div>
+            
+
+             <!-- Ventilation par rubrique - SECTION TOUJOURS VISIBLE 
+            <div class="ventilation-section">
+                <div class="row mb-3">
+                    <div class="col-6">
+                        <label for="natureRecette" class="form-label">Nature recette</label>
+                        <select class="form-control" id="uuidTypeProduitRubrique" formControlName="uuidTypeProduitRubrique" [disabled]="!isEdit">
+                            <option value="" disabled selected>Sélectionner nature recette</option>
+                            <option *ngFor="let typeProduitRubrique of natureRecette" [value]="typeProduitRubrique.uuid">
+                                {{typeProduitRubrique.codeRubrique}} {{typeProduitRubrique.typeProduit}}
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="col-6">
+                        <label for="montantVentiller" class="form-label">Montant à ventiler</label>
+                        <input type="number" class="form-control" id="montantVentiller" formControlName="montantVentiller" 
+                               placeholder="Entrez le montant à ventiler" [disabled]="!isEdit" />
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-12 text-end">
+                        <button type="button" class="btn btn-success" [disabled]="!isEdit">
+                            Ventiller
+                        </button>
+                    </div>
+                </div>
+            </div>-->
+            <!-- Ventilation par rubrique  [disabled]="!canVentiller()" (click)="ventiller()"-->
+
+            <!-- 
+            <div class="row">
+                <div class="card-body p-4">
+                    <div class="table-responsive">
+                        <table class="invoice-table table table-borderless table-nowrap mb-0">
+                            <thead class="align-middle">
+                            <tr class="table-active">
+                                <th scope="col" style="width: 50px;">#</th>
+                                <th scope="col">Rubrique</th>
+                                <th scope="col" style="width: 120px;">Montant (FG)</th>
+                            </tr>
+                            </thead>
+                            <tbody id="newlink">
+                                @for(phone of []; track $index){
+                                    <tr id="1" class="product">
+                                        <th scope="row" class="product-id">{{$index}}</th>
+                                        <td class="text-start">
+                                            <div class="mb-2">
+                                                <input type="text" class="form-control bg-light border-0" id="productName"
+                                                       placeholder="Product Name" required formControlName="items"/>
+                                                <div class="invalid-feedback">
+                                                    Please enter a product name
+                                                </div>
+                                            </div>
+                                            <textarea class="form-control bg-light border-0" id="productDetails" rows="2"
+                                                      placeholder="Product Details"></textarea>
+                                        </td>
+                                        <td>
+                                            <input type="number" class="form-control product-price bg-light border-0"
+                                                   placeholder="0.00" required formControlName="rate" value="10" />
+                                            <div class="invalid-feedback">
+                                                Please enter a rate
+                                            </div>
+                                        </td>
+                                        <td class="product-removal">
+                                            <a href="javascript:void(0)" class="btn btn-success"
+                                            >Delete</a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+
+                        </table>
+                    </div>
+                </div>
+            </div>
+-->
+
+
+            <hr>
+            <!-- Soumettre le Formulaire -->
+            <div class="d-flex justify-content-end">
+                <button  class="btn btn-secondary "  [disabled]="isEnable" (click)="activer($event)" >Modifier</button>
+                <button type="submit" class="btn btn-danger " [disabled]="!isEdit || !isEnable " (click)="delete(mensualisation)" >Supprimer</button>
+                <button type="submit" class="btn btn-success " [disabled]="!isEnable" (click)="Onsave()" >Valider</button>
+            </div>
+        </form>
+    </div>
+</div>

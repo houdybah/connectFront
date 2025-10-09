@@ -1,0 +1,207 @@
+<div class="mt-4">
+  <div class="card shadow-sm">
+    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+      <h5><i class="fas fa-list"></i> Situation Quittance</h5>
+    </div>
+
+    <form [formGroup]="quitanceForm" (ngSubmit)="onSubmit()" class="p-4 border rounded shadow-sm bg-light">
+      <div class="row g-4">
+        
+       
+         <div class="col-md-3">
+            <label for="ideCuoCod" class="form-label fw-bold">Bureau <span class="text-danger">*</span></label>
+             <select class="form-control" formControlName="ideCuoCod">
+              <option [ngValue]="null" disabled>
+                   Selectionner un Bureau</option>
+              <option  value="GNB04">GNB04</option>
+             
+          </select> 
+
+           <div *ngIf="quitanceForm.get('ideCuoCod')?.touched && quitanceForm.get('ideCuoCod')?.invalid" class="text-danger">
+            Le Bureau est requis
+          </div>
+            <!-- <input type="text" id="bureau" class="form-control" formControlName="bureau" placeholder="Saisir le bureau"> -->
+          </div>
+        
+        <!-- Code Declarant (decCod) -->
+        <div class="col-md-3">
+          <label for="decCod" class="form-label fw-bold">Code Déclarant</label>
+          <input type="text" id="decCod" class="form-control" formControlName="decCod" 
+                 placeholder="Saisir le code déclarant">
+          <div *ngIf="quitanceForm.get('decCod')?.touched && quitanceForm.get('decCod')?.invalid" class="text-danger">
+            Le Code Déclarant est requis.
+          </div>
+        </div>
+        
+        <!-- Année (decRefYer) -->
+        <div class="col-md-2">
+          <label for="decRefYer" class="form-label fw-bold">Année</label>
+          <input type="number" id="decRefYer" class="form-control" formControlName="decRefYer" 
+                 placeholder="AAAA">
+          <div *ngIf="quitanceForm.get('decRefYer')?.touched && quitanceForm.get('decRefYer')?.invalid" class="text-danger">
+            L'année est requise (format 4 chiffres).
+          </div>
+        </div>
+        
+        <!-- Serie Liquidation (ideAstSer) -->
+        <div class="col-md-2">
+          <label for="ideAstSer" class="form-label fw-bold">Série Liquidation</label>
+          <input type="text" id="ideAstSer" class="form-control" formControlName="ideAstSer" 
+                 placeholder="Série"   readonly>
+          <div *ngIf="quitanceForm.get('ideAstSer')?.touched && quitanceForm.get('ideAstSer')?.invalid" class="text-danger">
+            La Série est requise.
+          </div>
+        </div>
+        
+        <!-- Numero Liquidation (ideAstNbr) -->
+        <div class="col-md-2">
+          <label for="ideAstNbr" class="form-label fw-bold">Numéro Liquidation</label>
+          <input type="text" id="ideAstNbr" class="form-control" formControlName="ideAstNbr" 
+                 placeholder="Numéro"  >
+          <div *ngIf="quitanceForm.get('ideAstNbr')?.touched && quitanceForm.get('ideAstNbr')?.invalid" class="text-danger">
+            Le Numéro est requis.
+          </div>
+        </div>
+
+        <!-- Bouton Rechercher -->
+        <div class="col-md-3 d-flex justify-content-end mt-4">
+          <button type="submit" class="btn btn-primary w-100 me-2" [disabled]="quitanceForm.invalid">
+            <i class="fas fa-search"></i> Rechercher
+          </button>
+        </div>
+
+        <!-- Actions sur la quittance -->
+        <div class="col-md-9 d-flex justify-content-between mt-4">
+          <button  type="button" class="btn btn-success me-2 col-md-3" 
+                 [disabled]="!pageData?.content?.length"
+                  (click)="generateQuittanceByFilter('download')">
+            <i class="fas fa-download"></i> Télécharger PDF
+          </button>
+          
+          <button type="button" class="btn btn-info me-2 col-md-3" 
+                 [disabled]="!pageData?.content?.length"
+                  (click)="generateQuittanceByFilter('view')">
+            <i class="fas fa-eye"></i> Visualiser
+          </button>
+          
+          <button type="button" class="btn btn-warning col-md-3" 
+                   [disabled]="!pageData?.content?.length"
+                  (click)="generateQuittanceByFilter('print')">
+            <i class="fas fa-print"></i> Imprimer
+          </button>
+        </div>
+
+
+        
+        <!-- Message d'erreur -->
+        <div class="col-12 mt-2" *ngIf="errorMessage">
+          <div class="alert alert-danger">{{ errorMessage }}</div>
+        </div>
+        
+        <!-- Indicateur de chargement -->
+        <div class="col-12 text-center" *ngIf="isLoading">
+          <div class="spinner-border text-primary mt-3" role="status">
+            <span class="visually-hidden">Chargement...</span>
+          </div>
+          <p class="mt-2">Traitement en cours...</p>
+        </div>
+      </div>
+    </form>
+    
+    <br>
+    
+    <!-- Tableau de résultats -->
+    <div class="table-responsive">
+      <table class="table table-bordered">
+        <thead class="table-light">
+          <tr>
+            <th class="col-md-0.5">N°</th>
+           
+            <th class="col-md-0.5">Bureau</th>
+            <th class="col-md-2">Nom Declarant</th>
+            <th class="col-md-0.5">Code Dec</th>
+            <th class="col-md-1">Nif</th>
+            <th class="col-md-0.5">Liquidation</th>
+            <th class="col-md-0.5">Date</th>
+            <th class="col-md-0.5">Enregistrement</th>
+            <th class="col-md-0.5">Date</th>
+            <th class="col-md-0.5">Quittance</th>
+            <th class="col-md-0.5">Date</th>
+            <th class="col-md-2">Reference/Num BFU</th>
+            <th class="col-md-2">Droit Et Taxe</th>
+       
+          
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td colspan="14" class="text-center" *ngIf="!isLoading && !pageData?.content?.length">
+              Aucune donnée disponible
+            </td>
+          </tr>
+
+          <tr *ngFor="let quittance of pageData?.content; let i = index">
+            <td>{{ i + 1 }}</td>
+            <td>{{ quittance?.ide_CUO_COD || '-' }}</td>
+            <td>{{ quittance?.dec_NAM || '-' }}</td>
+            <td>{{ quittance?.dec_cod || quittance?.dec_cod || '-' }}</td>
+            <td>{{ quittance?.cmp_con_cod || '-' }}</td>
+            <td>{{ quittance?.liquidation || '-' }}</td>
+            <td>{{ quittance?.ide_ast_dat | date: 'yyyy-MM-dd' }}</td>
+            <td>{{ quittance?.enregistrement || '-' }}</td>
+            <td>{{ quittance?.ide_reg_dat  | date: 'yyyy-MM-dd' }}</td>
+            <td>{{ quittance?.quittance || '-' }}</td>
+            <td>{{ quittance?.ide_rcp_dat  | date: 'yyyy-MM-dd' }}</td>
+    
+            <td>{{ quittance?.ref || '-' }}</td>
+            <td>{{ quittance?.totalFinAmtTbp | number:'1.0-0' }} GNF</td>
+           
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Indicateur de génération PDF -->
+    <div class="text-center my-3" *ngIf="isGeneratingPdf">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Génération du PDF...</span>
+      </div>
+      <p class="mt-2">Génération du PDF en cours...</p>
+    </div>
+
+    <!-- Pagination -->
+     <div class="d-flex flex-wrap justify-content-between align-items-center mt-3">
+  <ngb-pagination
+    [collectionSize]="pageData.totalElements"
+    [(page)]="pageSelectionne"
+    [pageSize]="nombreElementParPage"
+    (pageChange)="onPageChange($event)"
+    [maxSize]="5"        
+    [rotate]="true"
+    [boundaryLinks]="true"
+    [ellipses]="true"
+    size="sm"
+    class="mb-2"
+  >
+  </ngb-pagination>
+
+  <div class="ms-3">
+    <select class="form-select form-select-sm"
+            style="width: auto; min-width: 180px;"
+            [(ngModel)]="nombreElementParPage"
+            (change)="onPageSizeChange()">
+      <option [ngValue]="5">5 éléments par page</option>
+      <option [ngValue]="10">10 éléments par page</option>
+      <option [ngValue]="20">20 éléments par page</option>
+    </select>
+  </div>
+</div>
+    
+    <!-- Bouton pour vider le cache (Admin seulement) -->
+    <div class="p-3" *ngIf="isAdmin">
+      <button type="button" class="btn btn-sm btn-outline-danger" (click)="clearCache()">
+        <i class="fas fa-trash"></i> Vider le cache des quittances
+      </button>
+    </div>
+  </div>
+</div>

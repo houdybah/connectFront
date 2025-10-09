@@ -1,0 +1,143 @@
+<div class="row" id="contactList">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header d-flex align-items-center border-0">
+                <div class="flex-shrink-0">
+                    <div class="flax-shrink-0 hstack gap-2">
+                        <button class="btn btn-primary" (click)="openModal(contentLF,null)">Ajouter</button>
+                        <!--<button class="btn btn-soft-info" (click)="openModalImp(contentImpLF,null)">Importer</button>-->
+                    </div>
+                </div>
+            </div>
+            <div class="card-body border border-dashed border-end-0 border-start-0">
+                <div class="row g-2">
+                    <!--end col-->
+                    <div class="col-xl-4 col-md-4">
+                        <select class="form-control" data-choices data-choices-search-false
+                                name="choices-single-default" id="depart">
+                            <option value="">Debut</option>
+                            <option value="2017">2017</option>
+                            <option value="2018">2018</option>
+                            <option value="2019">2019</option>
+                            <option value="2020">2020</option>
+                            <option value="2021">2021</option>
+                            <option value="2022">2022</option>
+                            <option value="2023">2023</option>
+                            <option value="2024">2024</option>
+                            <option value="2025">2025</option>
+                        </select>
+                    </div>
+                    <!--end col-->
+                    <div class="col-xl-3 col-md-4">
+                        <select class="form-control" data-choices data-choices-search-false
+                                name="choices-single-default" id="fin">
+                            <option value="">Fin</option>
+                            <option value="2017">2017</option>
+                            <option value="2018">2018</option>
+                            <option value="2019">2019</option>
+                            <option value="2020">2020</option>
+                            <option value="2021">2021</option>
+                            <option value="2022">2022</option>
+                            <option value="2023">2023</option>
+                            <option value="2024">2024</option>
+                            <option value="2025">2025</option>
+                        </select>
+                    </div>
+                    <!--end col-->
+                    <div class="col-xl-4 col-md-4">
+                        <button class="btn btn-success w-100">Filtrer</button>
+                    </div>
+                </div>
+                <!--end row-->
+            </div>
+            <div class="card-body">
+                <div class="table-responsive table-card">
+                    <table class="table align-middle table-nowrap" id="customerTable">
+                        <thead class="table-light text-muted">
+                        <tr>
+                            <th class="sort" >Annee</th>
+                            <th class="sort" >Initial</th>
+                            <th class="sort" >Rectificatif</th>
+                            <th class="sort" >Final</th>
+                            <th>Action</th>
+                        </tr>
+                        </thead>
+                        <!--end thead-->
+                        <tbody class="list form-check-all">
+                            @for(data of pageData.data; track $index){
+                                <tr>
+                                    <td class="order_date">{{data.exercice}}</td>
+                                    <td class="order_date">{{data.montantInitial}}</td>
+                                    <td class="order_date">{{data.montantRectificatif}}</td>
+                                    <td class="order_date">{{data.montantFinal}}</td>
+                                    <td>
+                                        <a><i class="ri-edit-2-line" (click)="openModal(contentLF,data)"></i></a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    <!--end table-->
+                </div>
+                <div class="row justify-content-md-end align-items-md-center mt-3">
+                    <!-- Pagination -->
+                    <div class="col col-sm-6">
+                        <nav aria-label="Page navigation example">
+                            <ul class="pagination">
+                                <li class="page-item">
+                                    <!-- [hidden]="this.pageData.page.pageNumber>0" -->
+                                    <a class="page-link" aria-label="Previous" (click)="precedentPage()" >
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" aria-label="Previous">
+                                        {{this.pageData.page.pageNumber+1}}   sur  {{totalPage}}
+                                    </a>
+                                </li>
+                                <li class="page-item">
+                                    <!-- [hidden]="pageNumber<this.pageData.page.totalPages" -->
+                                    <a class="page-link"  aria-label="Next" (click)="prochainePage()" >
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                    <div class="col col-sm-6">
+                        <div class="text-md-right float-md-end listjs-pagination">
+                            <select class="form-select " style="width: auto; height: 2%;" [(ngModel)]="size" (change)="changeSize()">
+                                <option  value="10">10 elements par page</option>
+                                <option value="30">30 elements par page</option>
+                                <option value="50">50 elements par page</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- End Pagination -->
+                </div>
+            </div>
+
+        </div>
+        <!--end card-->
+    </div>
+    <!--end col-->
+</div>
+<!--end row-->
+
+<ng-template #contentLF role="document" let-modal >
+    <div class="modal-header bg-primary p-3">
+        <h5 class="modal-title" id="exampleModalLabel">Formulaire QuotaAnnuel</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <app-quaota-annuel-form [innerQuotaAnnuel]="outerQuotaAnnuel" [unite]="unite"></app-quaota-annuel-form>
+</ng-template>
+
+
+<ng-template #contentImpLF role="document" let-modal >
+    <div class="modal-header bg-primary p-3">
+        <h5 class="modal-title" id="imp">Importation QuotaAnnuel</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal-Imp" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <app-lf-import></app-lf-import>
+</ng-template>

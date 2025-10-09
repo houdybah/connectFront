@@ -1,0 +1,82 @@
+<div class="card">
+
+    <div class="card-body  border-top">
+        <ul ngbNav  #navKC="ngbNav" [(activeId)]="activeKeep" [destroyOnHide]="false" class="nav-tabs">
+            <li [ngbNavItem]="1">
+                <a ngbNavLink>Exercice</a>
+                <ng-template ngbNavContent>
+                    <app-exercice-list></app-exercice-list>
+                </ng-template>
+            </li>
+
+            
+            <li [ngbNavItem]="2">
+                <a ngbNavLink>Unité</a>
+                <ng-template ngbNavContent>
+                    <app-unite-list></app-unite-list>
+                </ng-template>
+            </li>
+
+            <li [ngbNavItem]="3">
+                <a ngbNavLink>Nature Recette</a>
+                <ng-template ngbNavContent>
+                    <app-nature-recette-list></app-nature-recette-list>
+                </ng-template>
+            </li>
+            <li [ngbNavItem]="4">
+                <a ngbNavLink>Compte</a>
+                <ng-template ngbNavContent>
+                    <app-compte-list></app-compte-list>
+                </ng-template>
+            </li>
+            <li [ngbNavItem]="5">
+                <a ngbNavLink>Rubrique</a>
+                <ng-template ngbNavContent>
+                    <app-rubrique-list></app-rubrique-list>
+                </ng-template>
+            </li>
+
+
+             <li [ngbNavItem]="6">
+                <a ngbNavLink>
+                    <span class="d-block d-sm-none"><i class="mdi mdi-file-document"></i></span>
+                    <span class="d-sm-block">Lois de Finance</span>
+                </a>
+                <ng-template ngbNavContent>
+                    <app-lf-list></app-lf-list>
+                </ng-template>
+            </li>
+            <li [ngbNavItem]="7">
+                <a ngbNavLink>
+                    <span class="d-block d-sm-none"><i class="mdi mdi-focus-auto"></i></span>
+                    <span class="d-sm-block">Quota</span>
+                </a>
+                <ng-template ngbNavContent>
+                     <app-unite-organigramme></app-unite-organigramme>
+                </ng-template>
+            </li>
+             <li [ngbNavItem]="8" >
+                <a ngbNavLink>
+                    <span class="d-block d-sm-none"><i class="mdi mdi-plus-minus"></i></span>
+                    <span class="d-sm-block">Prevision</span>
+                </a>
+                <ng-template ngbNavContent>
+                      <app-analyse-et-prevision ></app-analyse-et-prevision>
+                </ng-template>
+            </li>
+
+            <li [ngbNavItem]="9" >
+                <a ngbNavLink>
+                    <span class="d-block d-sm-none"><i class="mdi mdi-plus-minus"></i></span>
+                    <span class="d-sm-block">BCRG</span>
+                </a>
+                <ng-template ngbNavContent>
+                     <app-transaction-ft></app-transaction-ft>
+                </ng-template>
+            </li>
+
+
+        </ul>
+        <div [ngbNavOutlet]="navKC" class="mt-1"></div>
+    </div>
+</div>

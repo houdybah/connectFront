@@ -1,0 +1,47 @@
+<div class="modal-body">
+    <div class="container">
+        <form  [formGroup]="mensualisationForm" >
+
+            <div class="row mb-3">
+                <div class="col-6">
+                    <label for="quotaAnnuelUuid" class="form-label">Exercice <span class="text-danger">*</span></label>
+                    <select class="form-control" id="quotaAnnuelUuid" formControlName="quotaAnnuelUuid">
+                        <option disabled>Selectionner l'quotaAnnuel</option>
+                        <option *ngFor="let quotaAnnuel of quotaAnnuels" value="{{quotaAnnuel.uuid}}">{{quotaAnnuel.exercice}}</option>
+                    </select>
+                    <div *ngIf="mensualisationForm.get('quotaAnnuelUuid')?.touched && mensualisationForm.get('quotaAnnuelUuid')?.invalid" class="text-danger">
+                        L'Exercice est requis
+                    </div>
+                </div>
+
+                <div class="col-6">
+                    <label for="mois" class="form-label">Mois <span class="text-danger">*</span></label>
+                    <input type="month" class="form-control" id="mois" formControlName="mois" placeholder="Entrez le quota Initial"  />
+                    <div *ngIf="mensualisationForm.get('mois')?.touched && mensualisationForm.get('mois')?.invalid" class="text-danger">
+                        Le mois est requis
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-6">
+                    <label for="montant" class="form-label">Quota </label>
+                    <input type="number" class="form-control" id="montant" formControlName="montant" placeholder="Entrez le quota Rectificatif"  />
+                    <div *ngIf="mensualisationForm.get('montant')?.touched && mensualisationForm.get('montant')?.invalid" class="text-danger">
+                        Le Quota est requis
+                    </div>
+                </div>
+
+                <div class="col-6">
+
+                </div>
+            </div>
+
+            <hr>
+            <div class="d-flex justify-content-end">
+                <button  class="btn btn-secondary "  [disabled]="isEnable" (click)="activer($event)" >Modifier</button>
+                <button type="submit" class="btn btn-danger " [disabled]="!isEdit || !isEnable " (click)="delete(mensualisation)" >Supprimer</button>
+                <button type="submit" class="btn btn-success " [disabled]="!isEnable" (click)="Onsave()" >Valider</button>
+            </div>
+        </form>
+    </div>
+</div>

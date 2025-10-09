@@ -1,0 +1,167 @@
+<h6>RESTE A RECOUVRER PAR CODE BUDGET</h6>
+<div class="row" id="contactList">
+    <div class="col-lg-12">
+        <div class="card">
+
+            <div class="card-body border border-dashed border-end-0 border-start-0">
+                <div class="row g-2">
+                    <!-- Champ unité (conditionnel) -->
+                    <div class="col-xl-2 col-md-2">
+                        <div class="position-relative">
+                            <input
+                                type="text"
+                                class="form-control"
+                                placeholder="Rechercher une unité..."
+                                [(ngModel)]="uniteSearch"
+                                (input)="onUniteSearchChange($event)"
+                                (focus)="showUniteDropdown = true"
+                                (blur)="onUniteBlur()"
+                                autocomplete="off">
+
+                            <div *ngIf="showUniteDropdown && filteredUnites.length > 0"
+                                 class="dropdown-menu show position-absolute w-100"
+                                 style="z-index: 1050; max-height: 200px; overflow-y: auto;">
+                                <button
+                                        *ngFor="let unite of filteredUnites"
+                                        type="button"
+                                        class="dropdown-item"
+                                        (mousedown)="selectUnite(unite)">
+                                    <div>
+                                        <strong>{{unite.codeUnite}}</strong> - {{unite.nomUnite}}
+                                    </div>
+                                    <small class="text-muted">{{unite.typeUnite}}</small>
+                                </button>
+                            </div>
+
+                            <div *ngIf="showUniteDropdown && filteredUnites.length === 0 && uniteSearch"
+                                 class="dropdown-menu show position-absolute w-100"
+                                 style="z-index: 1050;">
+                                <div class="dropdown-item-text text-muted">
+                                    Aucune unité trouvée
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Date de début -->
+                    <div class="col-xl-2 col-md-2">
+                        <input  type="date" class="form-control"  data-choices data-choices-search-false
+                               name="choices-single-default"   id="debut"
+                               (change)="validateDates()" [(ngModel)]="dateDebut" (ngModelChange)="masquer()"/>
+                    </div>
+
+                    <!-- Date de fin (conditionnel) -->
+                    <div class="col-xl-2 col-md-2">
+                        <input type="date" class="form-control"  data-choices  data-choices-search-false
+                               name="choices-single-default" id="fin"
+                               (change)="validateDates()" [(ngModel)]="dateFin" (ngModelChange)="masquer()" />
+                    </div>
+
+                    <!-- Bouton de recherche -->
+                    <div class="col-xl-2 col-md-2">
+                        <button class="btn btn-success w-100" (click)="getRarParCodeBudget()" [disabled]="isSearchDisabled()">
+                            <span *ngIf="!periodSelect && recherche" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                            {{ !periodSelect && recherche ? 'Chargement...' : 'Filtrer' }}
+                        </button>
+                    </div>
+
+                </div>
+
+                <!-- Messages d'erreur et d'avertissement -->
+                <div *ngIf="dateError" class="row g-2 mt-2">
+                    <div class="col-12">
+                        <div class="alert alert-danger" role="alert">
+                            {{ dateError }}
+                        </div>
+                    </div>
+                </div>
+                 <!-- Messages d'erreur et d'avertissement -->
+                <div *ngIf="getValidationMessage()" class="row g-2 mt-2">
+                    <div class="col-12">
+                        <div class="alert alert-warning" role="alert">
+                            {{ getValidationMessage() }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!--  <div class="card-body"> </div> -->
+                <div *ngIf="!periodSelect && recherche" class="text-center my-3">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Chargement...</span>
+                    </div>
+                    <p>Chargement des données...</p>
+                </div>
+
+                 <div *ngIf="!periodSelect && !recherche" class="text-center my-3 alert alert-info">
+                         Veuillez sélectionner les critères de filtre et valider pour afficher les données.
+                </div>
+
+                <div class="card-body border" [hidden]="!periodSelect">
+                    <div class="card-body">
+                       <div class="table-responsive table-card">
+                            <table class="table align-middle table-nowrap" id="customerTable">
+                                    <thead class="table-light text-muted">
+                                        <tr>
+                                        <th class="sort">Code</th>
+                                        <th>Code Budget</th>
+                                        <th>Code Taxe</th>
+                                        <th>Nom Taxe</th>
+                                        <th>Montant Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="list form-check-all">
+                                        @for(data of pageData.data; track $index){
+                                            <tr>
+                                            <td class="order_date">{{data.code}}</td>
+                                            <td class="order_date">{{data.codBudget}}</td>
+                                            <td class="order_date">{{data.codeTax}}</td>
+                                            <td class="order_date">{{data.nomTax}}</td>
+                                            <td class="order_date">{{data.montantTotal| number:'1.2-2'}}</td>
+                                        </tr>
+                                        }
+                                    </tbody>
+                            </table>
+                        </div>
+
+<div class="row justify-content-md-end align-items-md-center mt-3" *ngIf="periodSelect">
+  <!-- Pagination -->
+  <div class="col col-sm-6">
+    <nav aria-label="Page navigation example">
+      <ul class="pagination">
+        <li class="page-item" [class.disabled]="pageData.page?.pageNumber === 0">
+          <a class="page-link" aria-label="Previous" (click)="pageData.page?.pageNumber === 0 ? null : precedentPage()" tabindex="{{pageData.page?.pageNumber === 0 ? -1 : 0}}">
+            <span aria-hidden="true">&laquo;</span>
+          </a>
+        </li>
+        <li class="page-item disabled">
+          <a class="page-link" aria-label="Current page">
+            {{ (pageData.page?.pageNumber || 0) + 1 }} sur {{ totalPage }}
+          </a>
+        </li>
+        <li class="page-item" [class.disabled]="pageData.page?.pageNumber >= totalPage - 1">
+          <a class="page-link" aria-label="Next" (click)="pageData.page?.pageNumber >= totalPage - 1 ? null : prochainePage()" tabindex="{{pageData.page?.pageNumber >= totalPage - 1 ? -1 : 0}}">
+            <span aria-hidden="true">&raquo;</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+  <div class="col col-sm-6">
+    <div class="text-md-right float-md-end listjs-pagination">
+      <select class="form-select " style="width: auto; height: 2%;" [(ngModel)]="size" (change)="changeSize()">
+        <option value="10">10 elements par page</option>
+        <option value="30">30 elements par page</option>
+        <option value="50">50 elements par page</option>
+      </select>
+    </div>
+  </div>
+  <!-- End Pagination -->
+</div>
+
+                
+                    </div>
+                </div>
+        </div>
+    </div>
+</div>
+

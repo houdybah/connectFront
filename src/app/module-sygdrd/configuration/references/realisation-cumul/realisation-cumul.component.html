@@ -1,0 +1,188 @@
+<app-breadcrumbs title="RECETTE A LA DATE" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
+
+<div class="row" id="contactList">
+    <div class="col-lg-12">
+        <div class="card">
+
+            <div class="card-body border border-dashed border-end-0 border-start-0">
+                <div class="row g-2">
+
+                    <div class="col-xl-4 col-md-4">
+                        <select class="form-control" data-choices data-choices-search-false
+                                name="choices-single-default" id="depart" [(ngModel)]="periodicite" (change)="onPeriodiciteChange()">
+                            <option value="" disabled>Periodicité</option>
+                            <option value="ANNEE">De l'année : </option>
+                            <option value="MOIS">Du debut de l'année au mois de : </option>
+                            <option value="JOUR">Du debut du mois a la date du : </option>
+                        </select>
+                    </div>
+                    <div class="col-xl-4 col-md-4">
+                        <select *ngIf="periodicite === 'ANNEE'"
+                                class="form-control"
+                                data-choices
+                                data-choices-search-false
+                                name="choices-single-default"
+                                id="debut"
+                                [(ngModel)]="debut"
+                                (change)="onDateChange()">
+                            <option value="" disabled>Année</option>
+                            <option *ngFor="let year of getYearOptions()" [value]="year">{{year}}</option>
+                        </select>
+                        <input *ngIf="periodicite !== 'ANNEE'"
+                               [type]="getInputType()"
+                               class="form-control"
+                               data-choices
+                               data-choices-search-false
+                               name="choices-single-default"
+                               id="debut"
+                               [(ngModel)]="debut"
+                               (change)="onDateChange()"
+                               [placeholder]="getPlaceholder('debut')"
+                               [max]="getMaxDate()"
+                               [min]="getMinDate()"/>
+                    </div>
+                    <div class="col-xl-4 col-md-4" >
+                        <button class="btn btn-success w-100" (click)="rechercherRealisation()" [disabled]="isLoading || dateError || !debut || !periodicite ">
+                            <span *ngIf="isLoading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                            {{ isLoading ? 'Chargement...' : 'Filtrer' }}
+                        </button>
+                    </div>
+
+                </div>
+
+                <div *ngIf="dateError" class="row g-2 mt-2">
+                    <div class="col-12">
+                        <div class="alert alert-danger" role="alert">
+                            {{ dateError }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-body border border-dashed border-end-0 border-start-0">
+                <div class="row g-2">
+                    <div class="col-xl-2 col-md-2">
+                        <button class="btn btn-ghost-success w-100" (click)="exportToExcel()" [disabled]="isLoading || !isData || isExporting">
+                            <span *ngIf="isExporting" class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+                            {{ isExporting ? 'Export...' : 'Excel' }}
+                        </button>
+                    </div>
+                    <div class="col-xl-2 col-md-2">
+                        <button class="btn btn-ghost-info w-100" (click)="openAnalyseModal(analyseModalContent)" [disabled]="isLoading || !isData || isAnalysing">
+                            <span *ngIf="isAnalysing" class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+                            {{ isAnalysing ? 'Analyse...' : 'Analyser' }}
+                        </button>
+                    </div>
+                    <div class="col-xl-2 col-md-2">
+                        <button class="btn btn-ghost-secondary w-100" (click)="print()" [disabled]="isLoading || !isData || isPrinting">
+                            <span *ngIf="isPrinting" class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+                            {{ isPrinting ? 'Génération...' : 'PDF' }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div *ngIf="isLoading && !pageData.data?.length" class="text-center my-3">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Chargement...</span>
+                    </div>
+                    <p>Chargement des données...</p>
+                </div>
+
+                <div *ngIf="!isLoading && !isData && (debut && !dateError)" class="text-center my-3 alert alert-info">
+                    Aucune réalisation trouvée pour la période et les filtres sélectionnés.
+                </div>
+
+
+                <div class="table-responsive table-card" *ngIf="pageData && pageData.data && pageData.data.length > 0">
+                    <table class="table align-middle table-nowrap" id="customerTable">
+                        <thead class="table-light text-muted">
+                        <tr>
+                            <th class="sort" >Periode</th>
+                            <th>Recettes sur PP</th>
+                            <th>Recettes sur AP</th>
+                            <th>Total Encaissé</th>
+                            <th>Taxe Exportation DGD</th>
+                            <th>Taxe Extraction DGI</th>
+                            <th>RER</th>
+                            <th>Total des recettes Douanières</th>
+                        </tr>
+                        </thead>
+                        <tbody class="list form-check-all">
+                            @for(data of pageData!.data; track $index){
+                                <tr>
+                                    <td class="order_date">{{data.periode}}</td>
+                                    <td class="order_date">{{data.recettePP | number:'1.2-2'}}</td> <td class="order_date">{{data.recetteAP | number:'1.2-2'}}</td>
+                                    <td class="order_date">{{data.totalPPAP | number:'1.2-2'}}</td>
+                                    <td class="order_date">{{data.tme | number:'1.2-2'}}</td>
+                                    <td class="order_date">{{data.tmx | number:'1.2-2'}}</td>
+                                    <td class="order_date">{{data.rer | number:'1.2-2'}}</td>
+                                    <td class="order_date">{{data.totalPPAPTMERER | number:'1.2-2'}}</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <div class="row justify-content-md-end align-items-md-center mt-3" *ngIf="pageData && pageData.data && pageData.data.length > 0">
+                    <div class="col col-sm-6">
+                        <nav aria-label="Page navigation example">
+                            <ul class="pagination">
+                                <li class="page-item" [class.disabled]="pageData.page.pageNumber <= 0 || isLoading">
+                                    <a class="page-link" aria-label="Previous" (click)="precedentPage()" >
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+                                <li class="page-item disabled"> <a class="page-link">
+                                    {{pageData.page.pageNumber + 1}} sur {{totalPage}}
+                                </a>
+                                </li>
+                                <li class="page-item" [class.disabled]="pageData.page.pageNumber >= totalPage - 1 || isLoading">
+                                    <a class="page-link"  aria-label="Next" (click)="prochainePage()" >
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                    <div class="col col-sm-6">
+                        <div class="text-md-right float-md-end listjs-pagination">
+                            <select class="form-select " style="width: auto;" [(ngModel)]="size" (change)="changeSize()" [disabled]="isLoading">
+                                <option  value="10">10 éléments par page</option>
+                                <option value="30">30 éléments par page</option>
+                                <option value="50">50 éléments par page</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<ng-template #analyseModalContent let-modal>
+    <div class="modal-header">
+        <h5 class="modal-title" id="analyseModalLabel">Analyse des Réalisations</h5>
+        <button type="button" class="btn-close" (click)="modal.dismiss('Cross click')" aria-label="Close"></button>
+    </div>
+    <div class="modal-body">
+        <div *ngIf="isAnalysing" class="text-center">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Analyse en cours...</span>
+            </div>
+            <p>Analyse en cours, veuillez patienter...</p>
+        </div>
+        <div *ngIf="!isAnalysing && analysisError" class="alert alert-danger">
+            {{ analysisError }}
+        </div>
+        <div *ngIf="!isAnalysing && !analysisError && analysisResult" [innerHTML]="analysisResult | safeHtml">
+        </div>
+        <div *ngIf="!isAnalysing && !analysisError && !analysisResult" class="alert alert-info">
+            Aucune analyse disponible pour le moment.
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Fermer</button>
+    </div>
+</ng-template>

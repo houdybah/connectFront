@@ -1,0 +1,100 @@
+<div class="card">
+    <div class="card-body">
+        <div class="card-header bg-primary text-white">
+            <h5>Gestion des Quotas</h5>
+        </div>
+        <hr />
+        <div class="d-flex mb-3">
+            <div class="col-6" >
+                <div class="d-flex ">
+                    <input  class="form-control me-2" type="search" [(ngModel)]="key" (ngModelChange)=" getQuotas();" placeholder="Rechercher..." aria-label="Search">
+                    <button class="btn btn-primary" type="submit" (click)="rechercherQuota()" >Rechercher</button>
+                </div>
+            </div>
+
+            <div class="col-6">
+                <div class="d-flex ">
+                    <button type="button" class="btn btn-primary ms-auto" (click)="openModal(content,null)">Nouveau</button>
+                </div>
+            </div>
+        </div>
+        <hr />
+        <!-- Tableau -->
+        <table class="table table-bordered">
+            <thead class="table-light text-center">
+            <tr>
+                <th>Annee</th>
+                <th>Code Unite</th>
+                <th>Nom Unite</th>
+                <th>Quota Unite</th>
+                <th>Unité/Douane</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody class="text-center">
+            <tr *ngFor="let quota of pageData.data" >
+                <td>{{ quota.anneeExecice }}</td>
+                <td>{{ quota.codeUnite }}</td>
+                <td>{{ quota.nomUnite }}</td>
+                <td>{{ quota.montant }} ({{ quota.ajustement }})</td>
+                <td>{{ ((quota.ajustement/quota.ajustementExercice)*100).toFixed(2)}} %</td>
+                <button class="btn btn-primary ms-auto" (click)="openModal(content,quota)">Editer</button>
+            </tr>
+            </tbody>
+        </table>
+
+        <div class="d-flex justify-content-between p-2">
+            <!-- <ngb-pagination [(page)]="cpage" [pageSize]="cpageSize" [collectionSize]="totalLengthOfCollection" (click)="refresh(cpage)">
+            </ngb-pagination> -->
+
+
+            <nav aria-label="Page navigation example">
+                <ul class="pagination">
+                    <li class="page-item">
+                        <!-- [hidden]="this.pageData.page.pageNumber>0" -->
+                        <a class="page-link" aria-label="Previous" (click)="precedentPage()" >
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" aria-label="Previous">
+                            {{this.pageData.page.pageNumber+1}}   sur  {{totalPage}}
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <!-- [hidden]="pageNumber<this.pageData.page.totalPages" -->
+                        <a class="page-link"  aria-label="Next" (click)="prochainePage()" >
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+
+
+
+                </ul>
+
+            </nav>
+
+            <!--select class="form-select " style="width: auto; height: 2%;" [(ngModel)]="nombreElementParPage"-->
+            <select class="form-select " style="width: auto; height: 2%;" [(ngModel)]="size" (change)="changeSize()">
+                <option  value="10">10 elements par page</option>
+                <option value="30">30 elements par page</option>
+                <option value="50">50 elements par page</option>
+            </select>
+
+            <!-- <select class="form-control" id="genre" name="genre" [(ngModel)]="size" (change)="changeSize()" >
+              <option *ngFor="let app of LesTailles" value="{{ app }}" >
+                {{ app }}
+              </option>
+            </select> -->
+        </div>
+
+    </div>
+</div>
+
+<ng-template #content role="document" let-modal >
+    <div class="modal-header bg-primary p-3">
+        <h5 class="modal-title" id="exampleModalLabel">Formulaire Quota</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <app-quota-form [innerQuota]="outerQuota"></app-quota-form>
+</ng-template>

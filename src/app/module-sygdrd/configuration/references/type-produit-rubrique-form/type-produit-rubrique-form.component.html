@@ -1,0 +1,29 @@
+<div class="modal-body">
+    <div class="container">
+        <form  [formGroup]="typeProduitRubriqueForm" >
+            <hr>
+             <!-- Ventilation par rubrique - SECTION TOUJOURS VISIBLE -->
+            <div class="ventilation-section">
+                <div class="row mb-3">
+                    <div class="col-6">
+                        <label for="uuidRubrique" class="form-label">Rubrique</label>
+                        <select class="form-control" id="uuidRubrique" formControlName="uuidRubrique" [disabled]="!isEdit">
+                            <option value="" disabled selected>Sélectionner nature recette</option>
+                            <option *ngFor="let rubrique of rubriques" [value]="rubrique.uuid">
+                                {{rubrique.codeRubrique}} {{rubrique.descriptionRubrique}}
+                            </option>
+                        </select>
+                    </div>
+
+                   
+                </div>
+            </div>
+           <div class="d-flex justify-content-end">
+                <button  class="btn btn-secondary "  [disabled]="isEnable" (click)="activer($event)" >Modifier</button>
+                 <!-- (click)="delete(mensualisation)"  -->
+                <button type="submit" class="btn btn-danger " [disabled]="!isEdit || !isEnable " >Supprimer</button>
+                <button type="submit" class="btn btn-success " [disabled]="!isEnable" (click)="Onsave()" >Valider</button>
+            </div>
+        </form>
+    </div>
+</div>

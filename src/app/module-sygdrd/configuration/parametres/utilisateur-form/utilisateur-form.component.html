@@ -1,0 +1,99 @@
+<div class="modal-body">
+    <div class="container">
+        <form  [formGroup]="utilisateurForm" >
+
+            <div class="row mb-3">
+                <div class="col-6">
+                    <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
+                    <input type="email" class="form-control" id="email" formControlName="email" placeholder="Entrer l'email'">
+                    <div *ngIf="utilisateurForm.get('email')?.touched && utilisateurForm.get('email')?.invalid" class="text-danger">
+                        L'email est requis
+                    </div>
+                </div>
+
+                <div class="col-6 d-flex align-items-center">
+                    <input type="checkbox" id="nonLocked" formControlName="nonLocked" class="form-check-input me-2">
+                    <label for="nonLocked" class="form-check-label">Verrouiller</label>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-6">
+                    <label for="nom" class="form-label">Nom <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="nom" formControlName="nom" placeholder="Entrer le Nom">
+                    <div *ngIf="utilisateurForm.get('nom')?.touched && utilisateurForm.get('nom')?.invalid" class="text-danger">
+                        Le nom est requis
+                    </div>
+                </div>
+                <div class="col-6">
+                    <label for="prenom" class="form-label">Prenom <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="prenom" formControlName="prenom" placeholder="Entrer le prenom">
+                    <div *ngIf="utilisateurForm.get('prenom')?.touched && utilisateurForm.get('prenom')?.invalid" class="text-danger">
+                        Le prenom est requise
+                    </div>
+                </div>
+            </div>
+
+
+
+            <div class="row mb-3">
+
+                <div class="col-6">
+                    <label for="password" class="form-label">Mot de Passe <span class="text-danger">*</span></label>
+                    <input type="password" class="form-control" id="password" formControlName="password" placeholder="Entrer le mot de passe">
+                    <div *ngIf="utilisateurForm.get('password')?.touched && utilisateurForm.get('password')?.invalid" class="text-danger">
+                        Le Mot de passe est requis
+                    </div>
+                </div>
+
+                <div class="col-6">
+                    <label for="confirmation" class="form-label">Confirmation <span class="text-danger">*</span></label>
+                    <input type="password" class="form-control" id="confirmation" placeholder="Entrer le mot de passe" [(ngModel)]="confirme" [readOnly]="!isEnable">
+                    <div *ngIf="utilisateurForm.get('password')?.touched && utilisateurForm.get('password')?.invalid" class="text-danger">
+                        Confirmer le mot de passe
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="row mb-3">
+                    <div class="col-6">
+                        <label for="profileUuid" class="form-label">Profile <span class="text-danger">*</span></label>
+                        <select class="form-control" id="profileUuid" formControlName="profileUuid" placeholder="Entrer le profile">
+                            <option *ngFor="let profile of profiles" value="{{profile.uuid}}">
+                                {{profile.profileName}}
+                            </option>
+                        </select>
+                        <div *ngIf="utilisateurForm.get('profileUuid')?.touched && utilisateurForm.get('profileUuid')?.invalid" class="text-danger">
+                            Le Profile est requis
+                        </div>
+                    </div>
+                    <!--
+                    <div class="col-6">
+                        <label for="photoUuid" class="form-label">Photo <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="photoUuid" formControlName="photoUuid" placeholder="Entrer la photo">
+                        <div *ngIf="utilisateurForm.get('photoUuid')?.touched && utilisateurForm.get('photoUuid')?.invalid" class="text-danger">
+                            La photo est requise
+                        </div>
+                    </div>
+                    -->
+                </div>
+            </div>
+
+
+
+            <hr>
+
+
+            <!-- Soumettre le Formulaire -->
+            <div class="d-flex justify-content-end">
+                <button  class="btn btn-secondary "  [disabled]="isEnable" (click)="activer($event)" >Modifier</button>
+                <button type="submit" class="btn btn-danger " [disabled]="!isEdit || !isEnable " (click)="delete(utilisateur)" >Supprimer</button>
+                <button type="submit" class="btn btn-success " [disabled]="!isEnable" (click)="Onsave()" >Valider</button>
+            </div>
+
+            <hr>
+
+        </form>
+    </div>
+</div>

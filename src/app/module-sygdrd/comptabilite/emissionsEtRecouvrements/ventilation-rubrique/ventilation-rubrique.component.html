@@ -1,0 +1,69 @@
+<div class="budget-container">
+    <h5>Ventilation par Rubrique</h5>
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped">
+            <thead class="thead-dark">
+            <tr>
+                <th>Rubriques</th>
+                <th>Sydonia (E/R)</th>
+                <th>Emissions</th>
+                <th>Recouvrements</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let item of budgetItems; let i = index"
+                [ngClass]="{
+              'subtotal-row': i === sousTotalIndex,
+              'total-row': i === totalBudgetIndex || i === totalDuMoisIndex
+            }"
+            >
+                <td>
+                    <span>{{ item.rubrique }}</span>
+                </td>
+                <td>
+                    <span>{{ item.e_r }}</span>
+                </td>
+                <td>
+                    <input
+                            *ngIf="i !== sousTotalIndex && i !== totalBudgetIndex && i !== totalDuMoisIndex"
+                            type="number"
+                            class="form-control text-right"
+                            [ngModel]="item.emissions"
+                            (change)="updateValue(item, 'emissions', $event)"
+                    />
+                    <strong *ngIf="i === sousTotalIndex || i === totalBudgetIndex || i === totalDuMoisIndex">
+                        {{ item.emissions | number }}
+                    </strong>
+                </td>
+                <td>
+                    <input
+                            *ngIf="i !== sousTotalIndex && i !== totalBudgetIndex && i !== totalDuMoisIndex"
+                            type="number"
+                            class="form-control text-right"
+                            [ngModel]="item.recouvrements"
+                            (change)="updateValue(item, 'recouvrements', $event)"
+                    />
+                    <strong *ngIf="i === sousTotalIndex || i === totalBudgetIndex || i === totalDuMoisIndex">
+                        {{ item.recouvrements | number }}
+                    </strong>
+                </td>
+            </tr>
+            </tbody>
+            <tfoot>
+            <tr class="special-row">
+                <td colspan="3" class="text-right"><strong>TOTAL MOIS</strong></td>
+                <td>
+                    <input type="number" class="form-control text-right" [(ngModel)]="rarAnnee">
+                </td>
+            </tr>
+            <tr class="special-row">
+                <td colspan="3" class="text-right"><strong>TOTAL EXERCICE</strong></td>
+                <td>
+                    <input type="number" class="form-control text-right" [(ngModel)]="exclo2024">
+                </td>
+            </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>

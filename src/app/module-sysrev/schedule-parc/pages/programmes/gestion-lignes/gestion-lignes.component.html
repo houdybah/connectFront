@@ -12,13 +12,13 @@
             <i class="fas fa-route"></i>
             Gestion des Lignes
           </h1>
-          <p class="page-subtitle" *ngIf="demandeCKT">
-            Demande CKT : {{ demandeCKT.numero }} - {{ formatDate(demandeCKT.date) }} - {{ demandeCKT.horaire }}
+          <p class="page-subtitle" *ngIf="DemandeCKT">
+            Demande CKT : {{ DemandeCKT.numero }} - {{ formatDate(DemandeCKT.date) }} - {{ DemandeCKT.horaire }}
           </p>
         </div>
       </div>
       <div class="header-actions">
-        <button class="btn btn-primary" (click)="creerLigne()" *ngIf="ligneService.isSDT() || ligneService.isAdminOrDouane()">
+        <button class="btn btn-primary" (click)="creerLigne()" *ngIf="LigneService.isSDT() || LigneService.isAdminOrDouane()">
           <i class="fas fa-plus"></i>
           Créer une ligne
         </button>
@@ -27,7 +27,7 @@
   </div>
   
   <!-- Info demande CKT -->
-  <div class="demande-info-section" *ngIf="demandeCKT">
+  <div class="demande-info-section" *ngIf="DemandeCKT">
     <div class="section-header">
       <h3 class="section-title">
         <i class="fas fa-info-circle"></i>
@@ -42,7 +42,7 @@
         </div>
         <div class="info-content">
           <span class="info-label">Date</span>
-          <span class="info-value">{{ formatDate(demandeCKT.date) }}</span>
+          <span class="info-value">{{ formatDate(DemandeCKT.date) }}</span>
         </div>
       </div>
       
@@ -52,7 +52,7 @@
         </div>
         <div class="info-content">
           <span class="info-label">Heure</span>
-          <span class="info-value">{{ formatTime(demandeCKT.heure) }}</span>
+          <span class="info-value">{{ formatTime(DemandeCKT.heure) }}</span>
         </div>
       </div>
       
@@ -62,7 +62,7 @@
         </div>
         <div class="info-content">
           <span class="info-label">Horaire</span>
-          <span class="info-value">{{ demandeCKT.horaire }}</span>
+          <span class="info-value">{{ DemandeCKT.horaire }}</span>
         </div>
       </div>
       
@@ -72,7 +72,7 @@
         </div>
         <div class="info-content">
           <span class="info-label">Capacité demandée</span>
-          <span class="info-value">{{ demandeCKT.capacite }} places</span>
+          <span class="info-value">{{ DemandeCKT.capacite }} places</span>
         </div>
       </div>
     </div>
@@ -164,7 +164,7 @@
         <i class="fas fa-route"></i>
         <h4>Aucune ligne créée</h4>
         <p>Aucune ligne n'a été créée pour cette demande CKT</p>
-        <button class="btn btn-primary" (click)="creerLigne()" *ngIf="ligneService.isSDT() || ligneService.isAdminOrDouane()">
+        <button class="btn btn-primary" (click)="creerLigne()" *ngIf="LigneService.isSDT() || LigneService.isAdminOrDouane()">
           <i class="fas fa-plus"></i>
           Créer la première ligne
         </button>

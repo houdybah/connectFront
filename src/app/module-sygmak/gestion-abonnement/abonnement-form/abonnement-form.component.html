@@ -1,0 +1,74 @@
+<form [formGroup]="abonnementForm" (ngSubmit)="saveAbonnement()" class="entreprise-form p-4 border rounded shadow-sm bg-light">
+
+  <!-- Type d'abonnement -->
+  <div class="mb-3">
+    <label for="enumAbonnement" class="form-label fw-semibold">
+      Type d'abonnement <span class="text-danger">*</span>
+    </label>
+    <select
+      id="enumAbonnement"
+      formControlName="enumAbonnement"
+      class="form-select"
+      aria-describedby="enumAbonnementHelp"
+    >
+      <option value="" disabled>-- Sélectionner --</option>
+      <option value="MENSUEL">Mensuel</option>
+      <option value="ANNUEL">Annuel</option>
+     <!--  <option value="JOUR">Journalier</option>-->
+      <option value="TRIMESTRIEL">Trimestriel</option>
+    </select>
+    <div *ngIf="formSubmitted && abonnementForm.get('enumAbonnement')?.invalid" class="text-danger mt-1 small">
+      Veuillez sélectionner un type d'abonnement.
+    </div>
+  </div>
+
+  <!-- Champ NIF avec autocomplete -->
+  <div class="mb-3 position-relative" #userDropdown>
+    <label for="nif" class="form-label fw-semibold">
+      Code NIF <span class="text-danger">*</span>
+    </label>
+    <input
+      type="text"
+      id="nif"
+      class="form-control"
+      formControlName="nif"
+      placeholder="Rechercher son nif..."
+      (focus)="showUsersList()"
+      autocomplete="off"
+    />
+    <!-- Liste déroulante -->
+    <div
+      *ngIf="showUserList"
+      class="dropdown-menu show w-100 mt-0 shadow"
+      style="max-height: 200px; overflow-y: auto; cursor: pointer;"
+    >
+      <button
+        *ngFor="let nif of filterednif | async"
+        type="button"
+        class="dropdown-item"
+        (click)="setSelectedUsers(nif)"
+      >
+        {{ nif.nif }}
+        
+   
+      </button>
+      <div *ngIf="(filterednif | async)?.length === 0" class="dropdown-item text-muted">
+        Aucun résultat trouvé
+      </div>
+    </div>
+
+    <div *ngIf="formSubmitted && abonnementForm.get('nif')?.hasError('required')" class="text-danger mt-1 small">
+      Le nif est requis.
+    </div>
+  </div>
+
+  <!-- Boutons -->
+  <div class="d-flex justify-content-end gap-2 mt-4">
+    <button type="button" class="btn btn-secondary" (click)="activeModal.dismiss()">
+      Annuler
+    </button>
+    <button type="submit" class="btn btn-primary">
+      Souscrire
+    </button>
+  </div>
+</form>

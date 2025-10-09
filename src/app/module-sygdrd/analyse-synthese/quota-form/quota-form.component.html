@@ -1,0 +1,77 @@
+<div class="modal-body">
+    <div class="container">
+        <form  [formGroup]="quotaForm" >
+
+            <div class="row mb-3">
+                <div class="col-6">
+                    <label for="uuidExecice" class="form-label">Exercice <span class="text-danger">*</span></label>
+                    <select class="form-control" id="uuidExecice" formControlName="uuidExecice">
+                        <option disabled>Selectionner l'exercice</option>
+                        <option *ngFor="let exercice of exercices" value="{{exercice.uuid}}">{{exercice.annee}}</option>
+                    </select>
+                    <div *ngIf="quotaForm.get('uuidExecice')?.touched && quotaForm.get('uuidExecice')?.invalid" class="text-danger">
+                        L'Exercice est requis
+                    </div>
+                </div>
+
+                <div class="col-6">
+                    <label for="uuidUnite" class="form-label">Unite <span class="text-danger">*</span></label>
+                    <select class="form-control" id="uuidUnite" formControlName="uuidUnite">
+                        <option disabled>Selectionner l'unité'</option>
+                        <option *ngFor="let unite of unites" value="{{unite.uuid}}">{{unite.codeUnite}} - {{unite.nomUnite}}</option>
+                    </select>
+                    <div *ngIf="quotaForm.get('uuidUnite')?.touched && quotaForm.get('uuidUnite')?.invalid" class="text-danger">
+                        L'unité est requis
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-6">
+                    <label for="montant" class="form-label">Montant <span class="text-danger">*</span></label>
+                    <input type="number" class="form-control" id="montant" formControlName="montant" placeholder="Entrez le montant"  />
+                    <div *ngIf="quotaForm.get('montant')?.touched && quotaForm.get('montant')?.invalid" class="text-danger">
+                        Le montant est requis
+                    </div>
+                </div>
+
+                <div class="col-6">
+                    <label for="ajustement" class="form-label">Ajustement <span class="text-danger">*</span></label>
+                    <input type="number" class="form-control" id="ajustement" formControlName="ajustement" placeholder="Entrez l'ajustement'"  />
+                    <div *ngIf="quotaForm.get('ajustement')?.touched && quotaForm.get('ajustement')?.invalid" class="text-danger">
+                        L'ajustement est requis
+                    </div>
+                </div>
+            </div>
+
+            <!--
+                <hr>
+                <div class="row">
+                    <div class="col-6">
+                        <h5>Ventilation : </h5>
+                    </div>
+                    <div class="col-6">
+                        <h3>+</h3>
+                    </div>
+                </div>
+
+                <div class="row">
+
+                </div>
+
+
+
+                <hr>
+            -->
+            <!-- Soumettre le Formulaire -->
+            <div class="d-flex justify-content-end">
+                <button  class="btn btn-secondary "  [disabled]="isEnable" (click)="activer($event)" >Modifier</button>
+                <button type="submit" class="btn btn-danger " [disabled]="!isEdit || !isEnable " (click)="delete(quota)" >Supprimer</button>
+                <button type="submit" class="btn btn-success " [disabled]="!isEnable" (click)="Onsave()" >Valider</button>
+            </div>
+
+            <hr>
+
+        </form>
+    </div>
+</div>

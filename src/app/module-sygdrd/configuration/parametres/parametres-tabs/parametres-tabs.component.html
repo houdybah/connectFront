@@ -1,0 +1,27 @@
+<div class="card">
+    <div class="card-body  border-top">
+        <ul ngbNav  #navKC="ngbNav" [(activeId)]="activeKeep" [destroyOnHide]="false" class="nav-tabs">
+
+            <li [ngbNavItem]="1">
+                <a ngbNavLink>Profile</a>
+                <ng-template ngbNavContent>
+                    <app-profile-list></app-profile-list>
+                </ng-template>
+            </li>
+            <li [ngbNavItem]="2">
+                <a ngbNavLink>Utilisateur</a>
+                <ng-template ngbNavContent>
+                    <app-utilisateur-list></app-utilisateur-list>
+                </ng-template>
+            </li>
+            <!--<li [ngbNavItem]="3">
+                <a ngbNavLink>Parametres</a>
+                <ng-template ngbNavContent>
+                    <app-parametre-list></app-parametre-list>
+                </ng-template>
+            </li>-->
+        </ul>
+        <div [ngbNavOutlet]="navKC" class="mt-1"></div>
+    </div>
+
+</div>

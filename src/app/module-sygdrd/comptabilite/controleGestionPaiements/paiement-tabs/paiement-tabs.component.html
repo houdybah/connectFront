@@ -1,0 +1,25 @@
+<div class="card">
+    <div class="card-header bg-primary text-white">
+        <h5>Situation Paiements</h5>
+    </div>
+
+    <div class="card-body  border-top">
+        <ul ngbNav  #navKC="ngbNav" [(activeId)]="activeKeep" [destroyOnHide]="false" class="nav-tabs">
+
+            <li [ngbNavItem]="1">
+                <a ngbNavLink>BCRGttt</a>
+                <ng-template ngbNavContent>
+                    <app-search-ft></app-search-ft>
+                </ng-template>
+            </li>
+            <li [ngbNavItem]="2">
+                <a ngbNavLink>Douane</a>
+                <ng-template ngbNavContent>
+                    <app-search-quittance></app-search-quittance>
+                </ng-template>
+            </li>
+        </ul>
+        <div [ngbNavOutlet]="navKC" class="mt-1"></div>
+    </div>
+
+</div>

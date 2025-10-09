@@ -1,0 +1,75 @@
+<form [formGroup]="entrepriseForm" (ngSubmit)="saveEntreprise()" class="entreprise-form p-4 bg-white rounded shadow-sm">
+  <h4 class="mb-4 text-primary">Création d'une Entreprise</h4>
+
+  <div class="row gy-3">
+
+
+
+       <!-- Code NIF -->
+    <div class="col-md-6">
+      <label for="nif" class="form-label fw-bold">Code NIF <span class="text-danger">*</span></label>
+      <input type="text" class="form-control" formControlName="nif" placeholder="Rechercher son NIF..." (focus)="showUsersList()">
+      <div *ngIf="showUserList">
+        <div *ngIf="filterednif | async as nifList" class="dropdown-menu show w-100 mt-1">
+          <button type="button" class="dropdown-item" *ngFor="let nif of nifList" (click)="setSelectedUsers(nif)">
+            {{ nif.nif }}
+           {{ nif.nifNom }}
+              {{ nif.adresse }}
+          </button>
+        </div>
+      </div>
+      <div *ngIf="formSubmitted && entrepriseForm.get('nif')?.hasError('required')" class="text-danger mt-1">
+        Le NIF est requis
+      </div>
+    </div>
+    <!-- Nom Entreprise -->
+    <div class="col-md-6">
+      <label for="nomEntreprise" class="form-label fw-bold">Nom Entreprise <span class="text-danger">*</span></label>
+      <input type="text" class="form-control" formControlName="nomEntreprise" placeholder="Entrer le nom de l'entreprise">
+    </div>
+
+     <!-- Adresse -->
+    <div class="col-md-6">
+      <label for="adresse" class="form-label fw-bold">Adresse <span class="text-danger">*</span></label>
+      <input type="text" class="form-control" formControlName="adresse" placeholder="Entrer l'adresse">
+    </div>
+
+    <!-- Sigle -->
+    <div class="col-md-6">
+      <label for="sigle" class="form-label fw-bold">Sigle <span class="text-danger">*</span></label>
+      <input type="text" class="form-control" formControlName="sigle" placeholder="Entrer le sigle">
+    </div>
+
+    <!-- Téléphone -->
+    <div class="col-md-6">
+      <label for="telephone" class="form-label fw-bold">Téléphone <span class="text-danger">*</span></label>
+      <input type="number" class="form-control" formControlName="telephone" placeholder="Entrer le téléphone">
+    </div>
+
+
+
+    <!-- Solde -->
+    <div class="col-md-6">
+      <label for="solde" class="form-label fw-bold">Solde <span class="text-danger">*</span></label>
+      <input type="text" class="form-control" formControlName="solde" placeholder="Entrer le solde">
+    </div>
+
+    <!-- Utilisateur -->
+    <!-- <div class="col-md-12">
+      <label for="utilisateur" class="form-label fw-bold">Utilisateur <span class="text-danger">*</span></label>
+      <input type="text" class="form-control" [formControl]="utilisateurControl" placeholder="Rechercher un utilisateur..." (focus)="showUsersList()">
+      <div *ngIf="showUserList" class="dropdown-menu show w-100 mt-1">
+        <button type="button" class="dropdown-item" *ngFor="let utilisateur of filteredUtilisateurs | async" (click)="setSelectedUser(utilisateur)">
+          {{ utilisateur.email }}
+        </button>
+      </div>
+    </div> -->
+
+  </div>
+
+  <!-- Actions -->
+  <div class="mt-4 d-flex justify-content-end gap-2">
+    <button type="button" class="btn btn-outline-secondary" (click)="activeModal.dismiss()">Annuler</button>
+    <button type="submit" class="btn btn-primary" [disabled]="entrepriseForm.invalid">Sauvegarder</button>
+  </div>
+</form>

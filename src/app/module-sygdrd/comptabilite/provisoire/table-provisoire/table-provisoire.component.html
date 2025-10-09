@@ -1,0 +1,46 @@
+<div class="card border m-1">
+    <div class="card-header">
+        <h3><u>Tableau des Provisoires</u></h3>
+    </div>
+    <div class="card-block row">
+        <div class="col-sm-12 col-lg-12 col-xl-12">
+            <div class="table-responsive theme-scrollbar bordered">
+                <table class="table table-bordered table-sm border border-dark">
+                    <thead class="table-dark border border-dark">
+                    <tr>
+                        <th scope="col">BUREAU</th>
+                        <th scope="col">Serie</th>
+                        <th scope="col">Num Enreg</th>
+                        <th scope="col">Date Enreg</th>
+                        <th scope="col">Num Liqu</th>
+                        <th scope="col">Code Dec</th>
+                        <th scope="col">Dec</th>
+                        <th scope="col">Code Ent</th>
+                        <th scope="col">Ent</th>
+                        <th scope="col">vd</th>
+                        <th scope="col">Action</th>
+                    </tr>
+                    </thead>
+                    <tbody class="border border-dark">
+                    <ng-container *ngFor="let situation of situations">
+                        <tr>
+                            <td >{{situation.bureau}}</td>
+                            <td>{{situation.serieEng}}</td>
+                            <td>{{situation.numEnreg }}</td>
+                            <td>{{situation.dateEnreg}}</td>
+                            <td>{{situation.numLiq }}</td>
+                            <td>{{situation.codeDec}}</td>
+                            <td>{{situation.libDec }}</td>
+                            <td>{{situation.codEnt}}</td>
+                            <td>{{situation.libEnt }}</td>
+                            <td>{{situation.vd | number:'1.0'}}</td>
+                            <td></td>
+
+                        </tr>
+                    </ng-container>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,33 @@
+<div class="card border m-1">
+    <div class="card-header">
+        <h3><u>Situations par bureau</u></h3>
+    </div>
+
+            <div class="table-responsive table-card">
+                    <table class="table align-middle table-nowrap" id="customerTable">
+                        <thead class="table-light text-muted">
+                        <tr>
+                        <th scope="col">BUREAU</th>
+                        <th scope="col">DT</th>
+                        <th scope="col">Montant Pay</th>
+                        <th scope="col">Ecart</th>
+                        <th scope="col">Action</th>
+                        </tr>
+                        </thead>
+                        <!--end thead-->
+                        <tbody class="list form-check-all">
+                            @for(situation of situations; track $index){
+                            <tr>
+                                <td >{{situation.codeBur}}</td>
+                                <td>{{situation.dt | number:'1.0'}}</td>
+                                <td>{{situation.montantPay | number:'1.0'}}</td>
+                                <td>{{situation.manqueAGagner | number:'1.0'}}</td>
+                                <td></td>
+                                   
+                            </tr>
+                            }
+                        </tbody>
+                    </table>
+                    <!--end table-->
+            </div>
+</div>

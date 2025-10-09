@@ -11,7 +11,7 @@ const routes: Routes = [
   { path: 'auth', loadChildren: () => import('./account/account.module').then(m => m.AccountModule)  },
   { path: 'sygdrd', component: LayoutComponent, loadChildren: () => import('./module-sygdrd/module-sygdrd-routing.module').then(m => m.ModuleSygdrdRoutingModule), canActivate: [AuthGuard] },
   { path: 'modules', component: LayoutComponent, loadChildren: () => import('./module-manager/module-manager-routing.module').then(m => m.ModuleManagerRoutingModule), canActivate: [AuthGuard] },
-  { path: 'sysrev', component: LayoutComponent, loadChildren: () => import('./sysrev/sysrev.module').then(m => m.SysrevModule), canActivate: [AuthGuard] }
+  { path: 'sysrev', component: LayoutComponent, loadChildren: () => import('./module-sysrev/module-sysrev.module').then(m => m.ModuleSysrevModule), canActivate: [AuthGuard] }
 ];
 
 @NgModule({

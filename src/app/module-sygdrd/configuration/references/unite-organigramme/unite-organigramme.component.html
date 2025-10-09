@@ -1,0 +1,123 @@
+<!--<app-breadcrumbs title="Les Unités de recettes" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>-->
+
+<div class="row" id="contactList">
+    <div class="col-lg-12">
+        <div class="card">
+             <div class="card-header d-flex align-items-center border-0">
+                <div class="flex-shrink-0">
+                    <div class="flax-shrink-0 hstack gap-2">
+                        <button hidden class="btn btn-primary" (click)="openModal(content,null)">Ajouter</button>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body border border-dashed border-end-0 border-start-0">
+                <div class="row g-2">
+                    <div class="col-xl-4 col-md-4">
+                        <div class="search-box">
+                            <input type="text" name="searchTerm" class="form-control search"
+                                   placeholder="Rechercher..." [(ngModel)]="key" (ngModelChange)="recherche()">
+                            <i class="ri-search-line search-icon"></i>
+                        </div>
+                    </div>
+                    <div class="col-8">
+                        <div class="d-flex">
+                            <button hidden type="button me-2" class="btn btn-primary ms-auto" (click)="openModal(content,null)">Nouveau</button>
+                            <button hidden class="btn btn-ghost-secondary" type="submit" (click)="openModalOrg(contentOrg,null)">Organigramme</button>
+                        </div>
+                    </div>
+                </div>
+                
+                 
+                <!--end row-->
+            </div>
+            <div class="card-body">
+                <div class="table-responsive table-card">
+                    <table class="table align-middle table-nowrap" id="customerTable">
+                        <thead class="table-light text-muted">
+                        <tr>
+                            <th class="sort" >N°</th>
+                            <th class="sort" >Sigle</th>
+                            <th class="sort" >Nom</th>
+                            <th class="sort" >Type</th>
+                            <th class="sort" >Releve De</th>
+                             <th class="sort" >Action</th>
+                        </tr>
+                        </thead>
+                        <!--end thead-->
+                        <tbody class="list form-check-all">
+                            @for(data of pageData!.data; track $index){
+                                <tr>
+                                     <td class="order_date">{{$index+1}}</td>
+                                    <td class="order_date">{{data.codeUnite}}</td>
+                                    <td class="order_date">{{data.nomUnite}}</td>
+                                    <td class="order_date">{{data.typeUnite}}</td>
+                                    <td class="order_date">{{data.codeUnitePere}}</td>
+                                    <td>
+                                        <a><i class="ri-search-eye-line" (click)="openModal(content,data)"></i></a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    <!--end table-->
+                </div>
+                <div class="row justify-content-md-end align-items-md-center mt-3">
+                    <!-- Pagination -->
+                    <div class="col col-sm-6">
+                        <nav aria-label="Page navigation example">
+                            <ul class="pagination">
+                                <li class="page-item">
+                                    <!-- [hidden]="this.pageData.page.pageNumber>0" -->
+                                    <a class="page-link" aria-label="Previous" (click)="precedentPage()" >
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" aria-label="Previous">
+                                        {{this.pageData.page.pageNumber+1}}   sur  {{totalPage}}
+                                    </a>
+                                </li>
+                                <li class="page-item">
+                                    <!-- [hidden]="pageNumber<this.pageData.page.totalPages" -->
+                                    <a class="page-link"  aria-label="Next" (click)="prochainePage()" >
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                    <div class="col col-sm-6">
+                        <div class="text-md-right float-md-end listjs-pagination">
+                            <select class="form-select " style="width: auto; height: 2%;" [(ngModel)]="size" (change)="changeSize()">
+                                <option  value="10">10 elements par page</option>
+                                <option value="30">30 elements par page</option>
+                                <option value="50">50 elements par page</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- End Pagination -->
+                </div>
+            </div>
+
+        </div>
+        <!--end card-->
+    </div>
+    <!--end col-->
+</div>
+
+<ng-template #contentOrg role="document" let-modal >
+    <div class="modal-header bg-primary p-3">
+        <h5 class="modal-title" id="org">Organigramme Unités de Recette</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="orgBtn" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <app-organigramme ></app-organigramme>
+</ng-template>
+
+<ng-template #content role="document" let-modal >
+    <div class="modal-header bg-primary p-3">
+        <h5 class="modal-title" id="exampleModalLabel">Administration Unité</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <app-unite-tabs [innerUnite]="outerUnite"></app-unite-tabs>
+</ng-template>

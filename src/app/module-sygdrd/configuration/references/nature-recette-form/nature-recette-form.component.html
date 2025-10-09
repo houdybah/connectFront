@@ -1,0 +1,52 @@
+<div class="modal-body">
+    <div class="container">
+        <form  [formGroup]="natureRecetteForm" >
+
+            <div class="mb-3">
+                <label for="codeProduit" class="form-label">Code <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="codeProduit" formControlName="codeProduit" placeholder="Entrez le code "  />
+                <div *ngIf="natureRecetteForm.get('codeProduit')?.touched && natureRecetteForm.get('codeProduit')?.invalid" class="text-danger">
+                    Le code est requis
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="typeProduit" class="form-label">Libelle<span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="typeProduit" formControlName="typeProduit" placeholder="Entrez la nature de produit"  />
+                <div *ngIf="natureRecetteForm.get('typeProduit')?.touched && natureRecetteForm.get('typeProduit')?.invalid" class="text-danger">
+                    Le libelle est requis
+                </div>
+            </div>
+
+ <!-- Soumettre le Formulaire
+            <hr>
+            <div class="row">
+                <div class="col-6">
+                    <h5>Rubriques Concernées : </h5>
+                </div>
+                <div class="col-6">
+                    <h3>+</h3>
+                </div>
+            </div> 
+
+            <div class="row">
+
+            </div>
+
+
+
+            <hr>-->
+
+
+            <!-- Soumettre le Formulaire -->
+            <div class="d-flex justify-content-end">
+                <button  class="btn btn-secondary "  [disabled]="isEnable" (click)="activer($event)" >Modifier</button>
+                <button type="submit" class="btn btn-danger " [disabled]="!isEdit || !isEnable " (click)="delete(natureRecette)" >Supprimer</button>
+                <button type="submit" class="btn btn-success " [disabled]="!isEnable" (click)="Onsave()" >Valider</button>
+            </div>
+
+            <hr>
+
+        </form>
+    </div>
+</div>

@@ -1,0 +1,349 @@
+<head>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+</head>
+
+<div class="card shadow rounded-4">
+  <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center rounded-top-4 flex-wrap gap-2">
+    <h5 class="mb-0 d-flex align-items-center">
+      <i class="fas fa-users me-2"></i> Liste des Utilisateurs({{ getOnlineUsersCount() }} en ligne)
+    </h5>
+
+    <input
+      type="text"
+      [formControl]="rechercheEmailControl"
+      placeholder="Rechercher par email"
+      class="form-control"
+      style="max-width: 250px;"
+    />
+
+
+    <button *ngIf="isAdmin()" class="btn btn-light text-primary fw-semibold shadow-sm" (click)="openModal(modal, null)">
+  <i class="fa fa-plus-circle me-1"></i> Ajouter
+</button>
+
+    <!-- <button class="btn btn-light text-primary fw-semibold shadow-sm" (click)="openModal(modal, null)">
+      <i class="fa fa-plus-circle me-1"></i> Ajouter
+    </button> -->
+  </div>
+
+  <div class="card-body p-0 position-relative">
+    <div *ngIf="isAdmin()">
+     <table class="table table-bordered text-center mb-0">
+      <thead class="table-light">
+        <tr>
+          <th>N°</th>
+          <th>Email</th>
+          <th>Rôle</th>
+          <th>Statut</th>
+          <th>Actions</th>
+          <th>Connexion</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let utilisateur of pageData.content; let i = index">
+          <td>{{ (pageSelectionne - 1) * nombreElementParPage + i + 1 }}</td>
+          <td class="text-truncate" style="max-width: 220px;">{{ utilisateur.email }}
+            <i *ngIf="isUserOnline(utilisateur.uuid)" 
+               class="fa fa-circle text-success ms-1" 
+               style="font-size: 0.6rem;"
+               title="En ligne"></i>
+          </td>
+          <td>{{ utilisateur.roles?.join(', ') }}</td>
+          
+
+
+          <td>
+            <span 
+              [class.text-success]="!utilisateur.blocked" 
+              [class.text-danger]="utilisateur.blocked"
+              class="fw-semibold"
+            >
+              {{ utilisateur.blocked ? 'Bloqué' : 'Actif' }}
+            </span>
+          </td>
+          <td>
+            <button
+              *ngIf="!utilisateur.blocked"
+              (click)="blockUser(utilisateur.uuid)"
+              class="btn btn-outline-danger btn-sm me-1"
+              title="Bloquer"
+            >
+              Bloquer
+            </button>
+
+            <button
+              *ngIf="utilisateur.blocked"
+              (click)="unblockUser(utilisateur.uuid)"
+              class="btn btn-outline-success btn-sm me-1"
+              title="Débloquer"
+            >
+              Débloquer
+            </button>
+
+            <button
+              class="btn btn-outline-primary btn-sm me-1"
+              (click)="openModal(modal, utilisateur)"
+              title="Éditer"
+            >
+              Modifier <i class="fa fa-pen ms-1"></i>
+            </button>
+
+            <button
+            *ngIf="isUserOnline(utilisateur.uuid)"
+            class="btn btn-warning btn-sm me-1"
+            (click)="deconnecter(utilisateur.uuid)"
+            title="Déconnecter"
+          >
+            <i class="fa fa-sign-out-alt"></i>
+          </button>
+
+            <button
+              class="btn btn-outline-danger btn-sm"
+              (click)="deleteUtilisateur(utilisateur)"
+              title="Supprimer"
+            >
+              Supprimer <i class="fa fa-trash ms-1"></i>
+            </button>
+          </td>
+          <!-- td>
+            <span
+              class="badge"
+              [class.bg-success]="utilisateur.online"
+              [class.bg-secondary]="!utilisateur.online"
+              title="Statut de connexion"
+              style="font-weight: 600; font-size: 0.85rem; text-transform: uppercase; padding: 0.3em 0.75em; border-radius: 0.5rem; box-shadow: 0 0 6px rgba(0,0,0,0.1);"
+            >
+              {{ utilisateur.online ? 'En ligne' : 'Hors ligne' }}
+            </span>
+            <br />
+            <small *ngIf="utilisateur.connectedAt" class="text-muted">
+              {{ utilisateur.connectedAt | date: 'dd/MM/yyyy, à hh:mm a' }}
+            </small>
+          </td -->
+          <td>
+            <span class="badge me-1"
+              [class.bg-success]="isUserOnline(utilisateur.uuid)"
+              [class.bg-secondary]="!isUserOnline(utilisateur.uuid)"
+              title="Statut de connexion">
+              {{ isUserOnline(utilisateur.uuid) ? 'En ligne' : 'Hors ligne' }}
+            </span>
+            <br />
+            <small *ngIf="utilisateur.connectedAt">
+              {{ utilisateur.connectedAt | date: 'dd/MM/yyyy, à hh:mm a' }}
+            </small>
+          </td>
+        </tr>
+
+        <tr *ngIf="!pageData.content || pageData.content.length === 0">
+          <td colspan="6" class="text-center text-muted fst-italic py-3">
+            Aucun utilisateur trouvé.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div *ngIf="loading" class="position-absolute top-50 start-50 translate-middle">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Chargement...</span>
+      </div>
+    </div>
+</div>
+
+
+
+
+<div *ngIf="isMarketeur() ">
+     <table class="table table-bordered text-center mb-0">
+      <thead class="table-light">
+        <tr>
+          <th>N°</th>
+          <th>Email</th>
+          <th>Statut</th>
+          <th>Actions</th>
+          <th>Actions</th>
+       
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let utilisateur of pageData.content; let i = index">
+          <td>{{ (pageSelectionne - 1) * nombreElementParPage + i + 1 }}</td>
+          <td class="text-truncate" style="max-width: 220px;">{{ utilisateur.email }}</td>
+      
+          
+
+
+          <td>
+            <span 
+              [class.text-success]="!utilisateur.blocked" 
+              [class.text-danger]="utilisateur.blocked"
+              class="fw-semibold"
+            >
+              {{ utilisateur.blocked ? 'Bloqué' : 'Actif' }}
+            </span>
+          </td>
+          <td>
+          
+            
+
+            <button
+              class="btn btn-outline-primary btn-sm me-1"
+              (click)="openModal(modal, utilisateur)"
+              title="Éditer"
+            >
+              Modifier <i class="fa fa-pen ms-1"></i>
+            </button>
+
+      
+              
+          </td>
+          <td>
+            <span
+              class="badge"
+              [class.bg-success]="utilisateur.online"
+              [class.bg-secondary]="!utilisateur.online"
+              title="Statut de connexion"
+              style="font-weight: 600; font-size: 0.85rem; text-transform: uppercase; padding: 0.3em 0.75em; border-radius: 0.5rem; box-shadow: 0 0 6px rgba(0,0,0,0.1);"
+            >
+              {{ utilisateur.online ? 'En ligne' : 'Hors ligne' }}
+            </span>
+            <br />
+            <small *ngIf="utilisateur.connectedAt" class="text-muted">
+              {{ utilisateur.connectedAt | date: 'dd/MM/yyyy, à hh:mm a' }}
+            </small>
+          </td>
+        </tr>
+
+        <tr *ngIf="!pageData.content || pageData.content.length === 0">
+          <td colspan="6" class="text-center text-muted fst-italic py-3">
+            Aucun utilisateur trouvé.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+</div>
+
+
+
+
+<div *ngIf="isConsultation() ">
+     <table class="table table-bordered text-center mb-0">
+      <thead class="table-light">
+        <tr>
+          <th>N°</th>
+          <th>Email</th>
+          <th>Statut</th>
+          <th>Actions</th>
+          <th>Actions</th>
+       
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let utilisateur of pageData.content; let i = index">
+          <td>{{ (pageSelectionne - 1) * nombreElementParPage + i + 1 }}</td>
+          <td class="text-truncate" style="max-width: 220px;">{{ utilisateur.email }}</td>
+      
+          
+
+
+          <td>
+            <span 
+              [class.text-success]="!utilisateur.blocked" 
+              [class.text-danger]="utilisateur.blocked"
+              class="fw-semibold"
+            >
+              {{ utilisateur.blocked ? 'Bloqué' : 'Actif' }}
+            </span>
+          </td>
+          <td>
+          
+            
+
+            <button
+              class="btn btn-outline-primary btn-sm me-1"
+              (click)="openModal(modal, utilisateur)"
+              title="Éditer"
+            >
+              Modifier <i class="fa fa-pen ms-1"></i>
+            </button>
+
+      
+              
+          </td>
+          <td>
+            <span
+              class="badge"
+              [class.bg-success]="utilisateur.online"
+              [class.bg-secondary]="!utilisateur.online"
+              title="Statut de connexion"
+              style="font-weight: 600; font-size: 0.85rem; text-transform: uppercase; padding: 0.3em 0.75em; border-radius: 0.5rem; box-shadow: 0 0 6px rgba(0,0,0,0.1);"
+            >
+              {{ utilisateur.online ? 'En ligne' : 'Hors ligne' }}
+            </span>
+            <br />
+            <small *ngIf="utilisateur.connectedAt" class="text-muted">
+              {{ utilisateur.connectedAt | date: 'dd/MM/yyyy, à hh:mm a' }}
+            </small>
+          </td>
+        </tr>
+
+        <tr *ngIf="!pageData.content || pageData.content.length === 0">
+          <td colspan="6" class="text-center text-muted fst-italic py-3">
+            Aucun utilisateur trouvé.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+</div>
+
+
+
+
+
+
+
+
+    <div *ngIf="loading" class="position-absolute top-50 start-50 translate-middle">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Chargement...</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="d-flex justify-content-between align-items-center p-3 mt-3 bg-white rounded shadow-sm flex-wrap gap-2">
+    <ngb-pagination
+      [collectionSize]="nombreTotalEnregistrement"
+      [(page)]="pageSelectionne"
+      [pageSize]="nombreElementParPage"
+      (pageChange)="onPageChange($event)"
+    ></ngb-pagination>
+
+    <select
+      class="form-select form-select-sm w-auto"
+      [(ngModel)]="nombreElementParPage"
+      (change)="onPageSizeChange()"
+    >
+      <option [ngValue]="5">5 éléments par page</option>
+      <option [ngValue]="10">10 éléments par page</option>
+      <option [ngValue]="20">20 éléments par page</option>
+    </select>
+  </div>
+
+  
+</div>
+
+<ng-template #modal let-modal>
+  <div class="modal-header bg-primary text-white">
+    <h5 class="modal-title">
+      <i class="fas fa-user-edit me-2"></i> Création / Édition Utilisateur
+    </h5>
+    <button type="button" class="btn-close btn-close-white" aria-label="Close" (click)="closeModal()"></button>
+  </div>
+  <div class="modal-body bg-light">
+    
+
+    <app-form-utilisateur
+  [utilisateurPassed]="utilisateurRegisterParam"
+  [isAdmin]="isAdminUser"
+  (closeModalEvent)="closeModal()"
+></app-form-utilisateur>
+  </div>
+</ng-template>

@@ -1,0 +1,224 @@
+ <div class="row" id="contactList">
+    <div class="col-lg-12">
+        <div class="card">
+              
+            <div class="card-header d-flex align-items-center border-0">
+                <div class="flex-shrink-0">
+                    <div class="flax-shrink-0 hstack gap-2">
+                         <input type="file" class="form-control  me-2" id="fileInput" accept=".xlsx" (change)="onFileChange2($event)"/>
+                          <button type="submit" class="btn btn-primary" (click)="onUpload()" [disabled]="!selectedFile" >VALIDER</button>
+                       
+                    </div>
+                </div>
+            </div> 
+
+            <div class="card-body border border-dashed border-end-0 border-start-0">
+                <div class="row g-2">
+                    <div class="col-xl-4 col-md-6">
+                        <div class="search-box">
+                             <input  class="form-control me-2" type="search" [(ngModel)]="key" 
+                             (ngModelChange)="getPrevision();rechercherLoisFinance();" 
+                             placeholder="Rechercher..." aria-label="Search"><i class="ri-search-line search-icon"></i>
+                        </div>
+                    </div>
+                   
+                   
+                    
+                </div>
+                <!--end row-->
+            </div>
+            <div class="card-body">
+                <div class="table-responsive table-card">
+                    <table class="table align-middle table-nowrap" id="customerTable">
+                        <thead class="table-light text-muted">
+                        <tr>
+                            <th class="sort">Annee</th>
+                            <th class="sort">Rubrique</th>
+                            <th class="sort">Nature Rcette</th>
+                            <th class="sort">Prevision</th>
+                        </tr>
+                        </thead>
+                        <!--end thead-->
+                        <tbody class="list form-check-all">
+                            @for(prevision of pageData!.data; track $index){
+                                <tr> 
+                                    <td class="order_date">{{prevision.annee}}</td>
+                                    <td class="order_date">{{prevision.codeRubrique}}</td>
+                                    <td class="order_date">{{prevision.codeProduit}}</td>
+                                    <td class="order_date">{{prevision.budget | number:'1.2-2'}}</td>
+                                 
+                                </tr>}
+                        </tbody>
+                    </table>
+                    <!--end table-->
+                </div>
+                <div class="row justify-content-md-end align-items-md-center mt-3">
+                    <!-- Pagination -->
+                    <div class="col col-sm-6">
+                        <nav aria-label="Page navigation example">
+                            <ul class="pagination">
+                                <li class="page-item">
+                                    <!-- [hidden]="this.pageData.page.pageNumber>0" -->
+                                    <a class="page-link" aria-label="Previous" (click)="precedentPage()" >
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" aria-label="Previous">
+                                        {{this.pageData.page.pageNumber+1}}   sur  {{totalPage}}
+                                    </a>
+                                </li>
+                                <li class="page-item">
+                                    <!-- [hidden]="pageNumber<this.pageData.page.totalPages" -->
+                                    <a class="page-link"  aria-label="Next" (click)="prochainePage()" >
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                    <div class="col col-sm-6">
+                        <div class="text-md-right float-md-end listjs-pagination">
+                            <select class="form-select " style="width: auto; height: 2%;" [(ngModel)]="size" (change)="changeSize()">
+                                <option  value="10">10 elements par page</option>
+                                <option value="30">30 elements par page</option>
+                                <option value="50">50 elements par page</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- End Pagination -->
+                </div>
+            </div>
+
+        </div>
+        <!--end card-->
+    </div>
+    <!--end col-->
+</div>
+<!--end row-->
+
+
+
+
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ <!-- Tableau 
+<div class="card">
+    <div class="card-body">
+        <div class="card-header bg-primary text-white">
+            <h5>Gestion des previsions</h5>
+        </div>
+        <hr />
+        <div class="d-flex mb-3">
+            <div class="col-6" >
+                <div class="d-flex ">
+                    <input  class="form-control me-2" type="search" [(ngModel)]="key" (ngModelChange)=" getPrevision();rechercherLoisFinance();" placeholder="Rechercher..." aria-label="Search">
+                    <button class="btn btn-primary" type="submit" (click)="rechercherLoisFinance()" >Rechercher</button>
+                </div>
+            </div>
+           
+            <div class="col-3 ms-auto">
+                <div class="d-flex mb-3">
+                    <input type="file" class="form-control  me-2" id="fileInput" accept=".xlsx" (change)="onFileChange2($event)"/>
+                    <button type="submit" class="btn btn-primary" (click)="onUpload()" [disabled]="!selectedFile" >VALIDER</button>
+                </div> 
+            </div>
+
+        </div>
+        <hr />
+
+        
+         <div class="table-responsive table-card" *ngIf="pageData && pageData.data && pageData.data.length > 0">
+                    <table class="table align-middle table-nowrap" id="customerTable">
+                        <thead class="table-light text-muted">
+                        <tr>
+                            <th class="sort">Annee</th>
+                            <th class="sort">Rubrique</th>
+                            <th class="sort">Nature Rcette</th>
+                            <th class="sort">Prevision</th>
+                           
+                        </tr>
+                        </thead>
+                        <tbody class="list form-check-all">
+                            @for(prevision of pageData!.data; track $index){
+                                <tr> 
+                                    <td class="order_date">{{prevision.annee}}</td>
+                                    <td class="order_date">{{prevision.codeRubrique}}</td>
+                                    <td class="order_date">{{prevision.codeProduit}}</td>
+                                    <td class="order_date">{{prevision.budget | number:'1.2-2'}}</td>
+                                 
+                                </tr>}
+                        </tbody>
+                    </table>
+        </div>
+
+        <div class="d-flex justify-content-between p-2">
+            <nav aria-label="Page navigation example">
+                <ul class="pagination">
+                    <li class="page-item">
+                       
+                        <a class="page-link" aria-label="Previous" (click)="precedentPage()" >
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" aria-label="Previous">
+                            {{this.pageData.page.pageNumber+1}}   sur  {{totalPage}}
+                        </a>
+                    </li>
+                    <li class="page-item">
+                      
+                        <a class="page-link"  aria-label="Next" (click)="prochainePage()" >
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+           
+            <select class="form-select " style="width: auto; height: 2%;" [(ngModel)]="size" (change)="changeSize()">
+                <option  value="10">10 elements par page</option>
+                <option value="30">30 elements par page</option>
+                <option value="50">50 elements par page</option>
+            </select>
+        </div>
+
+    </div>
+</div>
+ -->

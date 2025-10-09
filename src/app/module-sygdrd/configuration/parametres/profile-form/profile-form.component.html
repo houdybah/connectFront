@@ -1,0 +1,338 @@
+<div class="modal-body">
+    <div class="container">
+        <form [formGroup]="profileForm">
+            <!-- En-tête du formulaire -->
+            <div class="form-header">
+                <div class="status-indicator" [class.editing]="isEnable" [class.viewing]="!isEnable">
+                    <span class="status-dot"></span>
+                    <span class="status-text">{{ isEnable ? 'Mode édition' : 'Mode lecture' }}</span>
+                </div>
+            </div>
+
+            <!-- Informations de base -->
+            <div class="form-section">
+
+                <div class="row mb-3">
+                    <div class="col-6">
+                        <label for="profileName" class="form-label">
+                            Nom <span class="text-danger">*</span>
+                        </label>
+                        <div class="input-wrapper">
+                            <input
+                                    type="text"
+                                    class="form-control"
+                                    [class.is-invalid]="profileForm.get('profileName')?.touched && profileForm.get('profileName')?.invalid"
+                                    id="profileName"
+                                    formControlName="profileName"
+                                    placeholder="Entrer le nom du profil"
+                            >
+                            <div class="input-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="12" cy="7" r="4"></circle>
+                                </svg>
+                            </div>
+                        </div>
+                        <div *ngIf="profileForm.get('profileName')?.touched && profileForm.get('profileName')?.invalid" class="error-message">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="12" y1="8" x2="12" y2="12"></line>
+                                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                            </svg>
+                            Le nom est requis
+                        </div>
+                    </div>
+
+                    <div class="col-6">
+                        <label for="profileDescription" class="form-label">
+                            Description <span class="text-danger">*</span>
+                        </label>
+                        <div class="input-wrapper">
+                            <input
+                                    type="text"
+                                    class="form-control"
+                                    [class.is-invalid]="profileForm.get('profileDescription')?.touched && profileForm.get('profileDescription')?.invalid"
+                                    id="profileDescription"
+                                    formControlName="profileDescription"
+                                    placeholder="Entrer la description"
+                            >
+                            <div class="input-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                    <polyline points="14,2 14,8 20,8"></polyline>
+                                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                                    <polyline points="10,9 9,9 8,9"></polyline>
+                                </svg>
+                            </div>
+                        </div>
+                        <div *ngIf="profileForm.get('profileDescription')?.touched && profileForm.get('profileDescription')?.invalid" class="error-message">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="12" y1="8" x2="12" y2="12"></line>
+                                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                            </svg>
+                            La description est requise
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mb-4">
+                    <div class="col-6">
+                        <div class="toggle-wrapper">
+                            <input type="checkbox" id="enabled" formControlName="enabled" class="toggle-input">
+                            <label for="enabled" class="toggle-label">
+                                <span class="toggle-slider"></span>
+                                <span class="toggle-text">Profil activé</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gestion des rôles -->
+            <div class="form-section">
+                <div class="roles-container">
+                    <!-- Message de succès -->
+                    <div *ngIf="showSuccess" class="success-message" [@slideIn]>
+                        <div class="success-content">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="success-icon">
+                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                            </svg>
+                            <span>Rôles mis à jour avec succès !</span>
+                        </div>
+                    </div>
+
+                    <div class="sections-container" [class.disabled-container]="!isEnable">
+                        <!-- Section des rôles disponibles -->
+                        <div class="section available-section">
+                            <div class="section-header">
+                                <div class="section-title-wrapper">
+                                    <h4 class="section-title">Rôles disponibles</h4>
+                                    <span class="role-count">{{ availableRoles.length }}</span>
+                                </div>
+                                <p class="section-description">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <circle cx="12" cy="12" r="10"></circle>
+                                        <line x1="12" y1="8" x2="12" y2="16"></line>
+                                        <line x1="8" y1="12" x2="16" y2="12"></line>
+                                    </svg>
+                                    Cliquer sur + pour attribuer un rôle
+                                </p>
+                            </div>
+
+                            <div class="section-content">
+                                <div
+                                        class="roles-list available-roles"
+                                        cdkDropList
+                                        #availableList="cdkDropList"
+                                        [cdkDropListData]="availableRoles"
+                                        [cdkDropListConnectedTo]="[assignedList]"
+                                        (cdkDropListDropped)="onDrop($event)"
+                                        [cdkDropListDisabled]="!isEnable"
+                                >
+                                    <div *ngIf="availableRoles.length === 0" class="empty-state">
+                                        <div class="empty-icon">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                                <circle cx="12" cy="12" r="10"></circle>
+                                                <path d="M16 16s-1.5-2-4-2-4 2-4 2"></path>
+                                                <line x1="9" y1="9" x2="9.01" y2="9"></line>
+                                                <line x1="15" y1="9" x2="15.01" y2="9"></line>
+                                            </svg>
+                                        </div>
+                                        <span class="empty-title">Aucun rôle disponible</span>
+                                        <span class="empty-subtitle">Tous les rôles ont été attribués</span>
+                                    </div>
+
+                                    <div
+                                            *ngFor="let role of availableRoles; trackBy: trackByRole"
+                                            class="role-item available-item"
+                                            cdkDrag
+                                            [cdkDragDisabled]="!isEnable" tooltip="role ...."
+                                    >
+                                        <div class="drag-handle" [attr.aria-label]="'Glisser le rôle ' + role">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <circle cx="9" cy="12" r="1"></circle>
+                                                <circle cx="9" cy="5" r="1"></circle>
+                                                <circle cx="9" cy="19" r="1"></circle>
+                                                <circle cx="15" cy="12" r="1"></circle>
+                                                <circle cx="15" cy="5" r="1"></circle>
+                                                <circle cx="15" cy="19" r="1"></circle>
+                                            </svg>
+                                        </div>
+
+                                        <div class="role-content">
+                                            <div class="role-badge">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                                                    <circle cx="9" cy="7" r="4"></circle>
+                                                    <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                                                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                                                </svg>
+                                            </div>
+                                            <span class="role-name">{{ role }}</span>
+                                        </div>
+
+                                        <button
+                                                class="action-button add-button"
+                                                (click)="addRole(role)"
+                                                [attr.title]="'Ajouter le rôle ' + role"
+                                                [disabled]="!isEnable"
+                                                type="button"
+                                        >
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <circle cx="12" cy="12" r="10"></circle>
+                                                <line x1="12" y1="8" x2="12" y2="16"></line>
+                                                <line x1="8" y1="12" x2="16" y2="12"></line>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Section des rôles attribués -->
+                        <div class="section assigned-section">
+                            <div class="section-header">
+                                <div class="section-title-wrapper">
+                                    <h4 class="section-title">Rôles du profil</h4>
+                                    <span class="role-count assigned-count">{{ assignedRoles.length }}</span>
+                                </div>
+                                <p class="section-description">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                                    </svg>
+                                    Cliquer sur × pour retirer un rôle
+                                </p>
+                            </div>
+
+                            <div class="section-content">
+                                <div
+                                        class="roles-list assigned-roles"
+                                        cdkDropList
+                                        #assignedList="cdkDropList"
+                                        [cdkDropListData]="assignedRoles"
+                                        [cdkDropListConnectedTo]="[availableList]"
+                                        (cdkDropListDropped)="onDrop($event)"
+                                        [cdkDropListDisabled]="!isEnable"
+                                >
+                                    <div *ngIf="assignedRoles.length === 0" class="empty-state">
+                                        <div class="empty-icon">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                                <path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                                <circle cx="12" cy="7" r="4"></circle>
+                                            </svg>
+                                        </div>
+                                        <span class="empty-title">Aucun rôle attribué</span>
+                                        <span class="empty-subtitle">Ajoutez des rôles à ce profil</span>
+                                    </div>
+
+                                    <div
+                                            *ngFor="let role of assignedRoles; trackBy: trackByRole"
+                                            class="role-item assigned-item"
+                                            cdkDrag
+                                            [cdkDragDisabled]="!isEnable"
+                                    >
+                                        <div class="drag-handle" [attr.aria-label]="'Glisser le rôle ' + role">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <circle cx="9" cy="12" r="1"></circle>
+                                                <circle cx="9" cy="5" r="1"></circle>
+                                                <circle cx="9" cy="19" r="1"></circle>
+                                                <circle cx="15" cy="12" r="1"></circle>
+                                                <circle cx="15" cy="5" r="1"></circle>
+                                                <circle cx="15" cy="19" r="1"></circle>
+                                            </svg>
+                                        </div>
+
+                                        <div class="role-content">
+                                            <div class="role-badge assigned-badge">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                    <path d="M9 12l2 2 4-4"></path>
+                                                    <path d="M21 12c-.9 0-3 1.75-3 1.75s-1.35-1.5-3-1.5-1.65 1.5-3 1.5-2.1-1.75-3-1.75-2.1 1.75-3 1.75-2.1-1.75-3-1.75"></path>
+                                                </svg>
+                                            </div>
+                                            <span class="role-name">{{ role }}</span>
+                                        </div>
+
+                                        <button
+                                                class="action-button remove-button"
+                                                (click)="removeRole(role)"
+                                                [attr.title]="'Retirer le rôle ' + role"
+                                                [disabled]="!isEnable"
+                                                type="button"
+                                        >
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actions du formulaire -->
+            <div class="form-actions">
+                <div class="actions-left">
+                    <div *ngIf="!isEnable" class="edit-hint">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                        </svg>
+                        Cliquez sur "Modifier" pour éditer ce profil
+                    </div>
+                </div>
+
+                <div class="actions-right">
+                    <button
+                            class="btn btn-outline"
+                            [disabled]="isEnable"
+                            (click)="activer($event)"
+                            type="button"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                        </svg>
+                        Modifier
+                    </button>
+
+                    <button
+                            type="button"
+                            class="btn btn-danger"
+                            [disabled]="!isEdit || !isEnable"
+                            (click)="delete(profile)"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="3 6 5 6 21 6"></polyline>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                            <line x1="10" y1="11" x2="10" y2="17"></line>
+                            <line x1="14" y1="11" x2="14" y2="17"></line>
+                        </svg>
+                        Supprimer
+                    </button>
+
+                    <button
+                            type="button"
+                            class="btn btn-primary"
+                            [disabled]="!isEnable || profileForm.invalid"
+                            (click)="Onsave()"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                            <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                            <polyline points="7 3 7 8 15 8"></polyline>
+                        </svg>
+                        {{ isEdit ? 'Sauvegarder' : 'Créer' }}
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

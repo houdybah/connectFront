@@ -1,0 +1,41 @@
+<div class="card">
+    <div class="card-body">
+        <hr />
+        <div class="d-flex ">
+            <div class="col-4">
+                <h5>Selectionner la Periode :</h5>
+            </div>
+            <div class="col-3">
+                <input type="date" class="form-control" id="dateBebut" name="dateBebut" [(ngModel)]="dateDebut" (ngModelChange)="masquer()"/>
+            </div>
+            <div class="col-3">
+                <input type="date" class="form-control" id="dateFin" name="dateFin" [(ngModel)]="dateFin" (ngModelChange)="masquer()"/>
+            </div>
+            <div class="col-2">
+                <button class="btn btn-outline-primary btn-md" [disabled]="!dateDebut || !dateFin" title="rechercher"  (click)="selectPeriod()">Valider</button>
+            </div>
+        </div>
+        <hr />
+        <!-- Tableau 
+        <div class=" d-flex justify-content-center m-4" *ngIf="!periodSelect && !recherche">
+            <h2 *ngIf="!periodSelect && !recherche">
+                Veuillez valider la periode !
+            </h2>
+        </div>-->
+
+        <div class=" d-flex justify-content-center m-4" *ngIf="!periodSelect && recherche">
+            <div class=" spinner-border" role="status" >
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+            <app-table-ft [situations]="situations" ></app-table-ft>
+        </div>
+</div>
+
+<ng-template #content role="document" let-modal >
+    <div class="modal-header bg-primary p-3">
+        <h5 class="modal-title" id="exampleModalLabel">Detail RAR Bureau</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+
+</ng-template>

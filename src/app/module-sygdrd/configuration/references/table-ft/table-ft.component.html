@@ -1,0 +1,36 @@
+<div class="card border m-1">
+    <div class="card-block row">
+        <div class="col-sm-12 col-lg-12 col-xl-12">
+            <div class="table-responsive theme-scrollbar bordered">
+                <table class="table table-bordered table-sm border border-dark">
+                    <thead class="table-dark border border-dark">
+                    <tr>
+                        <th scope="col">Date</th>
+                        <th scope="col">Reference</th>
+                        <th scope="col">Description</th>
+                        <th scope="col">Debit</th>
+                        <th scope="col">Credit</th>
+                        <th scope="col">Solde</th>
+                        <th scope="col">Action</th>
+                    </tr>
+                    </thead>
+                    <tbody class="border border-dark">
+                    <ng-container *ngFor="let situation of situations">
+                        <tr>
+                            <td>{{situation.transactionDate}}</td>
+                            <td>{{situation.reference}}</td>
+                            <td>{{situation.description}}</td>
+                            <td>{{situation.debit | number:'1.0'}}</td>
+                            <td>{{situation.credit | number:'1.0'}}</td>
+                            <td>{{situation.closingBalance | number:'1.0'}}</td>
+                            <td></td>
+
+                        </tr>
+                    </ng-container>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+

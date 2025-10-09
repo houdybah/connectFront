@@ -1,0 +1,382 @@
+<app-breadcrumbs title="Suivi Recettes" [breadcrumbItems]="breadcrumbItems"></app-breadcrumbs>
+
+<div class="row" id="contactList">
+    <div class="col-lg-12">
+        <div class="card">
+
+            <div class="card-body border border-dashed border-end-0 border-start-0">
+                <div class="row g-2">
+                    <!-- Select pour le type de situation -->
+
+
+                    <!-- Select pour le scope -->
+                    <div class="col-xl-2 col-md-2">
+                        <select class="form-control" data-choices data-choices-search-false
+                                name="choices-single-default" id="scope" [(ngModel)]="scope" (change)="onScopeChange()">
+                            <option value="" disabled>Recette/Realisation</option>
+                            <option value="UNITE">Réalisation d'une unité</option>
+                            <option value="DOUANE">Recettes de toute la Douane</option>
+                        </select>
+                    </div>
+
+                    <!-- Champ unité (conditionnel) -->
+                    <div class="col-xl-2 col-md-2" *ngIf="scope === 'UNITE'">
+                        <div class="position-relative">
+                            <input
+                                    type="text"
+                                    class="form-control"
+                                    placeholder="Rechercher une unité..."
+                                    [(ngModel)]="uniteSearch"
+                                    (input)="onUniteSearchChange($event)"
+                                    (focus)="showUniteDropdown = true"
+                                    (blur)="onUniteBlur()"
+                                    [value]="selectedUnite?.nomUnite || ''"
+                                    autocomplete="off">
+
+                            <div *ngIf="showUniteDropdown && filteredUnites.length > 0"
+                                 class="dropdown-menu show position-absolute w-100"
+                                 style="z-index: 1050; max-height: 200px; overflow-y: auto;">
+                                <button
+                                        *ngFor="let unite of filteredUnites"
+                                        type="button"
+                                        class="dropdown-item"
+                                        (mousedown)="selectUnite(unite)">
+                                    <div>
+                                        <strong>{{unite.codeUnite}}</strong> - {{unite.nomUnite}}
+                                    </div>
+                                    <small class="text-muted">{{unite.typeUnite}}</small>
+                                </button>
+                            </div>
+
+                            <div *ngIf="showUniteDropdown && filteredUnites.length === 0 && uniteSearch"
+                                 class="dropdown-menu show position-absolute w-100"
+                                 style="z-index: 1050;">
+                                <div class="dropdown-item-text text-muted">
+                                    Aucune unité trouvée
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-2 col-md-2">
+                        <select class="form-control" data-choices data-choices-search-false
+                                name="choices-single-default" id="typeSituation" [(ngModel)]="typeSituation" (change)="onTypeSituationChange()">
+                            <option value="" disabled>Type de situation</option>
+                            <option value="INTERVALLE">Entre deux dates</option>
+                            <option value="MOMENT">À un moment donné</option>
+                        </select>
+                    </div>
+
+                    <!-- Select pour la périodicité -->
+                    <div class="col-xl-2 col-md-2">
+                        <select class="form-control" data-choices data-choices-search-false
+                                name="choices-single-default" id="depart" [(ngModel)]="periodicite" (change)="onPeriodiciteChange()">
+                            <option value="" disabled>Critère</option>
+                            <option value="ANNEE">Année</option>
+                            <option value="MOIS">Mois</option>
+                            <option value="JOUR">Jour</option>
+                        </select>
+                    </div>
+
+                    <!-- Date de début -->
+                    <div class="col-xl-2 col-md-2">
+                        <select *ngIf="periodicite === 'ANNEE'"
+                                class="form-control"
+                                data-choices
+                                data-choices-search-false
+                                name="choices-single-default"
+                                id="debut"
+                                [(ngModel)]="debut"
+                                (change)="onDateChange()">
+                            <option value="" disabled>{{getDebutLabel()}}</option>
+                            <option *ngFor="let year of getYearOptions()" [value]="year">{{year}}</option>
+                        </select>
+                        <input *ngIf="periodicite !== 'ANNEE'"
+                               [type]="getInputType()"
+                               class="form-control"
+                               data-choices
+                               data-choices-search-false
+                               name="choices-single-default"
+                               id="debut"
+                               [(ngModel)]="debut"
+                               (change)="onDateChange()"
+                               [placeholder]="getPlaceholder('debut')"
+                               [max]="getMaxDate()"
+                               [min]="getMinDate()"/>
+                    </div>
+
+                    <!-- Date de fin (conditionnel) -->
+                    <div class="col-xl-2 col-md-2" *ngIf="typeSituation === 'INTERVALLE'">
+                        <select *ngIf="periodicite === 'ANNEE'"
+                                class="form-control"
+                                data-choices
+                                data-choices-search-false
+                                name="choices-single-default"
+                                id="fin"
+                                [(ngModel)]="fin"
+                                (change)="onDateChange()">
+                            <option value="" disabled>Année de fin</option>
+                            <option *ngFor="let year of getYearOptionsForEnd()" [value]="year">{{year}}</option>
+                        </select>
+                        <input *ngIf="periodicite !== 'ANNEE'"
+                               [type]="getInputType()"
+                               class="form-control"
+                               data-choices
+                               data-choices-search-false
+                               name="choices-single-default"
+                               id="fin"
+                               [(ngModel)]="fin"
+                               (change)="onDateChange()"
+                               [placeholder]="getPlaceholder('fin')"
+                               [max]="getMaxDate()"
+                               [min]="debut || getMinDate()"/>
+                    </div>
+
+                    <!-- Bouton de recherche -->
+                    <div class="col-xl-2 col-md-2">
+                        <button class="btn btn-success w-100" (click)="rechercherRealisation()" [disabled]="isSearchDisabled()">
+                            <span *ngIf="isLoading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                            {{ isLoading ? 'Chargement...' : 'Filtrer' }}
+                        </button>
+                    </div>
+
+                </div>
+
+                <!-- Messages d'erreur et d'avertissement -->
+                <div *ngIf="dateError" class="row g-2 mt-2">
+                    <div class="col-12">
+                        <div class="alert alert-danger" role="alert">
+                            {{ dateError }}
+                        </div>
+                    </div>
+                </div>
+                <div *ngIf="getValidationMessage()" class="row g-2 mt-2">
+                    <div class="col-12">
+                        <div class="alert alert-warning" role="alert">
+                            {{ getValidationMessage() }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-body border border-dashed border-end-0 border-start-0">
+                <div class="row g-2">
+                    <div class="col-xl-2 col-md-2">
+                        <button class="btn btn-ghost-success w-100" (click)="exportToExcel()" [disabled]="isLoading || !isData || isExporting">
+                            <span *ngIf="isExporting" class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+                            {{ isExporting ? 'Export...' : 'Excel' }}
+                        </button>
+                    </div>
+                    <!--
+                    <div class="col-xl-2 col-md-2">
+                        <button class="btn btn-ghost-info w-100" (click)="openAnalyseModal(analyseModalContent)" [disabled]="isLoading || !isData || isAnalysing">
+                            <span *ngIf="isAnalysing" class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+                            {{ isAnalysing ? 'Analyse...' : 'Analyser' }}
+                        </button>
+                    </div>
+                    -->
+                    <div class="col-xl-2 col-md-2">
+                        <button class="btn btn-ghost-secondary w-100" (click)="print()" [disabled]="isLoading || !isData || isPrinting">
+                            <span *ngIf="isPrinting" class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+                            {{ isPrinting ? 'Génération...' : 'PDF' }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div *ngIf="isLoading && !pageData.data?.length" class="text-center my-3">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Chargement...</span>
+                    </div>
+                    <p>Chargement des données...</p>
+                </div>
+
+                <!-- Message initial pour inviter l'utilisateur à filtrer -->
+                <div *ngIf="!isLoading && !isData && !hasSearched" class="text-center my-3 alert alert-info">
+                    Veuillez sélectionner les critères de filtre et valider pour afficher les données.
+                </div>
+
+                <div *ngIf="!isLoading && !isData && isSearchComplete() && hasSearched" class="text-center my-3 alert alert-info">
+                    Aucune réalisation trouvée pour la période et les filtres sélectionnés.
+                </div>
+
+                <!-- Tableau pour UNITE -->
+                <div class="table-responsive table-card" *ngIf="pageData && pageData.data && pageData.data.length > 0 && scope === 'UNITE'">
+                    <table class="table align-middle table-nowrap" id="customerTable">
+                        <thead class="table-light text-muted">
+                        <tr>
+                            <th class="sort">Période</th>
+                            <th>Produits Pétroliers</th>
+                            <th>Produits Miniers</th>
+                            <th>Autres Produits</th>
+                            <th>Total Réalisation</th>
+                        </tr>
+                        </thead>
+                        <tbody class="list form-check-all">
+                        <!-- Afficher les données sauf les totaux -->
+                            @for(data of getDataWithoutTotals(); track $index) {
+                                <tr>
+                                    <td class="order_date">{{data.periode}}</td>
+                                    <td class="order_date">{{data.recettePP | number:'1.2-2'}}</td>
+                                    <td class="order_date">{{data.tme | number:'1.2-2'}}</td>
+                                    <td class="order_date">{{data.recetteAP | number:'1.2-2'}}</td>
+                                    <td class="order_date">{{data.totalPPAPTMERER | number:'1.2-2'}}</td>
+                                </tr>
+                            }
+                        <!-- Ligne de total pour MOMENT (Total Mois) -->
+                        <tr *ngIf="typeSituation === 'MOMENT' && pageData.data.length >= 2" class="table-warning fw-bold">
+                            <td>Total Mois</td>
+                            <td>{{pageData.data[pageData.data.length - 2].recettePP | number:'1.2-2'}}</td>
+                            <td>{{pageData.data[pageData.data.length - 2].tme | number:'1.2-2'}}</td>
+                            <td>{{pageData.data[pageData.data.length - 2].recetteAP | number:'1.2-2'}}</td>
+                            <td>{{pageData.data[pageData.data.length - 2].totalPPAPTMERER | number:'1.2-2'}}</td>
+                        </tr>
+                        <!-- Ligne de total pour MOMENT (Total Année) -->
+                        <tr *ngIf="typeSituation === 'MOMENT' && pageData.data.length >= 1" class="table-warning fw-bold">
+                            <td>Total Année</td>
+                            <td>{{pageData.data[pageData.data.length - 1]?.recettePP | number:'1.2-2'}}</td>
+                            <td>{{pageData.data[pageData.data.length - 1]?.tme | number:'1.2-2'}}</td>
+                            <td>{{pageData.data[pageData.data.length - 1]?.recetteAP | number:'1.2-2'}}</td>
+                            <td>{{pageData.data[pageData.data.length - 1]?.totalPPAPTMERER | number:'1.2-2'}}</td>
+                        </tr>
+                        <!-- Ligne de total pour INTERVALLE -->
+                        <tr *ngIf="typeSituation === 'INTERVALLE' && pageData.data.length >= 1" class="table-warning fw-bold">
+                            <td>Total Intervalle</td>
+                            <td>{{pageData.data[pageData.data.length - 1]?.recettePP | number:'1.2-2'}}</td>
+                            <td>{{pageData.data[pageData.data.length - 1]?.tme | number:'1.2-2'}}</td>
+                            <td>{{pageData.data[pageData.data.length - 1]?.recetteAP | number:'1.2-2'}}</td>
+                            <td>{{pageData.data[pageData.data.length - 1]?.totalPPAPTMERER | number:'1.2-2'}}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Tableau pour DOUANE -->
+                <div class="table-responsive table-card" *ngIf="pageData && pageData.data && pageData.data.length > 0 && scope === 'DOUANE'">
+                    <table class="table align-middle table-nowrap" id="customerTable">
+                        <thead class="table-light text-muted">
+                        <tr>
+                            <th class="sort">Période</th>
+                            <th>Recettes sur PP</th>
+                            <th>Recettes sur AP</th>
+                            <th>Total Encaissé</th>
+                            <th>Taxe Exportation DGD</th>
+                            <th>Taxe Extraction DGI</th>
+                            <th>RER</th>
+                            <th>Total des recettes Douanières</th>
+                        </tr>
+                        </thead>
+                        <tbody class="list form-check-all">
+                        <!-- Afficher les données sauf les totaux -->
+                            @for(data of getDataWithoutTotals(); track $index) {
+                                <tr>
+                                    <td class="order_date">{{data.periode}}</td>
+                                    <td class="order_date">{{data.recettePP | number:'1.2-2'}}</td>
+                                    <td class="order_date">{{data.recetteAP | number:'1.2-2'}}</td>
+                                    <td class="order_date">{{data.totalPPAP | number:'1.2-2'}}</td>
+                                    <td class="order_date">{{data.tme | number:'1.2-2'}}</td>
+                                    <td class="order_date">{{data.tmx | number:'1.2-2'}}</td>
+                                    <td class="order_date">{{data.rer | number:'1.2-2'}}</td>
+                                    <td class="order_date">{{data.totalPPAPTMERER | number:'1.2-2'}}</td>
+                                </tr>
+                            }
+                        <!-- Ligne de total pour MOMENT (Total Mois) -->
+                        <tr *ngIf="typeSituation === 'MOMENT' && pageData.data.length >= 2" class="table-warning fw-bold">
+                            <td>Total Mois</td>
+                            <td>{{pageData.data[pageData.data.length - 2].recettePP | number:'1.2-2'}}</td>
+                            <td>{{pageData.data[pageData.data.length - 2].recetteAP | number:'1.2-2'}}</td>
+                            <td>{{pageData.data[pageData.data.length - 2].totalPPAP | number:'1.2-2'}}</td>
+                            <td>{{pageData.data[pageData.data.length - 2].tme | number:'1.2-2'}}</td>
+                            <td>{{pageData.data[pageData.data.length - 2].tmx | number:'1.2-2'}}</td>
+                            <td>{{pageData.data[pageData.data.length - 2].rer | number:'1.2-2'}}</td>
+                            <td>{{pageData.data[pageData.data.length - 2].totalPPAPTMERER | number:'1.2-2'}}</td>
+                        </tr>
+                        <!-- Ligne de total pour MOMENT (Total Année) -->
+                        <tr *ngIf="typeSituation === 'MOMENT' && pageData.data.length >= 1" class="table-warning fw-bold">
+                            <td>Total Année</td>
+                            <td>{{pageData.data[pageData.data.length - 1]?.recettePP | number:'1.2-2'}}</td>
+                            <td>{{pageData.data[pageData.data.length - 1]?.recetteAP | number:'1.2-2'}}</td>
+                            <td>{{pageData.data[pageData.data.length - 1]?.totalPPAP | number:'1.2-2'}}</td>
+                            <td>{{pageData.data[pageData.data.length - 1]?.tme | number:'1.2-2'}}</td>
+                            <td>{{pageData.data[pageData.data.length - 1]?.tmx | number:'1.2-2'}}</td>
+                            <td>{{pageData.data[pageData.data.length - 1]?.rer | number:'1.2-2'}}</td>
+                            <td>{{pageData.data[pageData.data.length - 1]?.totalPPAPTMERER | number:'1.2-2'}}</td>
+                        </tr>
+                        <!-- Ligne de total pour INTERVALLE -->
+                        <tr *ngIf="typeSituation === 'INTERVALLE' && pageData.data.length >= 1" class="table-warning fw-bold">
+                            <td>Total Intervalle</td>
+                            <td>{{pageData.data[pageData.data.length - 1]?.recettePP | number:'1.2-2'}}</td>
+                            <td>{{pageData.data[pageData.data.length - 1]?.recetteAP | number:'1.2-2'}}</td>
+                            <td>{{pageData.data[pageData.data.length - 1]?.totalPPAP | number:'1.2-2'}}</td>
+                            <td>{{pageData.data[pageData.data.length - 1]?.tme | number:'1.2-2'}}</td>
+                            <td>{{pageData.data[pageData.data.length - 1]?.tmx | number:'1.2-2'}}</td>
+                            <td>{{pageData.data[pageData.data.length - 1]?.rer | number:'1.2-2'}}</td>
+                            <td>{{pageData.data[pageData.data.length - 1]?.totalPPAPTMERER | number:'1.2-2'}}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="row justify-content-md-end align-items-md-center mt-3" *ngIf="pageData && pageData.data && pageData.data.length > 0">
+                    <div class="col col-sm-6">
+                        <nav aria-label="Page navigation example">
+                            <ul class="pagination">
+                                <li class="page-item" [class.disabled]="pageData.page.pageNumber <= 0 || isLoading">
+                                    <a class="page-link" aria-label="Previous" (click)="precedentPage()">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+                                <li class="page-item disabled"> <a class="page-link">
+                                    {{pageData.page.pageNumber + 1}} sur {{totalPage}}
+                                </a>
+                                </li>
+                                <li class="page-item" [class.disabled]="pageData.page.pageNumber >= totalPage - 1 || isLoading">
+                                    <a class="page-link" aria-label="Next" (click)="prochainePage()">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                    <div class="col col-sm-6">
+                        <div class="text-md-right float-md-end listjs-pagination">
+                            <select class="form-select" style="width: auto;" [(ngModel)]="size" (change)="changeSize()" [disabled]="isLoading">
+                                <option value="10">10 éléments par page</option>
+                                <option value="30">30 éléments par page</option>
+                                <option value="50">50 éléments par page</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<ng-template #analyseModalContent let-modal>
+    <div class="modal-header">
+        <h5 class="modal-title" id="analyseModalLabel">Analyse des Réalisations</h5>
+        <button type="button" class="btn-close" (click)="modal.dismiss('Cross click')" aria-label="Close"></button>
+    </div>
+    <div class="modal-body">
+        <div *ngIf="isAnalysing" class="text-center">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Analyse en cours...</span>
+            </div>
+            <p>Analyse en cours, veuillez patienter...</p>
+        </div>
+        <div *ngIf="!isAnalysing && analysisError" class="alert alert-danger">
+            {{ analysisError }}
+        </div>
+        <div *ngIf="!isAnalysing && !analysisError && analysisResult" [innerHTML]="analysisResult | safeHtml">
+        </div>
+        <div *ngIf="!isAnalysing && !analysisError && !analysisResult" class="alert alert-info">
+            Aucune analyse disponible pour le moment.
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Fermer</button>
+    </div>
+</ng-template>

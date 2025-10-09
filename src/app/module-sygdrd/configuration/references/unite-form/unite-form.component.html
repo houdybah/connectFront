@@ -1,0 +1,70 @@
+<div class="modal-body">
+    <form [formGroup]="uniteForm" (ngSubmit)="Onsave()">
+        <div class="form-group">
+            <label for="codeUnite">
+                Sigle *
+            </label>
+            <input type="text" class="form-control" id="codeUnite" formControlName="codeUnite" (input)="onInputChange()" required>
+            <div *ngIf="uniteForm.get('codeUnite')?.invalid && (uniteForm.get('codeUnite')?.touched || submitted)" class="alert alert-danger">
+                Le sigle est requis
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="nomUnite">
+                Nom *
+            </label>
+            <input type="text" class="form-control" id="nomUnite" formControlName="nomUnite" required>
+            <div *ngIf="uniteForm.get('nomUnite')?.invalid && (uniteForm.get('nomUnite')?.touched || submitted)" class="alert alert-danger">
+                Le nom est requis
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="typeUnite">
+                Type *
+            </label>
+            <select class="form-control" id="typeUnite" formControlName="typeUnite" required>
+                <option value="" disabled>Sélectionner le type d'unité</option>
+                <option *ngFor="let typeUnite of typesUnites" [value]="typeUnite">{{typeUnite}}</option>
+            </select>
+            <div *ngIf="uniteForm.get('typeUnite')?.invalid && (uniteForm.get('typeUnite')?.touched || submitted)" class="alert alert-danger">
+                Le type est requis
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="uuidUnitePere">
+                Relève de *
+            </label>
+            <ng-select
+
+                    id="uuidUnitePere"
+                    [items]="unites"
+                    bindValue="uuid"
+                    bindLabel="nomUnite"
+                    formControlName="uuidUnitePere"
+                    placeholder="Sélectionner l'unité parent"
+                    [searchable]="true"
+                    [clearable]="true"
+                    [disabled]="isRootUnit"
+                    (search)="onSearch($event)">
+                <ng-template ng-option-tmp let-item="item">
+                    {{item.codeUnite}} / {{item.nomUnite}}
+                </ng-template>
+            </ng-select>
+            <div *ngIf="uniteForm.get('uuidUnitePere')?.invalid && (uniteForm.get('uuidUnitePere')?.touched || submitted)" class="alert alert-danger">
+                L'unité parent est requise
+            </div>
+            <div *ngIf="isRootUnit" class="alert alert-info">
+                Vous ne pouvez pas modifier le parent d'une unité racine
+            </div>
+        </div>
+
+        <div class="modal-footer">
+            <button type="button" class="btn btn-outline-primary" (click)="activer($event)" *ngIf="!isEnable">Modifier</button>
+            <button type="button" class="btn btn-outline-danger" (click)="delete(unite)" *ngIf="isEdit">Supprimer</button>
+            <button type="submit" class="btn btn-primary">{{ isEdit ? 'Enregistrer' : 'Ajouter' }}</button>
+        </div>
+    </form>
+</div>

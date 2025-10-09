@@ -1,0 +1,35 @@
+<div class="modal-body">
+    <div class="container">
+        <form  [formGroup]="rubriqueForm" >
+
+            <div class="mb-3">
+                <label for="codeRubrique" class="form-label">Code <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="codeRubrique" formControlName="codeRubrique" placeholder="Entrez le code de la rubrique"  />
+                <div *ngIf="rubriqueForm.get('codeRubrique')?.touched && rubriqueForm.get('codeRubrique')?.invalid" class="text-danger">
+                    Le code est requis
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="descriptionRubrique" class="form-label">Libelle<span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="descriptionRubrique" formControlName="descriptionRubrique" placeholder="Entrez le nom de la rubrique"  />
+                <div *ngIf="rubriqueForm.get('descriptionRubrique')?.touched && rubriqueForm.get('descriptionRubrique')?.invalid" class="text-danger">
+                    Le libelle est requis
+                </div>
+            </div>
+
+            <hr>
+
+
+            <!-- Soumettre le Formulaire -->
+            <div class="d-flex justify-content-end">
+                <button  class="btn btn-secondary "  [disabled]="isEnable" (click)="activer($event)" >Modifier</button>
+                <button type="submit" class="btn btn-danger " [disabled]="!isEdit || !isEnable " (click)="delete(rubrique)" >Supprimer</button>
+                <button type="submit" class="btn btn-success " [disabled]="!isEnable" (click)="Onsave()" >Valider</button>
+            </div>
+
+            <hr>
+
+        </form>
+    </div>
+</div>
