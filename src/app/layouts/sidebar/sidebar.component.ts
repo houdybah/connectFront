@@ -31,11 +31,15 @@ export class SidebarComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log('🎬 SidebarComponent initialisé');
-    
-    // S'abonner à l'application sélectionnée
+    // Charger l'application sélectionnée depuis sessionStorage au démarrage
+    const savedApp = sessionStorage.getItem('selectedApp');
+    if (savedApp) {
+      this.selectedApp = savedApp;
+      this.filterMenuByApp(savedApp);
+    }
+
+    // S'abonner à l'application sélectionnée pour les changements futurs
     this.menuVisibilityService.selectedApp$.subscribe(app => {
-      console.log('🔄 Application sélectionnée changée:', app);
       this.selectedApp = app;
       this.filterMenuByApp(app);
       
@@ -55,60 +59,37 @@ export class SidebarComponent implements OnInit {
   }
 
   filterMenuByApp(app: string | null): void {
-    console.log('🔍 Filtrage du menu pour l\'app:', app);
-    
     if (!app) {
-      console.log('⚠️ Pas d\'application sélectionnée, menu vide');
       this.menuItems = [];
       return;
     }
 
     // Filtrer le menu en fonction de l'application
     if (app === 'sysrev') {
-      console.log('📋 Filtrage menu SYSREV');
       // Transformer les sous-menus en éléments de menu principaux
       this.menuItems = this.flattenSysrevMenu();
-      console.log('✅ Menu SYSREV chargé:', this.menuItems.length, 'éléments');
     } else if (app === 'sygmak') {
-      console.log('📋 Filtrage menu SYGMAK');
       // Transformer les sous-menus en éléments de menu principaux
       this.menuItems = this.flattenSygmakMenu();
-      console.log('✅ Menu SYGMAK chargé:', this.menuItems.length, 'éléments');
-    } else if (app === 'douaneconnect') {
-      console.log('📋 Filtrage menu DouaneConnect');
-      // Filtrer pour afficher uniquement les menus généraux (id < 1500)
-      this.menuItems = this.allMenuItems.filter(item => 
-        !item.id || item.id < 1500
-      );
-      console.log('✅ Menu DouaneConnect chargé:', this.menuItems.length, 'éléments');
     } else if (app === 'sygdrd') {
-      console.log('📋 Filtrage menu SYGDRD');
-      // Pour l'instant, pas de menu spécifique SYGDRD, afficher les menus généraux
+      // Transformer les sous-menus en éléments de menu principaux
+      this.menuItems = this.flattenSygdrdMenu();
+    } else if (app === 'douaneconnect') {
+      // Filtrer pour afficher uniquement les menus DouaneConnect
       this.menuItems = this.allMenuItems.filter(item => 
-        !item.id || item.id < 1500
+        item.app === 'douaneconnect'
       );
-      console.log('✅ Menu SYGDRD chargé:', this.menuItems.length, 'éléments');
     } else {
-      console.log('⚠️ Application inconnue:', app);
       this.menuItems = [];
     }
   }
 
   flattenSysrevMenu(): MenuItem[] {
-    console.log('🔧 Transformation du menu SYSREV...');
     const sysrevMainMenu = this.allMenuItems.find(item => item.id === 1501);
     
-    if (!sysrevMainMenu) {
-      console.log('❌ Menu SYSREV principal (id: 1501) non trouvé!');
+    if (!sysrevMainMenu || !sysrevMainMenu.subItems) {
       return [];
     }
-    
-    if (!sysrevMainMenu.subItems) {
-      console.log('❌ Pas de sous-menus dans le menu SYSREV!');
-      return [];
-    }
-
-    console.log('✅ Menu SYSREV trouvé avec', sysrevMainMenu.subItems.length, 'sous-menus');
 
     // Ajouter un titre pour l'application
     const titleItem: MenuItem = {
@@ -124,25 +105,15 @@ export class SidebarComponent implements OnInit {
       isCollapsed: subItem.subItems ? true : undefined
     }));
 
-    console.log('✅ Menu SYSREV transformé:', flatMenu.length, 'éléments');
     return [titleItem, ...flatMenu];
   }
 
   flattenSygmakMenu(): MenuItem[] {
-    console.log('🔧 Transformation du menu SYGMAK...');
     const sygmakMainMenu = this.allMenuItems.find(item => item.id === 1700);
     
-    if (!sygmakMainMenu) {
-      console.log('❌ Menu SYGMAK principal (id: 1700) non trouvé!');
+    if (!sygmakMainMenu || !sygmakMainMenu.subItems) {
       return [];
     }
-    
-    if (!sygmakMainMenu.subItems) {
-      console.log('❌ Pas de sous-menus dans le menu SYGMAK!');
-      return [];
-    }
-
-    console.log('✅ Menu SYGMAK trouvé avec', sygmakMainMenu.subItems.length, 'sous-menus');
 
     // Ajouter un titre pour l'application
     const titleItem: MenuItem = {
@@ -158,7 +129,30 @@ export class SidebarComponent implements OnInit {
       isCollapsed: subItem.subItems ? true : undefined
     }));
 
-    console.log('✅ Menu SYGMAK transformé:', flatMenu.length, 'éléments');
+    return [titleItem, ...flatMenu];
+  }
+
+  flattenSygdrdMenu(): MenuItem[] {
+    const sygdrdMainMenu = this.allMenuItems.find(item => item.id === 100);
+    
+    if (!sygdrdMainMenu || !sygdrdMainMenu.subItems) {
+      return [];
+    }
+
+    // Ajouter un titre pour l'application
+    const titleItem: MenuItem = {
+      id: 9997,
+      label: 'SYGDRD - Gestion des Droits et Redevances',
+      isTitle: true
+    };
+
+    // Transformer les sous-menus en éléments de menu principaux
+    const flatMenu: MenuItem[] = sygdrdMainMenu.subItems.map((subItem: MenuItem) => ({
+      ...subItem,
+      parentId: undefined, // Enlever le parentId pour en faire un élément principal
+      isCollapsed: subItem.subItems ? true : undefined
+    }));
+
     return [titleItem, ...flatMenu];
   }
 

@@ -3,20 +3,40 @@ import { MenuItem } from './menu.model';
 export const MENU: MenuItem[] = [
   {
     id: 1,
+    label: 'DOUANECONNECT',
+    isTitle: true,
+    app: 'douaneconnect'
+  },
+  {
+    id: 2,
+    label: 'Liste des Modules',
+    icon: 'ri-list-check',
+    link: '/modules/list',
+    app: 'douaneconnect'
+  },
+  {
+    id: 3,
+    label: 'Nouveau Module',
+    icon: 'ri-add-circle-line',
+    link: '/modules/create',
+    app: 'douaneconnect'
+  },
+  {
+    id: 4,
     label: 'MENUITEMS.MENU.TEXT',
     isTitle: true
   },
   {
-    id: 2,
+    id: 5,
     label: 'MENUITEMS.DASHBOARD.TEXT',
     icon: 'ri-dashboard-2-line',
     isCollapsed: true,
     subItems: [
       {
-        id: 3,
+        id: 6,
         label: 'MENUITEMS.DASHBOARD.LIST.ANALYTICS',
         link: '/',
-        parentId: 2
+        parentId: 5
       },
       {
         id: 4,
@@ -1415,14 +1435,148 @@ export const MENU: MenuItem[] = [
     ]
   },
   {
+    id: 90,
+    label: 'SYGDRD',
+    isTitle: true,
+    app: 'sygdrd'
+  },
+  {
+    id: 100,
+    label: 'SYGDRD',
+    icon: 'ri-file-list-3-line',
+    app: 'sygdrd',
+    isCollapsed: true,
+    subItems: [
+      {
+        id: 101,
+        label: 'Tableau de Bord',
+        icon: 'ri-dashboard-2-line',
+        parentId: 100,
+        isCollapsed: true,
+        subItems: [
+          {
+            id: 102,
+            label: 'Acceuil',
+            link: '/sygdrd/dashboard/acceuil',
+            parentId: 101
+          },
+          {
+            id: 103,
+            label: 'Statistiques',
+            link: '/sygdrd/dashboard/statistiques',
+            parentId: 101
+          },
+          {
+            id: 104,
+            label: 'Rapport et etats',
+            link: '/sygdrd/dashboard/etat',
+            parentId: 101
+          }
+        ]
+      },
+      {
+        id: 105,
+        label: 'Analyse et prevision',
+        icon: 'ri-file-list-3-line',
+        parentId: 100,
+        isCollapsed: true,
+        subItems: [
+          {
+            id: 106,
+            label: 'Lois de Finance',
+            link: '/sygdrd/analyse-synthese/loisFinance',
+            parentId: 105
+          },
+          {
+            id: 107,
+            label: 'Gestion des Quotas',
+            link: '/sygdrd/analyse-synthese/quota',
+            parentId: 105
+          },
+          {
+            id: 108,
+            label: 'Analyse et prevision',
+            link: '/sygdrd/analyse-synthese/analyseEtPrevision',
+            parentId: 105
+          }
+        ]
+      },
+      {
+        id: 109,
+        label: 'Comptabilité',
+        icon: 'ri-file-add-line',
+        parentId: 100,
+        isCollapsed: true,
+        subItems: [
+          {
+            id: 110,
+            label: 'Emissions et Recouvrements',
+            link: '/sygdrd/comptabilite/emissionsEtRecouvrements',
+            parentId: 109
+          },
+          {
+            id: 111,
+            label: 'Restes a Recouvrer',
+            link: '/sygdrd/comptabilite/resteARecouvrer',
+            parentId: 109
+          },
+          {
+            id: 112,
+            label: 'Controle et gestion des paiements',
+            link: '/sygdrd/comptabilite/controleGestionPaiments',
+            parentId: 109
+          }
+        ]
+      },
+      {
+        id: 113,
+        label: 'Configuration',
+        icon: 'ri-database-2-line',
+        parentId: 100,
+        isCollapsed: true,
+        subItems: [
+          {
+            id: 114,
+            label: 'Tables de References',
+            link: '/sygdrd/configuration/references',
+            parentId: 113
+          },
+          {
+            id: 115,
+            label: 'Parametres',
+            link: '/sygdrd/configuration/parametres',
+            parentId: 113
+          }
+        ]
+      },
+      {
+        id: 116,
+        label: 'Gestion Utilisateur',
+        icon: 'ri-user-settings-line',
+        parentId: 100,
+        isCollapsed: true,
+        subItems: [
+          {
+            id: 117,
+            label: 'Menu Utilisateur',
+            link: '/sygdrd/gestion-utilisateur/menuUser',
+            parentId: 116
+          }
+        ]
+      }
+    ]
+  },
+  {
     id: 1500,
     label: 'SYSREV',
-    isTitle: true
+    isTitle: true,
+    app: 'sysrev'
   },
   {
     id: 1501,
     label: 'SYSREV',
     icon: 'ri-truck-line',
+    app: 'sysrev',
     isCollapsed: true,
     subItems: [
       {
@@ -1673,12 +1827,18 @@ export const MENU: MenuItem[] = [
       }
     ]
   },
-
+  {
+    id: 1699,
+    label: 'SYGMAK',
+    isTitle: true,
+    app: 'sygmak'
+  },
   // SYGMAK Menu
   {
     id: 1700,
     label: 'SYGMAK',
     icon: 'ri-oil-line',
+    app: 'sygmak',
     isCollapsed: true,
     subItems: [
       {

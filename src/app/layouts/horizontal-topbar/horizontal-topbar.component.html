@@ -25,11 +25,20 @@
     </div>
 
     <div id="scrollbar">
-        <div class="container">
+        <div class="container-fluid">
+            <!-- Bouton de défilement gauche -->
+            @if(canScrollLeft){
+            <button type="button" class="btn btn-sm btn-scroll btn-scroll-left" (click)="scrollMenu('left')" aria-label="Défiler vers la gauche">
+                <i class="ri-arrow-left-s-line"></i>
+            </button>
+            }
 
             <div id="two-column-menu">
             </div>
-            <ul class="navbar-nav text-center ms-4" id="navbar-nav">
+
+            <!-- Conteneur de menu scrollable -->
+            <div class="navbar-menu-container" #menuScrollContainer>
+                <ul class="navbar-nav text-center ms-4" id="navbar-nav">
                 @for(item of menuItems; track $index){
                 @if(item.isTitle){
                 <li class="menu-title"><span data-key="t-menu">{{ item.label | translate }}</span></li>
@@ -108,7 +117,15 @@
                 </li>
                 }
                 }
-            </ul>
+                </ul>
+            </div>
+
+            <!-- Bouton de défilement droite -->
+            @if(canScrollRight){
+            <button type="button" class="btn btn-sm btn-scroll btn-scroll-right" (click)="scrollMenu('right')" aria-label="Défiler vers la droite">
+                <i class="ri-arrow-right-s-line"></i>
+            </button>
+            }
         </div>
         <!-- Sidebar -->
     </div>
