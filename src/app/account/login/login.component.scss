@@ -1,12 +1,165 @@
-.container-fluid {
-    height: 100vh;
+// Fond de la page
+.auth-page-wrapper {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #d4f1e8 0%, #e8f5f1 100%);
+  display: flex;
+  align-items: center;
+  padding: 2rem 0;
+}
+
+.auth-page-content {
+  width: 100%;
+}
+
+// Logo App-DGD
+.app-logo-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.app-logo-icon {
+  width: 80px;
+  height: 80px;
+  background-color: #0d6846;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(13, 104, 70, 0.3);
+  
+  i {
+    font-size: 48px;
+    color: white;
+  }
+}
+
+.app-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #0d6846;
+  margin: 0;
+}
+
+.app-subtitle {
+  font-size: 0.95rem;
+  color: #6c757d;
+  margin: 0.5rem 0 0 0;
+}
+
+// Card de connexion
+.login-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  border: none;
+}
+
+.login-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #212529;
+  margin: 0;
+}
+
+.login-subtitle {
+  font-size: 0.9rem;
+  color: #6c757d;
+  margin: 0;
+}
+
+// Formulaire
+.form-label {
+  color: #212529;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+}
+
+.form-control {
+  padding: 0.75rem;
+  font-size: 0.95rem;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  background-color: #f8f9fa;
+  
+  &:focus {
+    background-color: white;
+    border-color: #0d6846;
+    box-shadow: 0 0 0 0.2rem rgba(13, 104, 70, 0.15);
   }
   
-  .row {
-    height: 100%;
+  &::placeholder {
+    color: #adb5bd;
+  }
+}
+
+// Bouton mot de passe
+.password-toggle {
+  padding: 0.75rem 1rem;
+  
+  i {
+    font-size: 1.25rem;
+  }
+}
+
+// Bouton Se connecter
+.btn-connect {
+  background-color: #0d6846;
+  border: none;
+  padding: 0.875rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background-color: #0a5437;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(13, 104, 70, 0.3);
   }
   
-  .col-md-6:first-child {
-    background-color: #f8f9fa; /* Couleur de fond en cas d'absence d'image */
+  &:active {
+    transform: translateY(0);
   }
+}
+
+// Liens
+.link-secondary {
+  color: #6c757d;
+  font-size: 0.9rem;
+  
+  &:hover {
+    color: #495057;
+  }
+}
+
+.link-dark {
+  color: #212529;
+  font-size: 0.9rem;
+  
+  &:hover {
+    color: #0d6846;
+  }
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .app-logo-icon {
+    width: 60px;
+    height: 60px;
+    
+    i {
+      font-size: 36px;
+    }
+  }
+  
+  .app-title {
+    font-size: 1.5rem;
+  }
+  
+  .app-subtitle {
+    font-size: 0.85rem;
+  }
+}
   

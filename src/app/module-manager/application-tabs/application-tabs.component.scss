@@ -1,0 +1,255 @@
+.application-selector-wrapper {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #d4f1e8 0%, #e8f5f1 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.application-selector-content {
+  max-width: 1200px;
+  width: 100%;
+}
+
+// Header avec logo
+.app-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.app-logo-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.app-logo-icon {
+  width: 80px;
+  height: 80px;
+  background-color: #0d6846;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(13, 104, 70, 0.3);
+  
+  i {
+    font-size: 48px;
+    color: white;
+  }
+}
+
+.app-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #0d6846;
+  margin: 0;
+}
+
+.app-subtitle {
+  font-size: 1rem;
+  color: #6c757d;
+  margin: 0.5rem 0 0 0;
+}
+
+// Section de sélection
+.application-selection {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.selection-title {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: #212529;
+  margin-bottom: 0.5rem;
+}
+
+.selection-subtitle {
+  font-size: 1rem;
+  color: #6c757d;
+  margin-bottom: 2rem;
+}
+
+// Grille d'applications
+.applications-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
+  max-width: 1400px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.application-card {
+  background: white;
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--app-color);
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+  }
+
+  &:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+    border-color: var(--app-color);
+
+    &::before {
+      transform: scaleX(1);
+    }
+
+    .app-icon-wrapper {
+      background-color: var(--app-color);
+      transform: scale(1.1);
+
+      i {
+        color: white;
+      }
+    }
+
+    .access-link {
+      color: var(--app-color);
+      transform: translateX(4px);
+    }
+  }
+}
+
+.app-icon-wrapper {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 1.5rem;
+  background-color: rgba(0, 0, 0, 0.05);
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+
+  i {
+    font-size: 40px;
+    color: var(--app-color);
+    transition: color 0.3s ease;
+  }
+}
+
+.app-name {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #212529;
+  margin-bottom: 0.75rem;
+}
+
+.app-description {
+  font-size: 0.95rem;
+  color: #6c757d;
+  line-height: 1.5;
+  margin-bottom: 1.5rem;
+  min-height: 3rem;
+}
+
+.app-card-footer {
+  padding-top: 1rem;
+  border-top: 1px solid #e9ecef;
+}
+
+.access-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #6c757d;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+
+  i {
+    font-size: 1.1rem;
+    transition: transform 0.3s ease;
+  }
+}
+
+// Footer
+.app-footer {
+  text-align: center;
+  margin-top: 3rem;
+}
+
+.btn-logout {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background-color: white;
+  color: #6c757d;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  i {
+    font-size: 1.1rem;
+  }
+
+  &:hover {
+    background-color: #dc2626;
+    color: white;
+    border-color: #dc2626;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+  }
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .applications-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .app-title {
+    font-size: 2rem;
+  }
+
+  .selection-title {
+    font-size: 1.5rem;
+  }
+
+  .application-card {
+    padding: 1.5rem;
+  }
+
+  .app-logo-icon {
+    width: 60px;
+    height: 60px;
+
+    i {
+      font-size: 36px;
+    }
+  }
+}
+
+// Masquer le sidebar quand on est sur cette page
+:host {
+  display: block;
+  width: 100%;
+}
+

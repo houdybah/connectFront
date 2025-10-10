@@ -1,11 +1,16 @@
 <header id="page-topbar" data-scroll-header (window:scroll)="windowScroll()" class="bg-primary">
     <div class="layout-width">
         <div class="navbar-header">
-            <div class="d-flex">
+            <div class="d-flex align-items-center">
                 <!-- LOGO -->
-                <div class="navbar-brand-box horizontal-logo">
-                 
-                    <a hclass="logo-lg">
+                <div class="navbar-brand-box horizontal-logo logo-clickable" 
+                     (click)="backToApplications()"
+                     (keydown.enter)="backToApplications()"
+                     [class.has-app]="selectedApp"
+                     tabindex="0"
+                     role="button"
+                     title="Retour au sélecteur d'applications">
+                    <a class="logo-lg">
                         <b><h2 class="p-4 mt-2"><b> <img src="assets/images/DGD.png" alt="" height="70"> APP-DGD</b></h2></b>
                     </a>
                 </div>
@@ -17,9 +22,17 @@
                         <span></span>
                     </span>
                 </button>
-
-               
             </div>
+
+            <!-- Label Application Centrée -->
+            @if(selectedApp) {
+            <div class="app-name-center">
+                <div class="app-name-badge">
+                    <i class="ri-checkbox-circle-fill me-2"></i>
+                    <span class="app-name-text">{{ getSelectedAppName() }}</span>
+                </div>
+            </div>
+            }
 
             <div class="d-flex align-items-center">
 
@@ -36,11 +49,17 @@
                         </span>
                     </button>
                     <div class="dropdown-menu dropdown-menu-end" ngbDropdownMenu>
-                        
+                        @if(selectedApp) {
+                        <a class="dropdown-item" href="javascript: void(0);" (click)="backToApplications()">
+                            <i class="ri-apps-line text-muted fs-16 align-middle me-1"></i> 
+                            <span class="align-middle">Sélecteur d'applications</span>
+                        </a>
                         <div class="dropdown-divider"></div>
-                       
-                       
-                        <a class="dropdown-item" href="javascript: void(0);" (click)="logout()"><i class="mdi mdi-logout text-muted fs-16 align-middle me-1"></i> <span class="align-middle" data-key="t-logout">Logout</span></a>
+                        }
+                        <a class="dropdown-item" href="javascript: void(0);" (click)="logout()">
+                            <i class="mdi mdi-logout text-muted fs-16 align-middle me-1"></i> 
+                            <span class="align-middle" data-key="t-logout">Logout</span>
+                        </a>
                     </div>
 
                     

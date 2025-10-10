@@ -1,0 +1,10 @@
+// Style pour le contenu principal sans sidebar
+.main-content.no-sidebar {
+  margin-left: 0 !important;
+  
+  .page-content {
+    padding: 0;
+    margin-top: 0;
+  }
+}
+

@@ -1,0 +1,214 @@
+// ============================================
+// HEADER TOPBAR - Réorganisation
+// ============================================
+
+// Le header doit être en display flex pour permettre le centrage
+#page-topbar {
+  .navbar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+  }
+}
+
+// ============================================
+// LOGO CLIQUABLE
+// ============================================
+.logo-clickable {
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-radius: 8px;
+  position: relative;
+  outline: none;
+
+  &.has-app {
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    &:hover,
+    &:focus {
+      &::before {
+        opacity: 1;
+      }
+
+      transform: translateY(-1px);
+      
+      h2 {
+        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+      }
+    }
+
+    &:focus {
+      box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+}
+
+// ============================================
+// NOM APPLICATION CENTRÉE ET MISE EN ÉVIDENCE
+// ============================================
+.app-name-center {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+  display: flex;
+  align-items: center;
+
+  .app-name-badge {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 2rem;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.08) 100%);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    animation: slideInDown 0.5s ease-out;
+
+    i {
+      font-size: 1.3rem;
+      color: #10b981;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    .app-name-text {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: white;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+  }
+}
+
+// ============================================
+// ANIMATIONS
+// ============================================
+@keyframes slideInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+// ============================================
+// RESPONSIVE
+// ============================================
+@media (max-width: 1200px) {
+  .app-name-center {
+    .app-name-badge {
+      padding: 0.45rem 1.5rem;
+
+      i {
+        font-size: 1.2rem;
+      }
+
+      .app-name-text {
+        font-size: 1rem;
+      }
+    }
+  }
+}
+
+@media (max-width: 992px) {
+  .btn-app-back {
+    padding: 0.35rem 0.75rem;
+    font-size: 0.85rem;
+
+    i {
+      font-size: 1rem;
+    }
+
+    span {
+      display: none !important;
+    }
+  }
+
+  .app-name-center {
+    .app-name-badge {
+      padding: 0.4rem 1.25rem;
+
+      i {
+        font-size: 1.1rem;
+        margin-right: 0.5rem !important;
+      }
+
+      .app-name-text {
+        font-size: 0.95rem;
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .btn-app-back {
+    padding: 0.3rem 0.5rem;
+    
+    i {
+      margin-right: 0 !important;
+    }
+  }
+
+  .app-name-center {
+    .app-name-badge {
+      padding: 0.35rem 1rem;
+
+      i {
+        font-size: 1rem;
+        margin-right: 0.35rem !important;
+      }
+
+      .app-name-text {
+        font-size: 0.85rem;
+        letter-spacing: 0.3px;
+      }
+    }
+  }
+}
+
+@media (max-width: 576px) {
+  .app-name-center {
+    .app-name-badge {
+      padding: 0.3rem 0.75rem;
+      
+      i {
+        display: none;
+      }
+
+      .app-name-text {
+        font-size: 0.8rem;
+      }
+    }
+  }
+}

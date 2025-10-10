@@ -1,0 +1,50 @@
+<div class="application-selector-wrapper">
+    <div class="application-selector-content">
+        <!-- Header avec logo -->
+        <div class="app-header">
+            <div class="app-logo-container">
+                <div class="app-logo-icon">
+                    <i class="ri-shield-check-line"></i>
+                </div>
+            </div>
+            <h1 class="app-title">App-DGD</h1>
+            <p class="app-subtitle">Portail d'authentification unique de la Douane guinéenne</p>
+        </div>
+
+        <!-- Section de sélection d'application -->
+        <div class="application-selection">
+            <h2 class="selection-title">Sélectionnez une application</h2>
+            <p class="selection-subtitle">Choisissez l'application métier que vous souhaitez utiliser</p>
+
+            <!-- Grille d'applications -->
+            <div class="applications-grid">
+                @for(app of applications; track app.id) {
+                <div 
+                    class="application-card"
+                    (click)="selectApplication(app)"
+                    [style.--app-color]="app.color">
+                    <div class="app-icon-wrapper">
+                        <i [class]="app.icon"></i>
+                    </div>
+                    <h3 class="app-name">{{ app.name }}</h3>
+                    <p class="app-description">{{ app.description }}</p>
+                    <div class="app-card-footer">
+                        <span class="access-link">
+                            Accéder <i class="ri-arrow-right-line"></i>
+                        </span>
+                    </div>
+                </div>
+                }
+            </div>
+        </div>
+
+        <!-- Footer avec déconnexion -->
+        <div class="app-footer">
+            <button type="button" class="btn-logout" (click)="logout()">
+                <i class="ri-logout-box-line"></i>
+                Se déconnecter
+            </button>
+        </div>
+    </div>
+</div>
+

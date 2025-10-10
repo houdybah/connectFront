@@ -8,6 +8,7 @@ import { AuthenticationService } from '../../core/services/auth.service';
 import { AuthfakeauthenticationService } from '../../core/services/authfake.service';
 import { Router } from '@angular/router';
 import { TokenStorageService } from '../../core/services/token-storage.service';
+import { MenuVisibilityService } from '../../core/services/menu-visibility.service';
 
 // Language
 import { CookieService } from 'ngx-cookie-service';
@@ -43,14 +44,20 @@ export class TopbarComponent implements OnInit {
   isDropdownOpen = false;
   @ViewChild('removenotification') removenotification !: TemplateRef<any>;
   notifyId: any;
+  selectedApp: string | null = null;
 
   constructor(@Inject(DOCUMENT) private document: any, private eventService: EventService, public languageService: LanguageService, private modalService: NgbModal,
     public _cookiesService: CookieService, public translate: TranslateService, private authService: AuthenticationService, private authFackservice: AuthfakeauthenticationService,
-    private router: Router, private TokenStorageService: TokenStorageService) { }
+    private router: Router, private TokenStorageService: TokenStorageService, private menuVisibilityService: MenuVisibilityService) { }
 
   ngOnInit(): void {
     this.userData = this.TokenStorageService.getUser();
     this.element = document.documentElement;
+
+    // S'abonner à l'application sélectionnée
+    this.menuVisibilityService.selectedApp$.subscribe(app => {
+      this.selectedApp = app;
+    });
 
     // Cookies wise Language set
     this.cookieValue = this._cookiesService.get('lang');
@@ -175,6 +182,7 @@ export class TopbarComponent implements OnInit {
    * Logout the user
    */
   logout() {
+    this.menuVisibilityService.clearSelectedApp();
     this.authService.logout();
     this.router.navigate(['/auth/login']);
   }
@@ -182,6 +190,27 @@ export class TopbarComponent implements OnInit {
   register() {
     this.authService.logout();
     this.router.navigate(['/auth/register']);
+  }
+
+  /**
+   * Retour au sélecteur d'applications
+   */
+  backToApplications() {
+    this.menuVisibilityService.clearSelectedApp();
+    this.router.navigate(['/modules']);
+  }
+
+  /**
+   * Obtenir le nom de l'application sélectionnée
+   */
+  getSelectedAppName(): string {
+    switch(this.selectedApp) {
+      case 'douaneconnect': return 'DouaneConnect';
+      case 'sygdrd': return 'SYGDRD';
+      case 'sysrev': return 'SYSREV';
+      case 'sygmak': return 'SYGMAK';
+      default: return '';
+    }
   }
 
   windowScroll() {

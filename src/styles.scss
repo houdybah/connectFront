@@ -1,4 +1,32 @@
 /* You can add global styles to this file, and also import other style files */
+
+// Styles pour le layout sans menu
+body.no-sidebar {
+  #layout-wrapper {
+    .main-content {
+      margin-left: 0 !important;
+      
+      .page-content {
+        padding: 0;
+        margin-top: 0;
+      }
+    }
+  }
+}
+
+[data-sidebar-visibility="hidden"] {
+  #layout-wrapper {
+    .main-content {
+      margin-left: 0 !important;
+      
+      .page-content {
+        padding: 0;
+        margin-top: 0;
+      }
+    }
+  }
+}
+
 // Swiper
 .coverflowslide .slide {
     position: relative;

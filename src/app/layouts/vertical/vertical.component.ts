@@ -4,6 +4,7 @@ import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { getSidebarSize } from 'src/app/store/layouts/layout-selector';
 import { RootReducerState } from 'src/app/store';
 import { Store } from '@ngrx/store';
+import { MenuVisibilityService } from '../../core/services/menu-visibility.service';
 
 @Component({
   selector: 'app-vertical',
@@ -14,11 +15,22 @@ export class VerticalComponent implements OnInit {
 
   isCondensed = false;
   getsize:any;
+  menuVisible = true;
 
-  constructor(private eventService: EventService, private router: Router, private activatedRoute: ActivatedRoute,private store: Store<RootReducerState>) {
+  constructor(
+    private eventService: EventService, 
+    private router: Router, 
+    private activatedRoute: ActivatedRoute,
+    private store: Store<RootReducerState>,
+    private menuVisibilityService: MenuVisibilityService
+  ) {
   }
 
   ngOnInit(): void {
+    // S'abonner aux changements de visibilité du menu
+    this.menuVisibilityService.menuVisible$.subscribe(visible => {
+      this.menuVisible = visible;
+    });
 
     this.router.events.subscribe((event: any) => {
       if (document.documentElement.getAttribute('data-preloader') == 'enable') {

@@ -4,6 +4,10 @@ import { ModuleManagerModule } from './module-manager.module';
 
 const routes: Routes = [
   {
+    path: 'applications',
+    loadComponent: () => import('./application-tabs/application-tabs.component').then(m => m.ApplicationTabsComponent)
+  },
+  {
     path: 'list',
     loadComponent: () => import('./list-modules/list-modules.component').then(m => m.ListModulesComponent)
   },
@@ -17,7 +21,7 @@ const routes: Routes = [
   },
   {
     path: '',
-    redirectTo: 'list',
+    redirectTo: 'applications',
     pathMatch: 'full'
   }
 ];

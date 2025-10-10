@@ -1,130 +1,93 @@
-<div class="auth-page-wrapper pt-5">
-    <!-- auth page bg -->
-    <div class="auth-one-bg-position auth-one-bg" id="auth-particles">
-        <div class="bg-overlay"></div>
-
-        <div class="shape">
-            <svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1440 120">
-                <path d="M 0,36 C 144,53.6 432,123.2 720,124 C 1008,124.8 1296,56.8 1440,40L1440 140L0 140z"></path>
-            </svg>
-        </div>
-    </div>
-
-    <!-- auth page content -->
+<div class="auth-page-wrapper">
     <div class="auth-page-content">
         <div class="container">
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="text-center mt-sm-5 mb-4 text-white-50">
-                        <div>
-                            <a href="javascript:void(0);" class="d-inline-block auth-logo">
-                                <img src="assets/images/logo-light.png" alt="" height="20">
-                            </a>
-                        </div>
-                        <!-- <p class="mt-3 fs-15 fw-medium">Premium Admin & Dashboard Template</p> -->
-                    </div>
-                </div>
-            </div>
-            <!-- end row -->
-
             <div class="row justify-content-center">
                 <div class="col-md-8 col-lg-6 col-xl-5">
-                    <div class="card mt-4 card-bg-fill login">
-
-                        <div class="card-body p-4">
-                            <div class="text-center mt-2">
-                                <h5 class="text-primary">Bienvenue sur la platform de la douane !</h5>
-                                <!-- <p class="text-muted">Sign in to continue to Velzon.</p> -->
+                    <!-- Logo App-DGD -->
+                    <div class="text-center mb-4">
+                        <div class="app-logo-container">
+                            <div class="app-logo-icon">
+                                <i class="ri-shield-check-line"></i>
                             </div>
-                            <div class="p-2 mt-5 ">
-                                <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+                        </div>
+                        <h2 class="app-title mt-3">App-DGD</h2>
+                        <p class="app-subtitle">Portail d'authentification unique de la Douane guinéenne</p>
+                    </div>
 
-                                    <div class="mb-3">
-                                        <label class="form-label" for="username">Email</label>
-                                        <input type="email" class="form-control" id="email" formControlName="email" [ngClass]="{ 'is-invalid': submitted && f['email'].errors }" placeholder="Enter email">
-                                        @if (submitted && f['email'].errors) {
+                    <!-- Card de connexion -->
+                    <div class="card login-card">
+                        <div class="card-body p-4">
+                            <h5 class="login-title mb-2">Connexion sécurisée</h5>
+                            <p class="login-subtitle mb-4">Accédez à toutes vos applications métier avec un seul compte</p>
+
+                            <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+                                <!-- Adresse e-mail -->
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold" for="email">Adresse e-mail</label>
+                                    <input 
+                                        type="email" 
+                                        class="form-control" 
+                                        id="email" 
+                                        formControlName="email" 
+                                        [ngClass]="{ 'is-invalid': submitted && f['email'].errors }" 
+                                        placeholder="prenom.nom@douane.gov.gn">
+                                    @if (submitted && f['email'].errors) {
+                                    <div class="invalid-feedback">
+                                        @if(f['email'].errors['required']){
+                                        <div>L'adresse e-mail est requise</div>}
+                                        @if(f['email'].errors['email']){
+                                        <div>L'adresse e-mail doit être valide</div>
+                                        }
+                                    </div>
+                                    }
+                                </div>
+
+                                <!-- Mot de passe -->
+                                <div class="mb-4">
+                                    <label class="form-label fw-semibold" for="password-input">Mot de passe</label>
+                                    <div class="position-relative auth-pass-inputgroup">
+                                        <input 
+                                            [type]="fieldTextType ? 'text' : 'password'" 
+                                            class="form-control pe-5" 
+                                            placeholder="Votre mot de passe" 
+                                            id="password-input" 
+                                            formControlName="password" 
+                                            [ngClass]="{ 'is-invalid': submitted && f['password'].errors }">
+                                        <button 
+                                            class="btn btn-link position-absolute end-0 top-0 text-decoration-none text-muted password-toggle" 
+                                            type="button" 
+                                            id="password-addon"
+                                            (click)="toggleFieldTextType()"
+                                            aria-label="Afficher/Masquer le mot de passe">
+                                            <i class="mdi align-middle" 
+                                               [ngClass]="{'mdi-eye-off-outline': !fieldTextType, 'mdi-eye-outline': fieldTextType}"></i>
+                                        </button>
+                                        @if (submitted && f['password'].errors) {
                                         <div class="invalid-feedback">
-                                            @if(f['email'].errors['required']){
-                                            <div>Email is required</div>}
-                                            @if(f['email'].errors['email']){
-                                            <div>Email must be a valid email address
-                                            </div>
+                                            @if(f['password'].errors['required']){
+                                            <span>Le mot de passe est requis</span>
                                             }
                                         </div>
                                         }
                                     </div>
+                                </div>
 
-                                    <div class="mb-3">
-                                        <div class="float-end">
-                                            <a routerLink="/pass-reset/basic" class="text-muted">Forgot password?</a>
-                                        </div>
-                                        <label class="form-label" for="password-input">Password</label>
-                                        <div class="position-relative auth-pass-inputgroup mb-3">
-                                            <input [type]="fieldTextType ? 'text' : 'password'" class="form-control pe-5" placeholder="Enter password" id="password-input" formControlName="password" [ngClass]="{ 'is-invalid': submitted && f['password'].errors }">
-                                            <button class="btn btn-link position-absolute end-0 top-0 text-decoration-none text-muted" type="button" id="password-addon"><i class="mdi align-middle" [ngClass]="{'mdi-eye-off-outline': !fieldTextType, 'mdi-eye-outline': fieldTextType
-                                          }" (click)="toggleFieldTextType()"></i></button>
-                                            @if (submitted && f['password'].errors) {
-                                            <div class="invalid-feedback">
-                                                @if(f['password'].errors['required']){
-                                                <span>Password is required</span>
-                                                }
-                                            </div>
-                                            }
-                                        </div>
-                                    </div>
+                                <!-- Bouton Se connecter -->
+                                <div class="mb-3">
+                                    <button class="btn btn-success w-100 btn-connect" type="submit">Se connecter</button>
+                                </div>
 
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" value="" id="auth-remember-check">
-                                        <label class="form-check-label" for="auth-remember-check">Remember me</label>
-                                    </div>
-
-                                    <div class="mt-4">
-                                        <button class="btn btn-primary w-100" type="submit">Se connecter</button>
-                                    </div>
-
-                                    <div class="mt-4 text-center">
-                                        <!-- <div class="signin-other-title">
-                                            <h5 class="fs-13 mb-4 title">Sign In with</h5>
-                                        </div> -->
-                                        <!-- <div class="d-flex gap-2 justify-content-center">
-                                            <button type="button" class="btn btn-primary btn-icon waves-effect waves-light"><i class="ri-facebook-fill fs-16"></i></button>
-                                            <button type="button" class="btn btn-danger btn-icon waves-effect waves-light"><i class="ri-google-fill fs-16"></i></button>
-                                            <button type="button" class="btn btn-dark btn-icon waves-effect waves-light"><i class="ri-github-fill fs-16"></i></button>
-                                            <button type="button" class="btn btn-info btn-icon waves-effect waves-light"><i class="ri-twitter-fill fs-16"></i></button>
-                                        </div> -->
-                                    </div>
-                                </form>
-                            </div>
+                                <!-- Liens -->
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <a routerLink="/pass-reset/basic" class="text-decoration-none link-secondary">Mot de passe oublié ?</a>
+                                    <a routerLink="/auth/register" class="text-decoration-none fw-semibold link-dark">Créer un compte</a>
+                                </div>
+                            </form>
                         </div>
-                        <!-- end card body -->
                     </div>
-                    <!-- end card -->
-
-                    <!-- <div class="mt-4 text-center">
-                        <p class="mb-0">Don't have an account ? <a routerLink="/auth/register" class="fw-semibold text-primary text-decoration-underline"> Signup </a> </p>
-                    </div> -->
-
                 </div>
             </div>
-            <!-- end row -->
         </div>
-        <!-- end container -->
     </div>
-    <!-- end auth page content -->
-
-    <!-- footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12">
-                    <!-- <div class="text-center">
-                        <p class="mb-0 text-muted">&copy; {{year}} Velzon. Crafted with <i class="mdi mdi-heart text-danger"></i> by Themesbrand</p>
-                    </div> -->
-                </div>
-            </div>
-        </div>
-    </footer>
-    <!-- end Footer -->
 </div>
-<!-- end auth-page-wrapper -->
 <app-toasts aria-live="polite" aria-atomic="true"></app-toasts>

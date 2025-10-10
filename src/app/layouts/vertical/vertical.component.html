@@ -1,9 +1,13 @@
 <div id="layout-wrapper" (window:resize)="onResize($event)">
     <!-- Top Bar -->
+    @if(menuVisible) {
     <app-topbar (mobileMenuButtonClicked)="onToggleMobileMenu()"></app-topbar>
+    }
     <!-- Side Bar -->
+    @if(menuVisible) {
     <app-sidebar></app-sidebar>
-    <div class="main-content">
+    }
+    <div class="main-content" [class.no-sidebar]="!menuVisible">
         <div class="page-content">
             <div class="container-fluid">
                 <!-- Main Content -->
@@ -11,8 +15,12 @@
             </div>
         </div>
         <!-- Footer -->
+        @if(menuVisible) {
         <app-footer></app-footer>
+        }
     </div>
 </div>
 <!-- Right Side Bar -->
+@if(menuVisible) {
 <app-rightsidebar (settingsButtonClicked)="onSettingsButtonClicked()"></app-rightsidebar>
+}
