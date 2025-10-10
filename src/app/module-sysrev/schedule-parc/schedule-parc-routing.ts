@@ -82,7 +82,7 @@ const routes: Routes = [
       path: "statistiques",
       component: StatistiqueDouaneComponent
     },
-    { path: '', redirectTo: '/tableaudebord', pathMatch: 'full' },
+    { path: '', redirectTo: 'tableaudebord', pathMatch: 'full' },
   { path: 'tableaudebord', component: TableaudebordComponent },
   
   // ============================================

@@ -9,4 +9,5 @@ export interface MenuItem {
   badge?: any;
   parentId?: number;
   isLayout?: boolean;
+  app?: string; // Application à laquelle appartient le menu (douaneconnect, sygdrd, sysrev, sygmak)
 }

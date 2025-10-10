@@ -27,7 +27,7 @@ export class ApplicationTabsComponent implements OnInit {
       name: 'DouaneConnect',
       description: 'Plateforme centrale de gestion des services douaniers',
       icon: 'ri-dashboard-line',
-      color: '#0d6846',
+      color: '#056946',
       route: '/pages'
     },
     {
@@ -67,11 +67,22 @@ export class ApplicationTabsComponent implements OnInit {
   }
 
   selectApplication(app: Application): void {
+    console.log('🎯 Sélection de l\'application:', app.name, 'avec id:', app.id);
+    
     // Définir l'application sélectionnée
     this.menuVisibilityService.setSelectedApp(app.id);
+    console.log('✅ Application définie dans le service');
     
-    // Rediriger vers l'application
-    this.router.navigate([app.route]);
+    // Petit délai pour s'assurer que le service est mis à jour
+    setTimeout(() => {
+      // Rediriger vers l'application
+      console.log('🚀 Redirection vers:', app.route);
+      this.router.navigate([app.route]).then(success => {
+        console.log('✅ Navigation réussie:', success);
+      }).catch(error => {
+        console.error('❌ Erreur de navigation:', error);
+      });
+    }, 100);
   }
 
   logout(): void {

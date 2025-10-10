@@ -12,7 +12,7 @@ const routes: Routes = [
   { path: 'modules', loadChildren: () => import('./module-manager/module-manager-routing.module').then(m => m.ModuleManagerRoutingModule), canActivate: [AuthGuard] },
   { path: 'sygdrd', component: LayoutComponent, loadChildren: () => import('./module-sygdrd/module-sygdrd-routing.module').then(m => m.ModuleSygdrdRoutingModule), canActivate: [AuthGuard] },
   { path: 'sygmak', component: LayoutComponent, loadChildren: () => import('./module-sygmak/module-sygmak-routing.module').then(m => m.ModuleSygmakRoutingModule), canActivate: [AuthGuard] },
-  { path: 'sysrev', component: LayoutComponent, loadChildren: () => import('./module-sysrev/module-sysrev.module').then(m => m.ModuleSysrevModule), canActivate: [AuthGuard] },
+  { path: 'sysrev', component: LayoutComponent, loadChildren: () => import('./module-sysrev/module-sysrev-routing.module').then(m => m.ModuleSysrevRoutingModule), canActivate: [AuthGuard] },
   { path: 'pages', component: LayoutComponent, loadChildren: () => import('./pages/pages.module').then(m => m.PagesModule), canActivate: [AuthGuard] }
 ];
 

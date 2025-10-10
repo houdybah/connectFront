@@ -5,6 +5,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { MENU } from './menu';
 import { MenuItem } from './menu.model';
 import { environment } from 'src/environments/environment';
+import { MenuVisibilityService } from '../../core/services/menu-visibility.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -16,16 +17,34 @@ export class SidebarComponent implements OnInit {
   menu: any;
   toggle: any = true;
   menuItems: MenuItem[] = [];
+  allMenuItems: MenuItem[] = MENU;
+  selectedApp: string | null = null;
   @ViewChild('sideMenu') sideMenu!: ElementRef;
   @Output() mobileMenuButtonClicked = new EventEmitter();
 
-  constructor(private router: Router, public translate: TranslateService) {
+  constructor(
+    private router: Router, 
+    public translate: TranslateService,
+    private menuVisibilityService: MenuVisibilityService
+  ) {
     translate.setDefaultLang('en');
   }
 
   ngOnInit(): void {
-    // Menu Items
-    this.menuItems = MENU;
+    console.log('🎬 SidebarComponent initialisé');
+    
+    // S'abonner à l'application sélectionnée
+    this.menuVisibilityService.selectedApp$.subscribe(app => {
+      console.log('🔄 Application sélectionnée changée:', app);
+      this.selectedApp = app;
+      this.filterMenuByApp(app);
+      
+      // Réinitialiser le menu actif après le filtrage
+      setTimeout(() => {
+        this.initActiveMenu();
+      }, 100);
+    });
+    
     this.router.events.subscribe((event) => {
       if (document.documentElement.getAttribute('data-layout') != "twocolumn") {
         if (event instanceof NavigationEnd) {
@@ -33,6 +52,114 @@ export class SidebarComponent implements OnInit {
         }
       }
     });
+  }
+
+  filterMenuByApp(app: string | null): void {
+    console.log('🔍 Filtrage du menu pour l\'app:', app);
+    
+    if (!app) {
+      console.log('⚠️ Pas d\'application sélectionnée, menu vide');
+      this.menuItems = [];
+      return;
+    }
+
+    // Filtrer le menu en fonction de l'application
+    if (app === 'sysrev') {
+      console.log('📋 Filtrage menu SYSREV');
+      // Transformer les sous-menus en éléments de menu principaux
+      this.menuItems = this.flattenSysrevMenu();
+      console.log('✅ Menu SYSREV chargé:', this.menuItems.length, 'éléments');
+    } else if (app === 'sygmak') {
+      console.log('📋 Filtrage menu SYGMAK');
+      // Transformer les sous-menus en éléments de menu principaux
+      this.menuItems = this.flattenSygmakMenu();
+      console.log('✅ Menu SYGMAK chargé:', this.menuItems.length, 'éléments');
+    } else if (app === 'douaneconnect') {
+      console.log('📋 Filtrage menu DouaneConnect');
+      // Filtrer pour afficher uniquement les menus généraux (id < 1500)
+      this.menuItems = this.allMenuItems.filter(item => 
+        !item.id || item.id < 1500
+      );
+      console.log('✅ Menu DouaneConnect chargé:', this.menuItems.length, 'éléments');
+    } else if (app === 'sygdrd') {
+      console.log('📋 Filtrage menu SYGDRD');
+      // Pour l'instant, pas de menu spécifique SYGDRD, afficher les menus généraux
+      this.menuItems = this.allMenuItems.filter(item => 
+        !item.id || item.id < 1500
+      );
+      console.log('✅ Menu SYGDRD chargé:', this.menuItems.length, 'éléments');
+    } else {
+      console.log('⚠️ Application inconnue:', app);
+      this.menuItems = [];
+    }
+  }
+
+  flattenSysrevMenu(): MenuItem[] {
+    console.log('🔧 Transformation du menu SYSREV...');
+    const sysrevMainMenu = this.allMenuItems.find(item => item.id === 1501);
+    
+    if (!sysrevMainMenu) {
+      console.log('❌ Menu SYSREV principal (id: 1501) non trouvé!');
+      return [];
+    }
+    
+    if (!sysrevMainMenu.subItems) {
+      console.log('❌ Pas de sous-menus dans le menu SYSREV!');
+      return [];
+    }
+
+    console.log('✅ Menu SYSREV trouvé avec', sysrevMainMenu.subItems.length, 'sous-menus');
+
+    // Ajouter un titre pour l'application
+    const titleItem: MenuItem = {
+      id: 9999,
+      label: 'SYSREV - Système de Révision',
+      isTitle: true
+    };
+
+    // Transformer les sous-menus en éléments de menu principaux
+    const flatMenu: MenuItem[] = sysrevMainMenu.subItems.map((subItem: MenuItem) => ({
+      ...subItem,
+      parentId: undefined, // Enlever le parentId pour en faire un élément principal
+      isCollapsed: subItem.subItems ? true : undefined
+    }));
+
+    console.log('✅ Menu SYSREV transformé:', flatMenu.length, 'éléments');
+    return [titleItem, ...flatMenu];
+  }
+
+  flattenSygmakMenu(): MenuItem[] {
+    console.log('🔧 Transformation du menu SYGMAK...');
+    const sygmakMainMenu = this.allMenuItems.find(item => item.id === 1700);
+    
+    if (!sygmakMainMenu) {
+      console.log('❌ Menu SYGMAK principal (id: 1700) non trouvé!');
+      return [];
+    }
+    
+    if (!sygmakMainMenu.subItems) {
+      console.log('❌ Pas de sous-menus dans le menu SYGMAK!');
+      return [];
+    }
+
+    console.log('✅ Menu SYGMAK trouvé avec', sygmakMainMenu.subItems.length, 'sous-menus');
+
+    // Ajouter un titre pour l'application
+    const titleItem: MenuItem = {
+      id: 9998,
+      label: 'SYGMAK - Gestion Magasins',
+      isTitle: true
+    };
+
+    // Transformer les sous-menus en éléments de menu principaux
+    const flatMenu: MenuItem[] = sygmakMainMenu.subItems.map((subItem: MenuItem) => ({
+      ...subItem,
+      parentId: undefined, // Enlever le parentId pour en faire un élément principal
+      isCollapsed: subItem.subItems ? true : undefined
+    }));
+
+    console.log('✅ Menu SYGMAK transformé:', flatMenu.length, 'éléments');
+    return [titleItem, ...flatMenu];
   }
 
   /***
