@@ -1,5 +1,14 @@
 /* You can add global styles to this file, and also import other style files */
 
+// Police de caractères globale - Open Sans pour toute l'application
+* {
+  font-family: 'Open Sans', Arial, Helvetica, sans-serif !important;
+}
+
+body {
+  font-family: 'Open Sans', Arial, Helvetica, sans-serif !important;
+}
+
 // Styles pour le layout sans menu
 body.no-sidebar {
   #layout-wrapper {
@@ -104,4 +113,13 @@ body.no-sidebar {
         }
     }
 
+}
+
+// Fix global z-index pour SweetAlert2 au-dessus de tous les modals
+.swal2-container {
+  z-index: 10000 !important;
+}
+
+.swal2-backdrop-show {
+  z-index: 9999 !important;
 }

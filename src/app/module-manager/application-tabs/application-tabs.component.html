@@ -1,50 +1,135 @@
 <div class="application-selector-wrapper">
-    <div class="application-selector-content">
-        <!-- Header avec logo -->
-        <div class="app-header">
-            <div class="app-logo-container">
-                <div class="app-logo-icon">
-                    <i class="ri-shield-check-line"></i>
+    <!-- Header institutionnel -->
+    <div class="institutional-header">
+        <div class="container-fluid">
+            <div class="row align-items-center justify-content-between">
+                <div class="col-auto">
+                    <div class="d-flex align-items-center">
+                        <img src="assets/images/DGD.png" alt="Logo Douanes Guinée" class="header-douane-logo me-3">
+                        <div class="header-text">
+                            <h1 class="header-title mb-0">République de Guinée</h1>
+                            <p class="header-subtitle mb-0">Ministère du Budget</p>
+                            <p class="header-direction mb-0">Direction Générale des Douanes Guinéennes</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-auto">
+                    <div class="header-actions">
+                        <button type="button" class="btn btn-outline-light btn-sm me-2">
+                            <i class="ri-home-4-line me-1"></i> Accueil
+                        </button>
+                        <button type="button" class="btn btn-outline-light btn-sm" (click)="logout()">
+                            <i class="ri-logout-box-line me-1"></i> Déconnexion
+                        </button>
+                    </div>
                 </div>
             </div>
-            <h1 class="app-title">App-DGD</h1>
-            <p class="app-subtitle">Portail d'authentification unique de la Douane guinéenne</p>
+        </div>
+    </div>
+
+    <div class="application-selector-content">
+        <!-- Banner avec titre -->
+        <div class="app-header">
+            <div class="container">
+                <h1 class="app-title">Portail des Applications et Systèmes</h1>
+                <p class="app-subtitle">de la Douane Guinéenne</p>
+            </div>
         </div>
 
         <!-- Section de sélection d'application -->
         <div class="application-selection">
-            <h2 class="selection-title">Sélectionnez une application</h2>
-            <p class="selection-subtitle">Choisissez l'application métier que vous souhaitez utiliser</p>
+            <div class="container">
+                <h2 class="selection-title">Applications disponibles</h2>
+                <p class="selection-subtitle">Sélectionnez l'application que vous souhaitez utiliser</p>
 
-            <!-- Grille d'applications -->
-            <div class="applications-grid">
-                @for(app of applications; track app.id) {
-                <div 
-                    class="application-card"
-                    (click)="selectApplication(app)"
-                    [style.--app-color]="app.color">
-                    <div class="app-icon-wrapper">
-                        <i [class]="app.icon"></i>
+            <!-- Message de chargement -->
+            @if (isLoading) {
+            <div class="loading-container">
+                <output class="spinner-border text-primary">
+                    <span class="visually-hidden">Chargement...</span>
+                </output>
+                <p class="mt-3 text-muted">Chargement de vos applications...</p>
+            </div>
+            }
+
+            <!-- Message d'erreur -->
+            @if (errorMessage) {
+            <div class="alert alert-warning" role="alert">
+                <i class="ri-error-warning-line me-2"></i>
+                {{ errorMessage }}
+            </div>
+            }
+
+                <!-- Grille d'applications -->
+                @if (applications.length) {
+                <div class="applications-grid">
+                    @for(app of applications; track app.uuidApplication) {
+                    <div 
+                        class="application-card"
+                        [class.app-disabled]="!app.applicationEnabled"
+                        (click)="selectApplication(app)"
+                        (keydown.enter)="selectApplication(app)"
+                        tabindex="0"
+                        [attr.aria-label]="'Accéder à ' + app.nomApplication"
+                        [style.--app-color]="app.color">
+                        <div class="app-icon-wrapper">
+                            <i [class]="app.icon"></i>
+                        </div>
+                        <h3 class="app-name">{{ app.nomApplication }}</h3>
+                        <p class="app-code">{{ app.codeApplication }}</p>
+                        <p class="app-description">{{ app.descriptionApplication }}</p>
+                        <div class="app-metadata">
+                            <span class="app-version">v{{ app.version }}</span>
+                            <span class="app-env">{{ app.environnement }}</span>
+                            @if (!app.applicationEnabled) {
+                            <span class="app-status-disabled">Indisponible</span>
+                            } @else {
+                            <span class="app-status-enabled">Disponible</span>
+                            }
+                        </div>
+                        <div class="app-card-footer">
+                            <span class="access-link">
+                                Accéder <i class="ri-arrow-right-line"></i>
+                            </span>
+                        </div>
                     </div>
-                    <h3 class="app-name">{{ app.name }}</h3>
-                    <p class="app-description">{{ app.description }}</p>
-                    <div class="app-card-footer">
-                        <span class="access-link">
-                            Accéder <i class="ri-arrow-right-line"></i>
-                        </span>
-                    </div>
+                    }
+                </div>
+                }
+
+                <!-- Message si aucune application -->
+                @if (showNoAppsMessage()) {
+                <div class="no-apps-message">
+                    <i class="ri-inbox-line"></i>
+                    <p>Aucune application disponible pour votre compte.</p>
                 </div>
                 }
             </div>
         </div>
 
-        <!-- Footer avec déconnexion -->
+        <!-- Footer institutionnel -->
         <div class="app-footer">
-            <button type="button" class="btn-logout" (click)="logout()">
-                <i class="ri-logout-box-line"></i>
-                Se déconnecter
-            </button>
+            <div class="container">
+                <div class="footer-content">
+                    <p class="footer-text mb-0">© 2025 Direction Générale des Douanes - République de Guinée. Tous droits réservés.</p>
+                    <p class="footer-email mb-0">
+                        <i class="ri-mail-line me-1"></i>
+                        Email: contact&#64;dgd.gov.gn
+                    </p>
+                </div>
+            </div>
         </div>
     </div>
+
+    <!-- Bouton flottant admin (visible uniquement si service === 'admin') -->
+    @if (isAdmin) {
+    <button 
+        type="button" 
+        class="floating-admin-btn" 
+        (click)="onAdminAction()"
+        aria-label="Panneau d'administration">
+        <i class="ri-settings-3-line"></i>
+    </button>
+    }
 </div>
 
