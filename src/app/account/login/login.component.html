@@ -2,89 +2,118 @@
     <div class="auth-page-content">
         <div class="container">
             <div class="row justify-content-center">
-                <div class="col-md-8 col-lg-6 col-xl-5">
-                    <!-- Logo App-DGD -->
-                    <div class="text-center mb-4">
-                        <div class="app-logo-container">
-                            <div class="app-logo-icon">
-                                <i class="ri-shield-check-line"></i>
+                <div class="col-md-10 col-lg-8 col-xl-7">
+                    
+                    <div class="login-container">
+                        <!-- Partie gauche - Logo et information -->
+                        <div class="login-left">
+                            <div class="logo-section">
+                                <img src="assets/images/DGD.png" alt="Logo Douanes Guinée" class="douane-logo">
+                                <h1 class="app-title">E-Douane</h1>
+                                <p class="app-subtitle">Accedez a vos applications</p>
+                                <div class="divider-line"></div>
+                                <p class="app-slogan">Direction Generale des Douanes</p>
                             </div>
                         </div>
-                        <h2 class="app-title mt-3">App-DGD</h2>
-                        <p class="app-subtitle">Portail d'authentification unique de la Douane guinéenne</p>
-                    </div>
 
-                    <!-- Card de connexion -->
-                    <div class="card login-card">
-                        <div class="card-body p-4">
-                            <h5 class="login-title mb-2">Connexion sécurisée</h5>
-                            <p class="login-subtitle mb-4">Accédez à toutes vos applications métier avec un seul compte</p>
+                        <!-- Partie droite - Formulaire -->
+                        <div class="login-right">
 
-                            <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-                                <!-- Adresse e-mail -->
-                                <div class="mb-3">
-                                    <label class="form-label fw-semibold" for="email">Adresse e-mail</label>
-                                    <input 
-                                        type="email" 
-                                        class="form-control" 
-                                        id="email" 
-                                        formControlName="email" 
-                                        [ngClass]="{ 'is-invalid': submitted && f['email'].errors }" 
-                                        placeholder="prenom.nom@douane.gov.gn">
-                                    @if (submitted && f['email'].errors) {
-                                    <div class="invalid-feedback">
-                                        @if(f['email'].errors['required']){
-                                        <div>L'adresse e-mail est requise</div>}
-                                        @if(f['email'].errors['email']){
-                                        <div>L'adresse e-mail doit être valide</div>
-                                        }
-                                    </div>
-                                    }
+                            <div class="login-form-section">
+                                <h3 class="form-title">Connexion</h3>
+                                <!--<p class="form-subtitle">Accédez à votre portail d'applications</p>-->
+
+                                <!-- Message d'erreur d'authentification -->
+                                @if (messageError) {
+                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    <i class="ri-error-warning-line me-2"></i>
+                                    {{ messageError }}
                                 </div>
+                                }
 
-                                <!-- Mot de passe -->
-                                <div class="mb-4">
-                                    <label class="form-label fw-semibold" for="password-input">Mot de passe</label>
-                                    <div class="position-relative auth-pass-inputgroup">
+                                <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+                                    <!-- Adresse e-mail -->
+                                    <div class="form-group">
+                                        <label class="form-label" for="email">
+                                            <i class="ri-mail-line me-2"></i>Adresse e-mail
+                                        </label>
                                         <input 
-                                            [type]="fieldTextType ? 'text' : 'password'" 
-                                            class="form-control pe-5" 
-                                            placeholder="Votre mot de passe" 
-                                            id="password-input" 
-                                            formControlName="password" 
-                                            [ngClass]="{ 'is-invalid': submitted && f['password'].errors }">
-                                        <button 
-                                            class="btn btn-link position-absolute end-0 top-0 text-decoration-none text-muted password-toggle" 
-                                            type="button" 
-                                            id="password-addon"
-                                            (click)="toggleFieldTextType()"
-                                            aria-label="Afficher/Masquer le mot de passe">
-                                            <i class="mdi align-middle" 
-                                               [ngClass]="{'mdi-eye-off-outline': !fieldTextType, 'mdi-eye-outline': fieldTextType}"></i>
-                                        </button>
-                                        @if (submitted && f['password'].errors) {
+                                            type="email" 
+                                            class="form-control" 
+                                            id="email" 
+                                            formControlName="email" 
+                                            [ngClass]="{ 'is-invalid': submitted && f['email'].errors }" 
+                                            placeholder="prenom.nom@douane.gov.gn">
+                                        @if (submitted && f['email'].errors) {
                                         <div class="invalid-feedback">
-                                            @if(f['password'].errors['required']){
-                                            <span>Le mot de passe est requis</span>
+                                            @if(f['email'].errors['required']){
+                                            <div>L'adresse e-mail est requise</div>}
+                                            @if(f['email'].errors['email']){
+                                            <div>L'adresse e-mail doit être valide</div>
                                             }
                                         </div>
                                         }
                                     </div>
-                                </div>
 
-                                <!-- Bouton Se connecter -->
-                                <div class="mb-3">
-                                    <button class="btn btn-success w-100 btn-connect" type="submit">Se connecter</button>
-                                </div>
+                                    <!-- Mot de passe -->
+                                    <div class="form-group">
+                                        <label class="form-label" for="password-input">
+                                            <i class="ri-lock-line me-2"></i>Mot de passe
+                                        </label>
+                                        <div class="position-relative">
+                                            <input 
+                                                [type]="fieldTextType ? 'text' : 'password'" 
+                                                class="form-control" 
+                                                placeholder="Votre mot de passe" 
+                                                id="password-input" 
+                                                formControlName="password" 
+                                                [ngClass]="{ 'is-invalid': submitted && f['password'].errors }">
+                                            <button 
+                                                class="btn btn-link position-absolute end-0 top-0 text-decoration-none password-toggle" 
+                                                type="button" 
+                                                (click)="toggleFieldTextType()"
+                                                aria-label="Afficher/Masquer le mot de passe">
+                                                <i class="mdi align-middle" 
+                                                   [ngClass]="{'mdi-eye-off-outline': !fieldTextType, 'mdi-eye-outline': fieldTextType}"></i>
+                                            </button>
+                                            @if (submitted && f['password'].errors) {
+                                            <div class="invalid-feedback">
+                                                @if(f['password'].errors['required']){
+                                                <span>Le mot de passe est requis</span>
+                                                }
+                                            </div>
+                                            }
+                                        </div>
+                                    </div>
 
-                                <!-- Liens -->
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <a routerLink="/pass-reset/basic" class="text-decoration-none link-secondary">Mot de passe oublié ?</a>
-                                    <a routerLink="/auth/register" class="text-decoration-none fw-semibold link-dark">Créer un compte</a>
-                                </div>
-                            </form>
+                                    <!-- Liens supplémentaires 
+                                    <div class="form-links">
+                                        <a routerLink="/pass-reset/basic" class="link-secondary">
+                                            <i class="ri-lock-unlock-line me-1"></i>Mot de passe oublié ?
+                                        </a>
+                                    </div>
+                                    -->
+
+                                    <!-- Bouton Se connecter -->
+                                    <div class="form-group">
+                                        <button class="btn btn-primary btn-connect w-100" type="submit">
+                                            <i class="ri-login-box-line me-2"></i>Se connecter
+                                        </button>
+                                    </div>
+
+                                    <!-- Lien création compte 
+                                    <div class="text-center mt-3">
+                                        <p class="create-account-text">
+                                            Pas encore de compte ? 
+                                            <a routerLink="/auth/register" class="link-primary fw-semibold">Créer un compte</a>
+                                        </p>
+                                    </div>
+                                    -->
+                                </form>
+                            </div>
                         </div>
                     </div>
+                    
                 </div>
             </div>
         </div>

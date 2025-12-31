@@ -1,0 +1,265 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-12">
+      <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+        <h4 class="mb-sm-0">Journaux d'Audit</h4>
+        <div class="page-title-right">
+          <ol class="breadcrumb m-0">
+            <li class="breadcrumb-item"><a href="/modules/admin/dashboard">Tableau de bord</a></li>
+            <li class="breadcrumb-item active">Journaux d'Audit</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filtres -->
+  <div class="row mb-3">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title mb-3">Filtres</h5>
+          <div class="row g-3">
+            <div class="col-md-3">
+              <label class="form-label">Email utilisateur</label>
+              <input 
+                type="text" 
+                class="form-control" 
+                [(ngModel)]="filterEmail"
+                placeholder="Filtrer par email"
+              />
+            </div>
+            <div class="col-md-3">
+              <label class="form-label">Entité</label>
+              <input 
+                type="text" 
+                class="form-control" 
+                [(ngModel)]="filterEntity"
+                placeholder="Ex: Utilisateur, Application..."
+              />
+            </div>
+            <div class="col-md-3">
+              <label class="form-label">Type d'action</label>
+              <select class="form-select" [(ngModel)]="filterActionType">
+                <option value="">Tous les types</option>
+                <option *ngFor="let type of actionTypes" [value]="type">
+                  {{ getActionLabel(type) }}
+                </option>
+              </select>
+            </div>
+            <div class="col-md-3 d-flex align-items-end">
+              <button class="btn btn-primary me-2" (click)="applyFilters()">
+                <i class="ri-search-line"></i> Filtrer
+              </button>
+              <button class="btn btn-secondary" (click)="clearFilters()">
+                <i class="ri-close-line"></i> Réinitialiser
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Message d'erreur -->
+  <div class="row" *ngIf="errorMessage">
+    <div class="col-12">
+      <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="ri-error-warning-line me-2"></i>
+        {{ errorMessage }}
+        <button type="button" class="btn-close" (click)="errorMessage = ''"></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loader -->
+  <div class="row" *ngIf="isLoading">
+    <div class="col-12 text-center py-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Chargement...</span>
+      </div>
+      <p class="mt-2">Chargement des logs d'audit...</p>
+    </div>
+  </div>
+
+  <!-- Table des logs -->
+  <div class="row" *ngIf="!isLoading">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="card-title mb-0">
+              <i class="ri-file-list-3-line me-2"></i>
+              Liste des logs ({{ totalElements }} au total)
+            </h5>
+          </div>
+
+          <div class="table-responsive">
+            <table class="table table-hover table-striped align-middle">
+              <thead class="table-light">
+                <tr>
+                  <th>Date</th>
+                  <th>Utilisateur</th>
+                  <th>Action</th>
+                  <th>Entité</th>
+                  <th>Description</th>
+                  <th>IP</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let log of auditLogs">
+                  <td>
+                    <small>{{ formatDate(log.actionDate) }}</small>
+                  </td>
+                  <td>
+                    <div *ngIf="log.userName">
+                      <strong>{{ log.userName }}</strong><br>
+                      <small class="text-muted">{{ log.userEmail }}</small>
+                    </div>
+                    <span *ngIf="!log.userName" class="text-muted">Système</span>
+                  </td>
+                  <td>
+                    <span [class]="getActionClass(log.actionType)">
+                      {{ getActionLabel(log.actionType) }}
+                    </span>
+                  </td>
+                  <td>
+                    <strong>{{ log.entityName }}</strong>
+                    <div *ngIf="log.entityId">
+                      <small class="text-muted">ID: {{ log.entityId }}</small>
+                    </div>
+                  </td>
+                  <td>
+                    <span *ngIf="log.description">{{ log.description }}</span>
+                    <span *ngIf="!log.description" class="text-muted">-</span>
+                  </td>
+                  <td>
+                    <small>{{ log.ipAddress || '-' }}</small>
+                  </td>
+                  <td>
+                    <button 
+                      class="btn btn-sm btn-info" 
+                      (click)="viewDetails(log)"
+                      title="Voir les détails"
+                    >
+                      <i class="ri-eye-line"></i>
+                    </button>
+                  </td>
+                </tr>
+                <tr *ngIf="auditLogs.length === 0">
+                  <td colspan="7" class="text-center py-4 text-muted">
+                    <i class="ri-inbox-line fs-2 d-block mb-2"></i>
+                    Aucun log d'audit trouvé
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Pagination -->
+          <div class="d-flex justify-content-between align-items-center mt-3" *ngIf="totalPages > 1">
+            <div>
+              <span class="text-muted">
+                Page {{ currentPage + 1 }} sur {{ totalPages }} 
+                ({{ auditLogs.length }} éléments sur {{ totalElements }})
+              </span>
+            </div>
+            <nav>
+              <ul class="pagination mb-0">
+                <li class="page-item" [class.disabled]="currentPage === 0">
+                  <a class="page-link" (click)="previousPage()">
+                    <i class="ri-arrow-left-s-line"></i>
+                  </a>
+                </li>
+                <li 
+                  class="page-item" 
+                  *ngFor="let page of pageNumbers"
+                  [class.active]="page === currentPage"
+                >
+                  <a class="page-link" (click)="goToPage(page)">
+                    {{ page + 1 }}
+                  </a>
+                </li>
+                <li class="page-item" [class.disabled]="currentPage === totalPages - 1">
+                  <a class="page-link" (click)="nextPage()">
+                    <i class="ri-arrow-right-s-line"></i>
+                  </a>
+                </li>
+              </ul>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal détails -->
+  <div class="modal fade show d-block" tabindex="-1" *ngIf="selectedLog" style="background-color: rgba(0,0,0,0.5);">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">
+            <i class="ri-file-info-line me-2"></i>
+            Détails du log d'audit
+          </h5>
+          <button type="button" class="btn-close" (click)="closeDetails()"></button>
+        </div>
+        <div class="modal-body">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="text-muted">Date de l'action</label>
+              <p class="fw-semibold">{{ formatDate(selectedLog.actionDate) }}</p>
+            </div>
+            <div class="col-md-6">
+              <label class="text-muted">Type d'action</label>
+              <p>
+                <span [class]="getActionClass(selectedLog.actionType)">
+                  {{ getActionLabel(selectedLog.actionType) }}
+                </span>
+              </p>
+            </div>
+            <div class="col-md-6">
+              <label class="text-muted">Utilisateur</label>
+              <p class="fw-semibold">{{ selectedLog.userName || 'Système' }}</p>
+              <small class="text-muted" *ngIf="selectedLog.userEmail">{{ selectedLog.userEmail }}</small>
+            </div>
+            <div class="col-md-6">
+              <label class="text-muted">Entité</label>
+              <p class="fw-semibold">{{ selectedLog.entityName }}</p>
+              <small class="text-muted" *ngIf="selectedLog.entityId">ID: {{ selectedLog.entityId }}</small>
+            </div>
+            <div class="col-md-6">
+              <label class="text-muted">Adresse IP</label>
+              <p>{{ selectedLog.ipAddress || 'Non disponible' }}</p>
+            </div>
+            <div class="col-md-6">
+              <label class="text-muted">Session ID</label>
+              <p><small>{{ selectedLog.sessionId || 'Non disponible' }}</small></p>
+            </div>
+            <div class="col-12" *ngIf="selectedLog.description">
+              <label class="text-muted">Description</label>
+              <p>{{ selectedLog.description }}</p>
+            </div>
+            <div class="col-12" *ngIf="selectedLog.userAgent">
+              <label class="text-muted">User Agent</label>
+              <p><small class="text-muted">{{ selectedLog.userAgent }}</small></p>
+            </div>
+            <div class="col-12" *ngIf="selectedLog.oldValue">
+              <label class="text-muted">Ancienne valeur</label>
+              <pre class="bg-light p-2 rounded"><code>{{ selectedLog.oldValue }}</code></pre>
+            </div>
+            <div class="col-12" *ngIf="selectedLog.newValue">
+              <label class="text-muted">Nouvelle valeur</label>
+              <pre class="bg-light p-2 rounded"><code>{{ selectedLog.newValue }}</code></pre>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="closeDetails()">Fermer</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

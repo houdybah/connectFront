@@ -1,0 +1,214 @@
+// Dashboard avec design moderne et épuré
+
+// Cartes statistiques
+.stats-card {
+  border-radius: 8px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  border: 1px solid transparent;
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .stats-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 24px;
+    flex-shrink: 0;
+  }
+
+  .stats-content {
+    flex-grow: 1;
+  }
+
+  .stats-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    color: #6c757d;
+    margin-bottom: 8px;
+  }
+
+  .stats-value {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: #212529;
+  }
+
+  .stats-detail {
+    font-size: 12px;
+
+    .badge {
+      font-size: 10px;
+      padding: 3px 8px;
+      font-weight: 500;
+    }
+  }
+}
+
+// Couleurs de fond subtle
+.bg-primary-subtle {
+  background-color: rgba(64, 81, 137, 0.1);
+  border-color: rgba(64, 81, 137, 0.2);
+}
+
+.bg-info-subtle {
+  background-color: rgba(10, 179, 156, 0.1);
+  border-color: rgba(10, 179, 156, 0.2);
+}
+
+.bg-success-subtle {
+  background-color: rgba(10, 207, 151, 0.1);
+  border-color: rgba(10, 207, 151, 0.2);
+}
+
+.bg-warning-subtle {
+  background-color: rgba(247, 184, 75, 0.1);
+  border-color: rgba(247, 184, 75, 0.2);
+}
+
+// Sections (Top Apps, Users, Connexions)
+.section-card {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+
+  .section-header {
+    padding: 15px 20px;
+    background: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+    font-weight: 600;
+    font-size: 14px;
+    color: #212529;
+  }
+
+  .section-body {
+    padding: 20px;
+  }
+}
+
+// État vide
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: #6c757d;
+
+  i {
+    font-size: 64px;
+    color: #dee2e6;
+    margin-bottom: 15px;
+    display: block;
+  }
+
+  p {
+    margin: 0;
+    font-size: 14px;
+  }
+}
+
+// Icône d'application
+.app-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 18px;
+}
+
+// Avatar utilisateur
+.user-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+// Tableaux
+.table {
+  thead {
+    th {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #6c757d;
+      border-bottom: 2px solid #e9ecef;
+      padding: 12px 15px;
+    }
+  }
+
+  tbody {
+    td {
+      padding: 12px 15px;
+      vertical-align: middle;
+      font-size: 13px;
+    }
+
+    tr {
+      transition: background-color 0.2s ease;
+
+      &:hover {
+        background-color: #f8f9fa;
+      }
+    }
+  }
+}
+
+// Badges
+.badge {
+  font-weight: 500;
+  padding: 4px 10px;
+  border-radius: 4px;
+
+  &.bg-light {
+    color: #495057;
+    border: 1px solid #dee2e6;
+  }
+}
+
+// Code pour IP
+code {
+  font-size: 12px;
+  color: #6c757d;
+  background: #f8f9fa;
+  padding: 2px 6px;
+  border-radius: 3px;
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .stats-card {
+    flex-direction: column;
+    text-align: center;
+
+    .stats-icon {
+      margin-bottom: 10px;
+    }
+  }
+
+  .section-card {
+    margin-bottom: 20px;
+  }
+}

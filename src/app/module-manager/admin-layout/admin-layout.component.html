@@ -1,0 +1,65 @@
+<div class="admin-layout">
+  <!-- Top Bar -->
+  <header class="admin-topbar">
+    <div class="topbar-left">
+      <button class="btn-back" (click)="goBack()" aria-label="Retour aux applications">
+        <i class="ri-arrow-left-line"></i>
+        Retour
+      </button>
+      <div class="topbar-title">
+        <i class="ri-dashboard-line"></i>
+        <h1>Panneau d'Administration</h1>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div class="user-info">
+        <i class="ri-user-line"></i>
+        <span>{{ userName }}</span>
+      </div>
+      <button class="btn-logout" (click)="logout()" aria-label="Se déconnecter">
+        <i class="ri-logout-box-line"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- Menu Horizontal -->
+  <nav class="admin-nav">
+    <ul class="nav-menu">
+      <li class="nav-item" [class.active]="isActiveRoute('dashboard')">
+        <button type="button" (click)="navigateTo('/modules/admin/dashboard')">
+          <i class="ri-dashboard-3-line"></i>
+          <span>Tableau de bord</span>
+        </button>
+      </li>
+      <li class="nav-item" [class.active]="isActiveRoute('application-list')">
+        <button type="button" (click)="navigateTo('/modules/admin/application-list')">
+          <i class="ri-apps-line"></i>
+          <span>Applications</span>
+        </button>
+      </li>
+      <li class="nav-item" [class.active]="isActiveRoute('utilisateur-list')">
+        <button type="button" (click)="navigateTo('/modules/admin/utilisateur-list')">
+          <i class="ri-user-settings-line"></i>
+          <span>Utilisateurs</span>
+        </button>
+      </li>
+      <li class="nav-item" [class.active]="isActiveRoute('audit-logs')">
+        <button type="button" (click)="navigateTo('/modules/admin/audit-logs')">
+          <i class="ri-file-list-3-line"></i>
+          <span>Journaux d'Audit</span>
+        </button>
+      </li>
+      <li class="nav-item" [class.active]="isActiveRoute('login-history')">
+        <button type="button" (click)="navigateTo('/modules/admin/login-history')">
+          <i class="ri-history-line"></i>
+          <span>Historique Connexions</span>
+        </button>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- Contenu Principal -->
+  <main class="admin-content">
+    <router-outlet></router-outlet>
+  </main>
+</div>

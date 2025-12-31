@@ -1,0 +1,39 @@
+.table {
+  font-size: 0.875rem;
+
+  th {
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.5px;
+  }
+
+  td {
+    vertical-align: middle;
+  }
+}
+
+.badge {
+  font-size: 0.75rem;
+  padding: 0.35em 0.65em;
+  font-weight: 500;
+}
+
+pre {
+  max-height: 200px;
+  overflow-y: auto;
+  font-size: 0.8rem;
+  
+  code {
+    color: #333;
+  }
+}
+
+.page-link {
+  cursor: pointer;
+}
+
+.modal.show {
+  display: block;
+}
+

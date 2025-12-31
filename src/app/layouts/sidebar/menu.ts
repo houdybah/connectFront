@@ -9,17 +9,47 @@ export const MENU: MenuItem[] = [
   },
   {
     id: 2,
-    label: 'Liste des Modules',
-    icon: 'ri-list-check',
-    link: '/modules/list',
+    label: 'Tableau de Bord',
+    icon: 'ri-dashboard-line',
+    link: '/modules/admin/dashboard',
     app: 'douaneconnect'
   },
   {
     id: 3,
-    label: 'Nouveau Module',
-    icon: 'ri-add-circle-line',
-    link: '/modules/create',
+    label: 'Applications',
+    icon: 'ri-apps-2-line',
+    link: '/modules/admin/application-list',
     app: 'douaneconnect'
+  },
+  {
+    id: 4,
+    label: 'Utilisateurs',
+    icon: 'ri-user-line',
+    link: '/modules/admin/utilisateur-list',
+    app: 'douaneconnect'
+  },
+  {
+    id: 5,
+    label: 'Audit',
+    icon: 'ri-shield-check-line',
+    app: 'douaneconnect',
+    isCollapsed: true,
+    subItems: [
+      {
+        id: 6,
+        label: 'Journaux d\'Audit',
+        icon: 'ri-file-list-3-line',
+        link: '/modules/admin/audit-logs',
+        parentId: 5
+      },
+      {
+        id: 7,
+        label: 'Historique Connexions',
+        icon: 'ri-history-line',
+        link: '/modules/admin/login-history',
+        parentId: 5
+      }
+    ]
   },
   {
     id: 4,
@@ -1882,6 +1912,94 @@ export const MENU: MenuItem[] = [
         icon: 'ri-database-2-line',
         link: '/sygmak/gestion-abonnement',
         parentId: 1700
+      }
+    ]
+  },
+  {
+    id: 1899,
+    label: 'SYDACTOV',
+    isTitle: true,
+    app: 'sydactov'
+  },
+  // SYDACTOV Menu
+  {
+    id: 1900,
+    label: 'SYDACTOV',
+    icon: 'ri-calendar-check-line',
+    app: 'sydactov',
+    isCollapsed: true,
+    subItems: [
+      {
+        id: 1901,
+        label: 'Accueil',
+        icon: 'ri-home-5-line',
+        link: '/sydactov',
+        parentId: 1900
+      },
+      {
+        id: 1902,
+        label: 'Déclarations',
+        icon: 'ri-file-list-3-line',
+        link: '/sydactov/declarations',
+        parentId: 1900
+      },
+      {
+        id: 1903,
+        label: 'Activités',
+        icon: 'ri-calendar-event-line',
+        link: '/sydactov/activites',
+        parentId: 1900
+      },
+      {
+        id: 1904,
+        label: 'Visites',
+        icon: 'ri-calendar-check-line',
+        link: '/sydactov/visites',
+        parentId: 1900
+      }
+    ]
+  },
+  {
+    id: 1999,
+    label: 'SYSRECETTE',
+    isTitle: true,
+    app: 'sysrecette'
+  },
+  // SYSRECETTE Menu
+  {
+    id: 2000,
+    label: 'SYSRECETTE',
+    icon: 'ri-money-dollar-circle-line',
+    app: 'sysrecette',
+    isCollapsed: true,
+    subItems: [
+      {
+        id: 2001,
+        label: 'Accueil',
+        icon: 'ri-home-5-line',
+        link: '/sysrecette',
+        parentId: 2000
+      },
+      {
+        id: 2002,
+        label: 'Gestion Recettes',
+        icon: 'ri-money-dollar-circle-line',
+        link: '/sysrecette/recettes',
+        parentId: 2000
+      },
+      {
+        id: 2003,
+        label: 'Statistiques',
+        icon: 'ri-bar-chart-line',
+        link: '/sysrecette/statistiques',
+        parentId: 2000
+      },
+      {
+        id: 2004,
+        label: 'Rapports',
+        icon: 'ri-file-chart-line',
+        link: '/sysrecette/rapports',
+        parentId: 2000
       }
     ]
   }

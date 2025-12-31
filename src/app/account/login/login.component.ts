@@ -64,6 +64,8 @@ export class LoginComponent implements OnInit {
   */
   onSubmit() {
     this.submitted = true;
+    this.messageError = ''; // Réinitialiser le message d'erreur
+    
     this.authenticationService.login(this.f['email'].value, this.f['password'].value).subscribe(
      (data:any) => {
      if(data.token != null){
@@ -71,18 +73,27 @@ export class LoginComponent implements OnInit {
        const decodedHeader = jwtDecode(data.token);
       // console.log(decodedHeader)
        sessionStorage.setItem('currentUser', JSON.stringify(decodedHeader.sub));
-       //this.tokenStorageService.saveRole(decodedHeader.aud);
-       sessionStorage.setItem('token', data.token);
+       
+       // Sauvegarde du token de manière cryptée dans sessionStorage 'dConnect'
+       this.tokenStorageService.saveToken(data.token);
+       
+       // Redirection uniquement en cas de succès
        this.router.navigate(['']);
      } else {
+       // Rester sur la page et afficher le message d'erreur
        this.toastService.show(data.data, { classname: 'bg-danger text-white', delay: 15000 });
+       this.submitted = false; // Permettre une nouvelle tentative
      }
     },
     (error: any) => {
-       this.router.navigate(['']);
-         if(error ==="Login failed"){
-           this.messageError="username ou mot de passe incorrect";
-         }
+       // Rester sur la page de login en cas d'erreur
+       console.error('Erreur d\'authentification:', error);
+       if(error === "Login failed"){
+         this.messageError = "Nom d'utilisateur ou mot de passe incorrect";
+       } else {
+         this.messageError = "Erreur lors de la connexion. Veuillez réessayer.";
+       }
+       this.submitted = false; // Permettre une nouvelle tentative
     });
   }
 

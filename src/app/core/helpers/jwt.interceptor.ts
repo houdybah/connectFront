@@ -9,6 +9,7 @@ import { Observable, catchError, throwError } from 'rxjs';
 
 import { AuthenticationService } from '../services/auth.service';
 import { AuthfakeauthenticationService } from '../services/authfake.service';
+import { TokenStorageService } from '../services/token-storage.service';
 import { environment } from '../../../environments/environment';
 import { Router } from '@angular/router';
 
@@ -17,6 +18,7 @@ export class JwtInterceptor implements HttpInterceptor {
     constructor(
         private authenticationService: AuthenticationService,
         private authfackservice: AuthfakeauthenticationService,
+        private tokenStorageService: TokenStorageService,
         public router:Router
     ) { }
 
@@ -35,12 +37,12 @@ export class JwtInterceptor implements HttpInterceptor {
                 });
             }
         } else {
-            // add authorization header with jwt token if available
-            const currentUser = this.authfackservice.currentUserValue;
-            if (currentUser && currentUser.token) {
+            // Récupérer le token décrypté depuis TokenStorageService
+            const token = this.tokenStorageService.getToken();
+            if (token) {
                 request = request.clone({
                     setHeaders: {
-                        Authorization: `Bearer ${currentUser.token}`,
+                        Authorization: `Bearer ${token}`,
                     },
                 });
             }

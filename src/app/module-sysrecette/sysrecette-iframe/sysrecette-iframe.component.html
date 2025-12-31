@@ -1,0 +1,63 @@
+<div class="sysrecette-iframe-container">
+  <!-- Debug info -->
+  <div style="position: fixed; top: 70px; right: 10px; background: #fff; padding: 10px; border: 2px solid #333; z-index: 10000; font-size: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.2);">
+    <strong>DEBUG SYSRECETTE:</strong><br>
+    Loading: {{ isLoading }}<br>
+    Error: {{ hasError }}<br>
+    URL: http://localhost:49706/<br>
+    <span style="color: green;">✓ Composant chargé</span>
+  </div>
+
+  <!-- Indicateur visuel si iframe présente -->
+  <div *ngIf="!isLoading && !hasError" style="position: fixed; bottom: 10px; right: 10px; background: #10b981; color: white; padding: 8px 15px; border-radius: 20px; z-index: 10000; font-size: 12px;">
+    <strong>✓ IFRAME ACTIVE</strong>
+  </div>
+
+  <!-- Loading spinner -->
+  <div *ngIf="isLoading" class="loading-overlay">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Chargement de SYSRECETTE...</span>
+    </div>
+    <p class="mt-3 text-muted">Chargement de SYSRECETTE...</p>
+    <p class="mt-2"><small>Si cela prend trop de temps, vérifiez la console (F12)</small></p>
+  </div>
+
+  <!-- Error message -->
+  <div *ngIf="hasError && !isLoading" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 10001; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); max-width: 500px;">
+    <div style="color: #dc2626; font-size: 48px; text-align: center; margin-bottom: 20px;">
+      ⚠️
+    </div>
+    <h3 style="text-align: center; margin-bottom: 15px;">Erreur de chargement</h3>
+    <p style="text-align: center; color: #6b7280;">
+      Impossible de charger SYSRECETTE. Veuillez vérifier que l'application est démarrée sur 
+      <strong>http://localhost:49706/</strong>
+    </p>
+    <div style="text-align: center; margin-top: 20px;">
+      <button class="btn btn-primary" (click)="isLoading = true; hasError = false; ngOnInit()" style="margin-right: 10px;">
+        🔄 Réessayer
+      </button>
+      <button class="btn btn-secondary" onclick="window.location.href='/modules'">
+        ← Retour
+      </button>
+    </div>
+  </div>
+
+  <!-- Iframe avec bordure visible pour debug -->
+  <iframe 
+    *ngIf="!hasError"
+    [src]="sysrecetteUrl"
+    (load)="onIframeLoad()"
+    (error)="onIframeError()"
+    class="sysrecette-iframe"
+    style="border: 3px solid #10b981 !important;"
+    frameborder="0"
+    allow="fullscreen"
+    allowfullscreen>
+  </iframe>
+
+  <!-- Message si iframe ne se charge pas -->
+  <div *ngIf="!isLoading && !hasError" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1; pointer-events: none; color: #9ca3af; font-size: 14px;">
+    Si vous ne voyez rien, l'iframe est peut-être blanche...
+  </div>
+</div>
+

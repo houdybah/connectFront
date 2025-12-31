@@ -1,0 +1,257 @@
+<div class="container-fluid">
+  <!-- En-tête -->
+  <div class="row">
+    <div class="col-12">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="mb-0">
+          <i class="ri-pie-chart-line me-2"></i>Tableau de bord
+        </h4>
+        <button class="btn btn-success btn-sm" (click)="refresh()">
+          <i class="ri-refresh-line me-1"></i>Actualiser
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Message d'erreur -->
+  <div class="row" *ngIf="errorMessage">
+    <div class="col-12">
+      <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="ri-error-warning-line me-2"></i>{{ errorMessage }}
+        <button type="button" class="btn-close" (click)="errorMessage = ''"></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loader -->
+  <div class="row" *ngIf="isLoading">
+    <div class="col-12 text-center py-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Chargement...</span>
+      </div>
+      <p class="mt-2 text-muted">Chargement des statistiques...</p>
+    </div>
+  </div>
+
+  <!-- Contenu -->
+  <div *ngIf="!isLoading && stats">
+    
+    <!-- Cartes statistiques -->
+    <div class="row g-3 mb-4">
+      <!-- Applications -->
+      <div class="col-xl-3 col-md-6">
+        <div class="stats-card bg-primary-subtle">
+          <div class="stats-icon bg-primary">
+            <i class="ri-apps-2-line"></i>
+          </div>
+          <div class="stats-content">
+            <div class="stats-label">APPLICATIONS</div>
+            <div class="stats-value">{{ stats.applicationStats.total }}</div>
+            <div class="stats-detail">
+              <span class="badge bg-success me-1">{{ stats.applicationStats.actives }} actives</span>
+              <span class="badge bg-danger">{{ stats.applicationStats.inactives }} inactives</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Utilisateurs -->
+      <div class="col-xl-3 col-md-6">
+        <div class="stats-card bg-info-subtle">
+          <div class="stats-icon bg-info">
+            <i class="ri-user-line"></i>
+          </div>
+          <div class="stats-content">
+            <div class="stats-label">UTILISATEURS</div>
+            <div class="stats-value">{{ stats.utilisateurStats.total }}</div>
+            <div class="stats-detail">
+              <span class="badge bg-success me-1">{{ stats.utilisateurStats.actifs }} actifs</span>
+              <span class="badge bg-danger">{{ stats.utilisateurStats.inactifs }} inactifs</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Aujourd'hui -->
+      <div class="col-xl-3 col-md-6">
+        <div class="stats-card bg-success-subtle">
+          <div class="stats-icon bg-success">
+            <i class="ri-calendar-check-line"></i>
+          </div>
+          <div class="stats-content">
+            <div class="stats-label">AUJOURD'HUI</div>
+            <div class="stats-value">{{ stats.loginStats.aujourdhui }}</div>
+            <div class="stats-detail text-muted">connexions</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cette semaine -->
+      <div class="col-xl-3 col-md-6">
+        <div class="stats-card bg-warning-subtle">
+          <div class="stats-icon bg-warning">
+            <i class="ri-calendar-event-line"></i>
+          </div>
+          <div class="stats-content">
+            <div class="stats-label">CETTE SEMAINE</div>
+            <div class="stats-value">{{ stats.loginStats.cetteSemaine }}</div>
+            <div class="stats-detail text-muted">connexions</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Top Applications -->
+    <div class="row mb-4">
+      <div class="col-12">
+        <div class="section-card">
+          <div class="section-header">
+            <i class="ri-apps-2-line me-2"></i>Top Applications
+          </div>
+          <div class="section-body">
+            <div *ngIf="stats.topApplications.length === 0" class="empty-state">
+              <i class="ri-inbox-line"></i>
+              <p>Aucune statistique d'application disponible</p>
+            </div>
+            <div *ngIf="stats.topApplications.length > 0" class="table-responsive">
+              <table class="table table-hover mb-0">
+                <thead>
+                  <tr>
+                    <th>Application</th>
+                    <th>Code</th>
+                    <th class="text-end">Connexions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let app of stats.topApplications">
+                    <td>
+                      <div class="d-flex align-items-center">
+                        <div class="app-icon me-2" [style.background-color]="getAppColor(app.color)">
+                          <i [class]="app.icon || 'ri-apps-line'"></i>
+                        </div>
+                        <span class="fw-medium">{{ app.nom }}</span>
+                      </div>
+                    </td>
+                    <td>
+                      <span class="badge bg-light text-dark">{{ app.code }}</span>
+                    </td>
+                    <td class="text-end">
+                      <span class="badge bg-primary">{{ app.nombreConnexions }}</span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Utilisateurs les plus actifs -->
+    <div class="row mb-4">
+      <div class="col-12">
+        <div class="section-card">
+          <div class="section-header">
+            <i class="ri-user-star-line me-2"></i>Utilisateurs les plus actifs
+          </div>
+          <div class="section-body">
+            <div *ngIf="stats.topUtilisateurs.length === 0" class="empty-state">
+              <i class="ri-inbox-line"></i>
+              <p>Aucune statistique utilisateur disponible</p>
+            </div>
+            <div *ngIf="stats.topUtilisateurs.length > 0" class="table-responsive">
+              <table class="table table-hover mb-0">
+                <thead>
+                  <tr>
+                    <th>Utilisateur</th>
+                    <th>Email</th>
+                    <th class="text-end">Connexions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let user of stats.topUtilisateurs">
+                    <td>
+                      <div class="d-flex align-items-center">
+                        <div class="user-avatar me-2">
+                          {{ user.prenom?.charAt(0) || 'U' }}{{ user.nom?.charAt(0) || '' }}
+                        </div>
+                        <span class="fw-medium">{{ user.prenom }} {{ user.nom }}</span>
+                      </div>
+                    </td>
+                    <td class="text-muted">{{ user.email }}</td>
+                    <td class="text-end">
+                      <span class="badge bg-success">{{ user.nombreConnexions }}</span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Connexions récentes -->
+    <div class="row">
+      <div class="col-12">
+        <div class="section-card">
+          <div class="section-header">
+            <i class="ri-time-line me-2"></i>Connexions récentes
+          </div>
+          <div class="section-body">
+            <div *ngIf="stats.recentLogins.length === 0" class="empty-state">
+              <i class="ri-inbox-line"></i>
+              <p>Aucune connexion récente</p>
+            </div>
+            <div *ngIf="stats.recentLogins.length > 0" class="table-responsive">
+              <table class="table table-hover mb-0">
+                <thead>
+                  <tr>
+                    <th>Utilisateur</th>
+                    <th>Application</th>
+                    <th>Date</th>
+                    <th>IP</th>
+                    <th class="text-center">Statut</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let login of stats.recentLogins">
+                    <td>
+                      <div class="d-flex align-items-center">
+                        <div class="user-avatar me-2">
+                          {{ login.prenom?.charAt(0) || 'U' }}
+                        </div>
+                        <div>
+                          <div class="fw-medium">{{ login.prenom }} {{ login.nom }}</div>
+                          <small class="text-muted">{{ login.email }}</small>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <span class="badge bg-light text-dark">{{ login.application || '-' }}</span>
+                    </td>
+                    <td class="text-muted">
+                      <small>{{ formatDate(login.dateConnexion) }}</small>
+                    </td>
+                    <td class="text-muted">
+                      <code>{{ login.ipAddress || '-' }}</code>
+                    </td>
+                    <td class="text-center">
+                      <span *ngIf="login.success" class="badge bg-success">
+                        <i class="ri-checkbox-circle-line me-1"></i>Réussie
+                      </span>
+                      <span *ngIf="!login.success" class="badge bg-danger">
+                        <i class="ri-close-circle-line me-1"></i>Échouée
+                      </span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

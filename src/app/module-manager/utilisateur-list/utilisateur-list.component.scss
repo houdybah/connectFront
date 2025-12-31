@@ -1,0 +1,58 @@
+@import '../application-list/application-list.component.scss';
+
+.badge-service {
+  background-color: #e7f5ff;
+  color: #1864ab;
+}
+
+.badge {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  font-weight: 500;
+
+  &.bg-success {
+    background-color: #d4edda !important;
+    color: #155724 !important;
+  }
+
+  &.bg-danger {
+    background-color: #f8d7da !important;
+    color: #721c24 !important;
+  }
+
+  i {
+    font-size: 0.875rem;
+  }
+}
+
+.btn-sm {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+
+  &.btn-success {
+    background-color: #28a745;
+    border-color: #28a745;
+
+    &:hover {
+      background-color: #218838;
+      border-color: #1e7e34;
+    }
+  }
+
+  &.btn-danger {
+    background-color: #dc3545;
+    border-color: #dc3545;
+
+    &:hover {
+      background-color: #c82333;
+      border-color: #bd2130;
+    }
+  }
+
+  i {
+    font-size: 0.875rem;
+  }
+}
+

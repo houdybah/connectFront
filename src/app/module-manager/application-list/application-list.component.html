@@ -1,0 +1,177 @@
+<div class="list-container">
+  <div class="list-header">
+    <h2><i class="ri-apps-line"></i> Gestion des Applications</h2>
+    <button class="btn-primary" (click)="createNew()">
+      <i class="ri-add-line"></i>
+      Nouvelle Application
+    </button>
+  </div>
+
+  <!-- Search Bar -->
+  <div class="search-bar">
+    <div class="search-input-group">
+      <i class="ri-search-line"></i>
+      <input 
+        type="text" 
+        [(ngModel)]="searchTerm"
+        (input)="onSearchInput()"
+        (keyup.enter)="isSearchEnabled && searchApplications()"
+        placeholder="Rechercher une application (min. 3 caractères)..." 
+        class="form-control">
+      <button 
+        class="btn-search" 
+        (click)="searchApplications()"
+        [disabled]="!isSearchEnabled"
+        [class.disabled]="!isSearchEnabled">
+        <i class="ri-search-2-line"></i>
+        Rechercher
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  @if (isLoading) {
+  <div class="loading-state">
+    <div class="spinner-border text-primary"></div>
+    <p>Chargement des applications...</p>
+  </div>
+  }
+
+  <!-- Error -->
+  @if (errorMessage) {
+  <div class="alert alert-danger">
+    <i class="ri-error-warning-line"></i>
+    {{ errorMessage }}
+  </div>
+  }
+
+  <!-- Applications List -->
+  @if (!isLoading && applications.length > 0) {
+  <div class="table-responsive">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th class="col-icon"></th>
+          <th class="col-name">Nom</th>
+          <th class="col-code">Code</th>
+          <th class="col-version">Version</th>
+          <th class="col-env">Environnement</th>
+          <th class="col-url">URL</th>
+          <th class="col-status">Statut</th>
+          <th class="col-actions">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (app of applications; track app.uuid) {
+        <tr>
+          <td class="app-icon-cell">
+            <div class="app-icon-circle" [style.background-color]="app.color">
+              <i [class]="app.icon || 'ri-apps-line'"></i>
+            </div>
+          </td>
+          <td class="font-weight-bold" data-label="Nom">{{ app.nom }}</td>
+          <td data-label="Code"><span class="badge badge-code">{{ app.code }}</span></td>
+          <td data-label="Version">{{ app.version }}</td>
+          <td data-label="Environnement">
+            <span class="badge" [class.badge-prod]="app.environnement === 'prod'" 
+                                [class.badge-preprod]="app.environnement === 'preprod'"
+                                [class.badge-formation]="app.environnement === 'formation'">
+              {{ app.environnement }}
+            </span>
+          </td>
+          <td class="text-muted url-cell" data-label="URL">{{ app.url }}</td>
+          <td data-label="Statut">
+            <label class="switch">
+              <input type="checkbox" [checked]="app.enabled" (change)="toggleStatus(app)">
+              <span class="slider"></span>
+            </label>
+            <span class="status-text" [class.active]="app.enabled">
+              {{ app.enabled ? 'Active' : 'Inactive' }}
+            </span>
+          </td>
+          <td data-label="Actions">
+            <div class="action-buttons">
+              <button class="btn-icon btn-edit" (click)="editApplication(app)" title="Modifier">
+                <i class="ri-edit-line"></i>
+              </button>
+              <button class="btn-icon btn-delete" (click)="deleteApplication(app)" title="Supprimer">
+                <i class="ri-delete-bin-line"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination -->
+  <div class="pagination-container">
+    <div class="pagination-info">
+      <div class="page-size-selector">
+        <label for="pageSize">Afficher :</label>
+        <select 
+          id="pageSize"
+          [(ngModel)]="page.size" 
+          (change)="onPageSizeChange()"
+          class="form-select">
+          @for (size of pageSizes; track size) {
+            <option [value]="size">{{ size }}</option>
+          }
+        </select>
+        <span>éléments</span>
+      </div>
+      <div class="pagination-range">
+        {{ (page.pageNumber * page.size) + 1 }} à {{ Math.min((page.pageNumber + 1) * page.size, totalElements) }} sur {{ totalElements }} applications
+      </div>
+    </div>
+    <div class="pagination-controls">
+      <button 
+        class="pagination-btn" 
+        (click)="previousPage()" 
+        [disabled]="!hasPreviousPage">
+        <i class="ri-arrow-left-s-line"></i>
+        Précédent
+      </button>
+      
+      @for (pageNum of getPageNumbers(); track pageNum) {
+      <button 
+        class="pagination-btn page-number" 
+        [class.active]="pageNum === page.pageNumber"
+        (click)="goToPage(pageNum)">
+        {{ pageNum + 1 }}
+      </button>
+      }
+      
+      <button 
+        class="pagination-btn" 
+        (click)="nextPage()" 
+        [disabled]="!hasNextPage">
+        Suivant
+        <i class="ri-arrow-right-s-line"></i>
+      </button>
+    </div>
+  </div>
+  }
+
+  <!-- Empty State -->
+  @if (!isLoading && applications.length === 0 && !errorMessage) {
+  <div class="empty-state">
+    <i class="ri-inbox-line"></i>
+    <p>Aucune application trouvée</p>
+    @if (searchTerm) {
+    <button class="btn-secondary" (click)="searchTerm = ''; searchApplications()">
+      Réinitialiser la recherche
+    </button>
+    }
+  </div>
+  }
+
+  <!-- Modal pour le formulaire -->
+  @if (showModal) {
+  <app-application-form 
+    [applicationToEdit]="selectedApplication"
+    (onClose)="onModalClose($event)">
+  </app-application-form>
+  }
+</div>

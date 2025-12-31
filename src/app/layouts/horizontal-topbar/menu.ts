@@ -408,6 +408,60 @@ export const MENUDOUANECONNECT: MenuItem[] = [
   }
 ];
 
+export const MENUSYDACTOV: MenuItem[] = [
+  {
+    id: 1901,
+    label: 'Accueil',
+    icon: 'ri-home-5-line',
+    link: '/sydactov'
+  },
+  {
+    id: 1902,
+    label: 'Déclarations',
+    icon: 'ri-file-list-3-line',
+    link: '/sydactov/declarations'
+  },
+  {
+    id: 1903,
+    label: 'Activités',
+    icon: 'ri-calendar-event-line',
+    link: '/sydactov/activites'
+  },
+  {
+    id: 1904,
+    label: 'Visites',
+    icon: 'ri-calendar-check-line',
+    link: '/sydactov/visites'
+  }
+];
+
+export const MENUSYSRECETTE: MenuItem[] = [
+  {
+    id: 2001,
+    label: 'Accueil',
+    icon: 'ri-home-5-line',
+    link: '/sysrecette'
+  },
+  {
+    id: 2002,
+    label: 'Gestion Recettes',
+    icon: 'ri-money-dollar-circle-line',
+    link: '/sysrecette/recettes'
+  },
+  {
+    id: 2003,
+    label: 'Statistiques',
+    icon: 'ri-bar-chart-line',
+    link: '/sysrecette/statistiques'
+  },
+  {
+    id: 2004,
+    label: 'Rapports',
+    icon: 'ri-file-chart-line',
+    link: '/sysrecette/rapports'
+  }
+];
+
 // Menu combiné pour toutes les applications
 export const MENU: MenuItem[] = [
   // Menus DouaneConnect (id < 1500)
@@ -438,5 +492,23 @@ export const MENU: MenuItem[] = [
     icon: 'ri-file-list-3-line',
     app: 'sygdrd',
     subItems: MENUSYGDRD
+  },
+  
+  // Menu SYDACTOV (id = 1900)
+  {
+    id: 1900,
+    label: 'SYDACTOV',
+    icon: 'ri-calendar-check-line',
+    app: 'sydactov',
+    subItems: MENUSYDACTOV
+  },
+  
+  // Menu SYSRECETTE (id = 2000)
+  {
+    id: 2000,
+    label: 'SYSRECETTE',
+    icon: 'ri-money-dollar-circle-line',
+    app: 'sysrecette',
+    subItems: MENUSYSRECETTE
   }
 ];

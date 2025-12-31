@@ -13,6 +13,8 @@ const routes: Routes = [
   { path: 'sygdrd', component: LayoutComponent, loadChildren: () => import('./module-sygdrd/module-sygdrd-routing.module').then(m => m.ModuleSygdrdRoutingModule), canActivate: [AuthGuard] },
   { path: 'sygmak', component: LayoutComponent, loadChildren: () => import('./module-sygmak/module-sygmak-routing.module').then(m => m.ModuleSygmakRoutingModule), canActivate: [AuthGuard] },
   { path: 'sysrev', component: LayoutComponent, loadChildren: () => import('./module-sysrev/module-sysrev-routing.module').then(m => m.ModuleSysrevRoutingModule), canActivate: [AuthGuard] },
+  { path: 'sydactov', component: LayoutComponent, loadChildren: () => import('./module-sydactov/module-sydactov-routing.module').then(m => m.ModuleSydactovRoutingModule), canActivate: [AuthGuard] },
+  { path: 'sysrecette', component: LayoutComponent, loadChildren: () => import('./module-sysrecette/module-sysrecette-routing.module').then(m => m.ModuleSysrecetteRoutingModule), canActivate: [AuthGuard] },
   { path: 'pages', component: LayoutComponent, loadChildren: () => import('./pages/pages.module').then(m => m.PagesModule), canActivate: [AuthGuard] }
 ];
 

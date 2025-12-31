@@ -1,0 +1,119 @@
+<div class="modal-overlay" (click)="cancel()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>
+        <i class="ri-apps-line"></i>
+        {{ isEditMode ? 'Modifier l\'Application' : 'Nouvelle Application' }}
+      </h2>
+      <button type="button" class="btn-close" (click)="cancel()" aria-label="Fermer">
+        <i class="ri-close-line"></i>
+      </button>
+    </div>
+
+    <div class="modal-body">
+
+    @if (errorMessage) {
+    <div class="alert alert-danger">
+      <i class="ri-error-warning-line"></i>
+      {{ errorMessage }}
+    </div>
+    }
+    <form [formGroup]="applicationForm" (ngSubmit)="onSubmit()">
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="code">Code *</label>
+          <input type="text" id="code" formControlName="code" class="form-control">
+        </div>
+
+        <div class="form-group">
+          <label for="nom">Nom *</label>
+          <input type="text" id="nom" formControlName="nom" class="form-control">
+        </div>
+
+        <div class="form-group">
+          <label for="version">Version *</label>
+          <input type="text" id="version" formControlName="version" class="form-control">
+        </div>
+
+        <div class="form-group">
+          <label for="environnement">Environnement *</label>
+          <select id="environnement" formControlName="environnement" class="form-control">
+            <option value="">Sélectionner...</option>
+            <option value="prod">Production</option>
+            <option value="preprod">Pré-production</option>
+            <option value="formation">Formation</option>
+          </select>
+        </div>
+
+        <div class="form-group full-width">
+          <label for="url">URL *</label>
+          <input type="url" id="url" formControlName="url" class="form-control">
+        </div>
+
+        <div class="form-group full-width">
+          <label for="description">Description</label>
+          <textarea id="description" formControlName="description" class="form-control" rows="3"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Icône *</label>
+          <div class="icon-selector">
+            <div class="icon-preview" [style.color]="applicationForm.get('color')?.value">
+              <i [class]="applicationForm.get('icon')?.value || 'ri-apps-line'"></i>
+            </div>
+            <select id="icon" formControlName="icon" class="form-control">
+              <option value="ri-apps-line">Application</option>
+              <option value="ri-dashboard-line">Tableau de bord</option>
+              <option value="ri-file-list-line">Documents</option>
+              <option value="ri-bar-chart-box-line">Statistiques</option>
+              <option value="ri-settings-3-line">Paramètres</option>
+              <option value="ri-database-line">Base de données</option>
+              <option value="ri-server-line">Serveur</option>
+              <option value="ri-cloud-line">Cloud</option>
+              <option value="ri-globe-line">Web</option>
+              <option value="ri-ship-line">Maritime</option>
+              <option value="ri-truck-line">Transport</option>
+              <option value="ri-plane-line">Aérien</option>
+              <option value="ri-building-line">Entreprise</option>
+              <option value="ri-government-line">Gouvernement</option>
+              <option value="ri-shield-check-line">Sécurité</option>
+              <option value="ri-user-settings-line">Gestion utilisateurs</option>
+              <option value="ri-map-pin-line">Localisation</option>
+              <option value="ri-calendar-line">Calendrier</option>
+              <option value="ri-mail-line">Messagerie</option>
+              <option value="ri-money-dollar-circle-line">Finances</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="color">Couleur *</label>
+          <div class="color-selector">
+            <input type="color" id="color" formControlName="color" class="form-control color-input">
+            <input type="text" formControlName="color" class="form-control color-text" placeholder="#0d6846">
+          </div>
+        </div>
+
+        <div class="form-group full-width">
+          <label class="checkbox-label">
+            <input type="checkbox" formControlName="enabled">
+            <span>Application activée</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn-secondary" (click)="cancel()" [disabled]="isLoading">
+          Annuler
+        </button>
+        <button type="submit" class="btn-primary" [disabled]="applicationForm.invalid || isLoading">
+          @if (isLoading) {
+          <span class="spinner-border spinner-border-sm"></span>
+          }
+          {{ isEditMode ? 'Mettre à jour' : 'Créer' }}
+        </button>
+      </div>
+    </form>
+    </div>
+  </div>
+</div>

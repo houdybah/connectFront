@@ -5,7 +5,9 @@
 export const environment = {
   production: false,
   //defaultauth: 'https://atns-backend.atns-guinee.com',
-   defaultauth: 'http://localhost:8090',
+   defaultauth: 'http://localhost:8091',
+  // Clé secrète pour le cryptage AES-256 du token
+  encryptionSecretKey: 'douane-connect-secret-key-2024-secure',
   firebaseConfig: {
     apiKey: '',
     authDomain: '',

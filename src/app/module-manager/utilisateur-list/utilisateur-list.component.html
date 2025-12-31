@@ -1,0 +1,163 @@
+<div class="list-container">
+  <div class="list-header">
+    <h2><i class="ri-user-settings-line"></i> Gestion des Utilisateurs</h2>
+    <button class="btn-primary" (click)="createNew()">
+      <i class="ri-user-add-line"></i>
+      Nouvel Utilisateur
+    </button>
+  </div>
+
+  <div class="search-bar">
+    <div class="search-input-group">
+      <i class="ri-search-line"></i>
+      <input 
+        type="text" 
+        [(ngModel)]="searchTerm"
+        (input)="onSearchInput()"
+        (keyup.enter)="isSearchEnabled && searchUsers()"
+        placeholder="Rechercher un utilisateur (min. 3 caractères)..." 
+        class="form-control">
+      <button 
+        class="btn-search" 
+        (click)="searchUsers()"
+        [disabled]="!isSearchEnabled"
+        [class.disabled]="!isSearchEnabled">
+        <i class="ri-search-2-line"></i>
+        Rechercher
+      </button>
+    </div>
+  </div>
+
+  @if (isLoading) {
+  <div class="loading-state">
+    <div class="spinner-border text-primary"></div>
+    <p>Chargement des utilisateurs...</p>
+  </div>
+  }
+
+  @if (errorMessage) {
+  <div class="alert alert-danger">
+    <i class="ri-error-warning-line"></i>
+    {{ errorMessage }}
+  </div>
+  }
+
+  @if (!isLoading && users.length > 0) {
+  <div class="table-responsive">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Nom</th>
+          <th>Prénom</th>
+          <th>Email</th>
+          <th>Service</th>
+          <th>Fonction</th>
+          <th>Rôle</th>
+          <th>État du compte</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (user of users; track user.uuid) {
+        <tr>
+          <td class="font-weight-bold" data-label="Nom">{{ user.nom }}</td>
+          <td data-label="Prénom">{{ user.prenom }}</td>
+          <td class="text-muted" data-label="Email">{{ user.email }}</td>
+          <td data-label="Service"><span class="badge badge-service">{{ user.service || 'N/A' }}</span></td>
+          <td data-label="Fonction">{{ user.fonction || 'N/A' }}</td>
+          <td data-label="Rôle">{{ getRoleLabel(user.role) }}</td>
+          <td data-label="État">
+            <button type="button"
+                    class="btn btn-sm"
+                    [class]="user.active ? 'btn-success' : 'btn-danger'"
+                    (click)="toggleActiveStatus(user)"
+                    title="Cliquer pour {{ user.active ? 'désactiver' : 'activer' }} l'utilisateur">
+              <i class="ri-{{ user.active ? 'check' : 'close' }}-circle-line me-1"></i>
+              {{ user.active ? 'Activé' : 'Désactivé' }}
+            </button>
+          </td>
+          <td data-label="Actions">
+            <div class="action-buttons">
+              <button class="btn-icon btn-edit" (click)="editUser(user)" title="Modifier">
+                <i class="ri-edit-line"></i>
+              </button>
+              <button class="btn-icon btn-delete" (click)="deleteUser(user)" title="Supprimer">
+                <i class="ri-delete-bin-line"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination -->
+  <div class="pagination-container">
+    <div class="pagination-info">
+      <div class="page-size-selector">
+        <label for="pageSize">Afficher :</label>
+        <select 
+          id="pageSize"
+          [(ngModel)]="page.size" 
+          (change)="onPageSizeChange()"
+          class="form-select">
+          @for (size of pageSizes; track size) {
+            <option [value]="size">{{ size }}</option>
+          }
+        </select>
+        <span>éléments</span>
+      </div>
+      <div class="pagination-range">
+        {{ (page.pageNumber * page.size) + 1 }} à {{ Math.min((page.pageNumber + 1) * page.size, totalElements) }} sur {{ totalElements }} utilisateurs
+      </div>
+    </div>
+    <div class="pagination-controls">
+      <button 
+        class="pagination-btn" 
+        (click)="previousPage()" 
+        [disabled]="!hasPreviousPage">
+        <i class="ri-arrow-left-s-line"></i>
+        Précédent
+      </button>
+      
+      @for (pageNum of getPageNumbers(); track pageNum) {
+      <button 
+        class="pagination-btn page-number" 
+        [class.active]="pageNum === page.pageNumber"
+        (click)="goToPage(pageNum)">
+        {{ pageNum + 1 }}
+      </button>
+      }
+      
+      <button 
+        class="pagination-btn" 
+        (click)="nextPage()" 
+        [disabled]="!hasNextPage">
+        Suivant
+        <i class="ri-arrow-right-s-line"></i>
+      </button>
+    </div>
+  </div>
+  }
+
+  @if (!isLoading && users.length === 0 && !errorMessage) {
+  <div class="empty-state">
+    <i class="ri-inbox-line"></i>
+    <p>Aucun utilisateur trouvé</p>
+    @if (searchTerm) {
+    <button class="btn-secondary" (click)="searchTerm = ''; searchUsers()">
+      Réinitialiser la recherche
+    </button>
+    }
+  </div>
+  }
+
+  <!-- Modal pour le formulaire -->
+  @if (showModal) {
+  <app-utilisateur-form 
+    [userToEdit]="selectedUser"
+    (onClose)="onModalClose($event)">
+  </app-utilisateur-form>
+  }
+</div>

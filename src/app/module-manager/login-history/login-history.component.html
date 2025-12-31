@@ -1,0 +1,304 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-12">
+      <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+        <h4 class="mb-sm-0">Historique des Connexions</h4>
+        <div class="page-title-right">
+          <ol class="breadcrumb m-0">
+            <li class="breadcrumb-item"><a href="/modules/admin/dashboard">Tableau de bord</a></li>
+            <li class="breadcrumb-item active">Historique des Connexions</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Statistiques utilisateur -->
+  <div class="row mb-3" *ngIf="showStats && loginStats">
+    <div class="col-12">
+      <div class="card border-primary">
+        <div class="card-body">
+          <h5 class="card-title">
+            <i class="ri-bar-chart-line me-2"></i>
+            Statistiques pour {{ filterEmail }}
+          </h5>
+          <div class="row g-3">
+            <div class="col-md-3">
+              <div class="text-center">
+                <h3 class="text-success mb-0">{{ loginStats.successfulLogins }}</h3>
+                <p class="text-muted mb-0">Connexions réussies</p>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="text-center">
+                <h3 class="text-danger mb-0">{{ loginStats.failedLogins }}</h3>
+                <p class="text-muted mb-0">Connexions échouées</p>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="text-center">
+                <h3 class="text-primary mb-0">
+                  {{ loginStats.successfulLogins + loginStats.failedLogins }}
+                </h3>
+                <p class="text-muted mb-0">Total tentatives</p>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="text-center">
+                <h3 class="mb-0" [class.text-success]="successRate >= 80" [class.text-warning]="successRate >= 50 && successRate < 80" [class.text-danger]="successRate < 50">
+                  {{ successRate }}%
+                </h3>
+                <p class="text-muted mb-0">Taux de réussite</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filtres -->
+  <div class="row mb-3">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title mb-3">Filtres</h5>
+          <div class="row g-3">
+            <div class="col-md-3">
+              <label class="form-label">Email utilisateur</label>
+              <input 
+                type="text" 
+                class="form-control" 
+                [(ngModel)]="filterEmail"
+                placeholder="Filtrer par email"
+              />
+            </div>
+            <div class="col-md-3">
+              <label class="form-label">Application</label>
+              <input 
+                type="text" 
+                class="form-control" 
+                [(ngModel)]="filterApp"
+                placeholder="Code application"
+              />
+            </div>
+            <div class="col-md-3">
+              <label class="form-label">Type de connexion</label>
+              <div class="form-check form-switch mt-2">
+                <input 
+                  class="form-check-input" 
+                  type="checkbox" 
+                  id="failedOnlySwitch"
+                  [(ngModel)]="showFailedOnly"
+                  (change)="toggleFailedOnly()"
+                />
+                <label class="form-check-label" for="failedOnlySwitch">
+                  Connexions échouées uniquement
+                </label>
+              </div>
+            </div>
+            <div class="col-md-3 d-flex align-items-end">
+              <button class="btn btn-primary me-2" (click)="applyFilters()">
+                <i class="ri-search-line"></i> Filtrer
+              </button>
+              <button class="btn btn-secondary" (click)="clearFilters()">
+                <i class="ri-close-line"></i> Réinitialiser
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Message d'erreur -->
+  <div class="row" *ngIf="errorMessage">
+    <div class="col-12">
+      <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="ri-error-warning-line me-2"></i>
+        {{ errorMessage }}
+        <button type="button" class="btn-close" (click)="errorMessage = ''"></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loader -->
+  <div class="row" *ngIf="isLoading">
+    <div class="col-12 text-center py-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Chargement...</span>
+      </div>
+      <p class="mt-2">Chargement de l'historique des connexions...</p>
+    </div>
+  </div>
+
+  <!-- Table de l'historique -->
+  <div class="row" *ngIf="!isLoading">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="card-title mb-0">
+              <i class="ri-history-line me-2"></i>
+              Historique ({{ totalElements }} connexions)
+            </h5>
+          </div>
+
+          <div class="table-responsive">
+            <table class="table table-hover table-striped align-middle">
+              <thead class="table-light">
+                <tr>
+                  <th>Date</th>
+                  <th>Utilisateur</th>
+                  <th>Application</th>
+                  <th>Statut</th>
+                  <th>IP</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let history of loginHistory" [class.table-danger]="!history.success">
+                  <td>
+                    <small>{{ formatDate(history.loginDate) }}</small>
+                  </td>
+                  <td>
+                    <strong>{{ history.email }}</strong>
+                  </td>
+                  <td>
+                    <div *ngIf="history.nomApplication">
+                      <strong>{{ history.nomApplication }}</strong>
+                      <br>
+                      <small class="text-muted">{{ history.codeApplication }}</small>
+                    </div>
+                    <span *ngIf="!history.nomApplication" class="text-muted">-</span>
+                  </td>
+                  <td>
+                    <span [class]="getStatusClass(history.success)">
+                      <i [class]="getStatusIcon(history.success)"></i>
+                      {{ getStatusLabel(history.success) }}
+                    </span>
+                  </td>
+                  <td>
+                    <small>{{ history.ipAddress || '-' }}</small>
+                  </td>
+                  <td>
+                    <button 
+                      class="btn btn-sm btn-info" 
+                      (click)="viewDetails(history)"
+                      title="Voir les détails"
+                    >
+                      <i class="ri-eye-line"></i>
+                    </button>
+                  </td>
+                </tr>
+                <tr *ngIf="loginHistory.length === 0">
+                  <td colspan="6" class="text-center py-4 text-muted">
+                    <i class="ri-inbox-line fs-2 d-block mb-2"></i>
+                    Aucune connexion trouvée
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Pagination -->
+          <div class="d-flex justify-content-between align-items-center mt-3" *ngIf="totalPages > 1">
+            <div>
+              <span class="text-muted">
+                Page {{ currentPage + 1 }} sur {{ totalPages }} 
+                ({{ loginHistory.length }} éléments sur {{ totalElements }})
+              </span>
+            </div>
+            <nav>
+              <ul class="pagination mb-0">
+                <li class="page-item" [class.disabled]="currentPage === 0">
+                  <a class="page-link" (click)="previousPage()">
+                    <i class="ri-arrow-left-s-line"></i>
+                  </a>
+                </li>
+                <li 
+                  class="page-item" 
+                  *ngFor="let page of pageNumbers"
+                  [class.active]="page === currentPage"
+                >
+                  <a class="page-link" (click)="goToPage(page)">
+                    {{ page + 1 }}
+                  </a>
+                </li>
+                <li class="page-item" [class.disabled]="currentPage === totalPages - 1">
+                  <a class="page-link" (click)="nextPage()">
+                    <i class="ri-arrow-right-s-line"></i>
+                  </a>
+                </li>
+              </ul>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal détails -->
+  <div class="modal fade show d-block" tabindex="-1" *ngIf="selectedHistory" style="background-color: rgba(0,0,0,0.5);">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header" [class.bg-danger]="!selectedHistory.success" [class.bg-success]="selectedHistory.success">
+          <h5 class="modal-title text-white">
+            <i [class]="getStatusIcon(selectedHistory.success)" class="me-2"></i>
+            Détails de la connexion
+          </h5>
+          <button type="button" class="btn-close btn-close-white" (click)="closeDetails()"></button>
+        </div>
+        <div class="modal-body">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="text-muted">Date de connexion</label>
+              <p class="fw-semibold">{{ formatDate(selectedHistory.loginDate) }}</p>
+            </div>
+            <div class="col-md-6">
+              <label class="text-muted">Statut</label>
+              <p>
+                <span [class]="getStatusClass(selectedHistory.success)">
+                  {{ getStatusLabel(selectedHistory.success) }}
+                </span>
+              </p>
+            </div>
+            <div class="col-md-6">
+              <label class="text-muted">Email utilisateur</label>
+              <p class="fw-semibold">{{ selectedHistory.email }}</p>
+            </div>
+            <div class="col-md-6">
+              <label class="text-muted">Application</label>
+              <p class="fw-semibold">{{ selectedHistory.nomApplication || 'N/A' }}</p>
+              <small class="text-muted" *ngIf="selectedHistory.codeApplication">
+                Code: {{ selectedHistory.codeApplication }}
+              </small>
+            </div>
+            <div class="col-md-6">
+              <label class="text-muted">Adresse IP</label>
+              <p>{{ selectedHistory.ipAddress || 'Non disponible' }}</p>
+            </div>
+            <div class="col-md-6">
+              <label class="text-muted">Session ID</label>
+              <p><small>{{ selectedHistory.sessionId || 'Non disponible' }}</small></p>
+            </div>
+            <div class="col-12" *ngIf="!selectedHistory.success && selectedHistory.failureReason">
+              <div class="alert alert-danger">
+                <label class="text-muted mb-1">Raison de l'échec</label>
+                <p class="mb-0">{{ selectedHistory.failureReason }}</p>
+              </div>
+            </div>
+            <div class="col-12" *ngIf="selectedHistory.userAgent">
+              <label class="text-muted">User Agent</label>
+              <p><small class="text-muted">{{ selectedHistory.userAgent }}</small></p>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="closeDetails()">Fermer</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

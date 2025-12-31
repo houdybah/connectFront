@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test SYSRECETTE Iframe</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            padding: 20px;
+        }
+        iframe {
+            width: 100%;
+            height: 80vh;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+        }
+        .status {
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+        }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .info { background: #d1ecf1; color: #0c5460; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Test SYSRECETTE dans Iframe</h1>
+        <div id="status" class="status info">Chargement en cours...</div>
+        <div>
+            <strong>URL testée :</strong> <span id="url">http://localhost:49706/</span>
+        </div>
+        <hr>
+        <iframe 
+            id="sysrecetteFrame" 
+            src="http://localhost:49706/"
+            onload="frameLoaded()"
+            onerror="frameError()">
+        </iframe>
+    </div>
+
+    <script>
+        function frameLoaded() {
+            document.getElementById('status').className = 'status success';
+            document.getElementById('status').textContent = '✓ SYSRECETTE chargée avec succès !';
+            console.log('Iframe loaded successfully');
+        }
+
+        function frameError() {
+            document.getElementById('status').className = 'status error';
+            document.getElementById('status').textContent = '✗ Erreur de chargement de SYSRECETTE';
+            console.error('Iframe loading error');
+        }
+
+        // Timeout pour détecter si rien ne se charge
+        setTimeout(() => {
+            const status = document.getElementById('status');
+            if (status.classList.contains('info')) {
+                status.className = 'status error';
+                status.textContent = '✗ Timeout - SYSRECETTE ne répond pas';
+            }
+        }, 10000);
+    </script>
+</body>
+</html>
+
