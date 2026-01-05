@@ -4,13 +4,15 @@ import { FormsModule } from '@angular/forms';
 import { ApplicationService } from '../services/application.service';
 import { Application } from '../models/application';
 import { ApplicationFormComponent } from '../application-form/application-form.component';
+import { PrivilegeManagementComponent } from '../privilege-management/privilege-management.component';
+import { ProfileManagementComponent } from '../profile-management/profile-management.component';
 import { Page } from '../../../models/Page';
 import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-application-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, ApplicationFormComponent],
+  imports: [CommonModule, FormsModule, ApplicationFormComponent, PrivilegeManagementComponent, ProfileManagementComponent],
   templateUrl: './application-list.component.html',
   styleUrls: ['./application-list.component.scss']
 })
@@ -20,6 +22,8 @@ export class ApplicationListComponent implements OnInit {
   errorMessage: string = '';
   searchTerm: string = '';
   showModal: boolean = false;
+  showPrivilegeModal: boolean = false;
+  showProfileModal: boolean = false;
   selectedApplication: Application | null = null;
   page: Page = new Page();
   totalElements: number = 0;
@@ -259,5 +263,35 @@ export class ApplicationListComponent implements OnInit {
     if (success) {
       this.loadApplications();
     }
+  }
+
+  openPrivilegeManagement(app: Application): void {
+    this.selectedApplication = app;
+    this.showPrivilegeModal = true;
+  }
+
+  closePrivilegeModal(): void {
+    this.showPrivilegeModal = false;
+    this.selectedApplication = null;
+  }
+
+  onPrivilegeUpdated(): void {
+    // Recharger les applications si nécessaire
+    this.loadApplications();
+  }
+
+  openProfileManagement(app: Application): void {
+    this.selectedApplication = app;
+    this.showProfileModal = true;
+  }
+
+  closeProfileModal(): void {
+    this.showProfileModal = false;
+    this.selectedApplication = null;
+  }
+
+  onProfileUpdated(): void {
+    // Recharger les applications si nécessaire
+    this.loadApplications();
   }
 }

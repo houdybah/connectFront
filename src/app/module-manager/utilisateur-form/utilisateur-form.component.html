@@ -94,52 +94,64 @@
         </div>
       </div>
 
-      <!-- Section : Gestion des accès aux applications -->
-      <h3><i class="ri-apps-2-line"></i> Accès aux Applications</h3>
+      <!-- Section : Gestion des profils (accès aux applications) -->
+      <h3><i class="ri-shield-user-line"></i> Profils & Accès aux Applications</h3>
       
       <div class="applications-access" *ngIf="userToEdit">
-        <p class="text-muted">Gérez les applications auxquelles cet utilisateur a accès.</p>
+        <p class="text-muted">Gérez les profils (et donc les accès aux applications) de cet utilisateur.</p>
         
         <div class="app-selection">
           <div class="app-list">
-            <h4>Applications Autorisées</h4>
+            <h4>Profils Autorisés</h4>
             <div class="app-items">
-              <div *ngFor="let app of userToEdit.userAppDtos; trackBy: trackByCodeApp" class="app-item authorized">
+              <div *ngFor="let userProfile of userToEdit.userProfileDtos; trackBy: trackByUuidProfile" class="app-item authorized">
                 <div class="app-info">
                   <i class="ri-check-circle-fill text-success"></i>
-                  <span>{{ app.nomApp }}</span>
+                  <div class="profile-details">
+                    <strong>{{ userProfile.nomProfile }}</strong>
+                    <small class="text-muted">{{ userProfile.nomApplication }}</small>
+                  </div>
                 </div>
-                <button type="button" class="btn btn-sm btn-danger" (click)="revokeAppAccess(app)">
+                <button type="button" class="btn btn-sm btn-danger" (click)="revokeProfileAccess(userProfile)">
                   <i class="ri-close-line"></i> Retirer
                 </button>
               </div>
-              <div *ngIf="!userToEdit.userAppDtos || userToEdit.userAppDtos.length === 0" class="no-apps">
-                Aucune application autorisée
+              <div *ngIf="!userToEdit.userProfileDtos || userToEdit.userProfileDtos.length === 0" class="no-apps">
+                Aucun profil autorisé
               </div>
             </div>
           </div>
 
           <div class="app-list">
-            <h4>Applications Disponibles</h4>
+            <h4>Profils Disponibles</h4>
             <div class="app-items">
-              <div *ngFor="let app of availableApplications; trackBy: trackByUuid" class="app-item available">
-                <div class="app-info">
-                  <i class="ri-add-circle-line text-primary"></i>
-                  <span>{{ app.nom }}</span>
+              <!-- Groupés par application -->
+              <div *ngFor="let appGroup of profilesByApplication" class="app-group">
+                <div class="app-group-header">
+                  <i class="ri-apps-2-line"></i>
+                  <span>{{ appGroup.applicationNom }}</span>
+                  <span class="badge-count">{{ appGroup.profiles.length }}</span>
                 </div>
-                <button type="button" class="btn btn-sm btn-success" (click)="grantAppAccess(app)">
-                  <i class="ri-check-line"></i> Autoriser
-                </button>
+                <div class="app-group-items">
+                  <div *ngFor="let profile of appGroup.profiles; trackBy: trackByUuid" class="app-item available">
+                    <div class="app-info">
+                      <i class="ri-add-circle-line text-primary"></i>
+                      <strong>{{ profile.nom }}</strong>
+                    </div>
+                    <button type="button" class="btn btn-sm btn-success" (click)="grantProfileAccess(profile)">
+                      <i class="ri-check-line"></i> Autoriser
+                    </button>
+                  </div>
+                </div>
               </div>
-              <div *ngIf="!availableApplications || availableApplications.length === 0" class="no-apps">
-                Toutes les applications sont déjà autorisées
+              
+              <div *ngIf="!profilesByApplication || profilesByApplication.length === 0" class="no-apps">
+                Tous les profils disponibles sont déjà autorisés
               </div>
             </div>
           </div>
         </div>
       </div>
-
-      <!-- La gestion des autorisations d'accès aux applications sera implémentée ultérieurement -->
 
       <div class="form-actions">
         <button type="button" class="btn-secondary" (click)="cancel()" [disabled]="isLoading">

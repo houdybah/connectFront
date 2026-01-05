@@ -1,0 +1,244 @@
+<div class="modal-backdrop" (click)="close()"></div>
+
+<div class="modal-container" (click)="$event.stopPropagation()">
+  <div class="modal-header">
+    <h2>
+      <i class="ri-user-settings-line"></i>
+      Gestion des Profils - {{ application?.nom }}
+    </h2>
+    <button type="button" class="close-btn" (click)="close()">
+      <i class="ri-close-line"></i>
+    </button>
+  </div>
+
+  <div class="modal-body">
+    <div *ngIf="isLoading" class="loading">
+      <i class="ri-loader-4-line spin"></i> Chargement...
+    </div>
+
+    <div *ngIf="!isLoading" class="content-layout">
+      <!-- Section gauche: Liste des profils -->
+      <div class="profiles-section">
+        <div class="section-header">
+          <h3><i class="ri-group-line"></i> Profils ({{ profiles.length }})</h3>
+          <button 
+            type="button" 
+            class="btn btn-success btn-sm" 
+            (click)="startCreateProfile()"
+            *ngIf="!isCreatingProfile"
+          >
+            <i class="ri-add-line"></i> Nouveau
+          </button>
+        </div>
+
+        <!-- Formulaire de création -->
+        <div *ngIf="isCreatingProfile" class="profile-create-form">
+          <h4 class="form-title"><i class="ri-add-circle-line"></i> Nouveau Profil</h4>
+          <div class="form-group">
+            <label>Nom du profil <span class="required">*</span></label>
+            <input 
+              type="text" 
+              class="form-control" 
+              [(ngModel)]="newProfile.nom" 
+              placeholder="Ex: Administrateur, Utilisateur..."
+            />
+          </div>
+          <div class="form-group">
+            <label>Description <span class="required">*</span></label>
+            <textarea 
+              class="form-control" 
+              [(ngModel)]="newProfile.description" 
+              rows="3"
+              placeholder="Description du profil"
+            ></textarea>
+          </div>
+          <div class="form-actions">
+            <button 
+              type="button" 
+              class="btn btn-success btn-sm" 
+              (click)="saveNewProfile()"
+              [disabled]="!newProfile.nom || !newProfile.description"
+            >
+              <i class="ri-check-line"></i> Créer
+            </button>
+            <button 
+              type="button" 
+              class="btn btn-secondary btn-sm" 
+              (click)="cancelCreateProfile()"
+            >
+              <i class="ri-close-line"></i> Annuler
+            </button>
+          </div>
+        </div>
+
+        <!-- Formulaire d'édition -->
+        <div *ngIf="isEditingProfile" class="profile-edit-form">
+          <h4 class="form-title"><i class="ri-edit-line"></i> Modifier le Profil</h4>
+          <div class="form-group">
+            <label>Nom du profil <span class="required">*</span></label>
+            <input 
+              type="text" 
+              class="form-control" 
+              [(ngModel)]="editingProfile.nom" 
+              placeholder="Ex: Administrateur, Utilisateur..."
+            />
+          </div>
+          <div class="form-group">
+            <label>Description <span class="required">*</span></label>
+            <textarea 
+              class="form-control" 
+              [(ngModel)]="editingProfile.description" 
+              rows="3"
+              placeholder="Description du profil"
+            ></textarea>
+          </div>
+          <div class="form-actions">
+            <button 
+              type="button" 
+              class="btn btn-success btn-sm" 
+              (click)="saveEditProfile()"
+              [disabled]="!editingProfile.nom || !editingProfile.description"
+            >
+              <i class="ri-save-line"></i> Enregistrer
+            </button>
+            <button 
+              type="button" 
+              class="btn btn-secondary btn-sm" 
+              (click)="cancelEditProfile()"
+            >
+              <i class="ri-close-line"></i> Annuler
+            </button>
+          </div>
+        </div>
+
+        <!-- Liste des profils -->
+        <div class="profiles-list">
+          <div 
+            *ngFor="let profile of profiles; trackBy: trackByProfileUuid" 
+            class="profile-card"
+            [class.active]="selectedProfile?.uuid === profile.uuid"
+            (click)="selectProfile(profile)"
+          >
+            <div class="profile-info">
+              <h4>{{ profile.nom }}</h4>
+              <p>{{ profile.description }}</p>
+              <div class="profile-stats">
+                <span class="badge">
+                  <i class="ri-shield-keyhole-line"></i>
+                  {{ profile.privilegesAttributed?.length || 0 }} privilège(s)
+                </span>
+              </div>
+            </div>
+            <div class="profile-actions">
+              <button 
+                type="button" 
+                class="btn-icon btn-edit" 
+                (click)="startEditProfile(profile); $event.stopPropagation()"
+                title="Modifier"
+              >
+                <i class="ri-edit-line"></i>
+              </button>
+              <button 
+                type="button" 
+                class="btn-icon btn-delete" 
+                (click)="deleteProfile(profile); $event.stopPropagation()"
+                title="Supprimer"
+              >
+                <i class="ri-delete-bin-line"></i>
+              </button>
+            </div>
+          </div>
+
+          <div *ngIf="profiles.length === 0 && !isCreatingProfile" class="no-data">
+            <i class="ri-information-line"></i>
+            <p>Aucun profil défini</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section droite: Gestion des privilèges du profil sélectionné -->
+      <div class="privileges-section">
+        <div *ngIf="!selectedProfile" class="no-selection">
+          <i class="ri-user-settings-line"></i>
+          <p>Sélectionnez un profil pour gérer ses privilèges</p>
+        </div>
+
+        <div *ngIf="selectedProfile" class="privilege-management">
+          <h3 class="profile-title">
+            <i class="ri-shield-user-line"></i>
+            {{ selectedProfile.nom }}
+          </h3>
+
+          <div class="privileges-grid">
+            <!-- Privilèges attribués -->
+            <div class="privilege-column">
+              <h4><i class="ri-check-circle-line"></i> Privilèges Attribués</h4>
+              <div class="privilege-list">
+                <div 
+                  *ngFor="let privilege of selectedProfile.privilegesAttributed; trackBy: trackByPrivilegeUuid" 
+                  class="privilege-item granted"
+                >
+                  <div class="privilege-info">
+                    <i class="ri-check-circle-fill"></i>
+                    <div>
+                      <strong>{{ privilege.nom }}</strong>
+                      <p>{{ privilege.description }}</p>
+                    </div>
+                  </div>
+                  <button 
+                    type="button" 
+                    class="btn btn-sm btn-danger" 
+                    (click)="revokePrivilege(privilege)"
+                  >
+                    <i class="ri-close-line"></i> Retirer
+                  </button>
+                </div>
+
+                <div *ngIf="!selectedProfile.privilegesAttributed || selectedProfile.privilegesAttributed.length === 0" class="no-items">
+                  Aucun privilège attribué
+                </div>
+              </div>
+            </div>
+
+            <!-- Privilèges disponibles -->
+            <div class="privilege-column">
+              <h4><i class="ri-add-circle-line"></i> Privilèges Disponibles</h4>
+              <div class="privilege-list">
+                <div 
+                  *ngFor="let privilege of availablePrivileges; trackBy: trackByPrivilegeUuid" 
+                  class="privilege-item available"
+                >
+                  <div class="privilege-info">
+                    <i class="ri-add-circle-line"></i>
+                    <div>
+                      <strong>{{ privilege.nom }}</strong>
+                      <p>{{ privilege.description }}</p>
+                    </div>
+                  </div>
+                  <button 
+                    type="button" 
+                    class="btn btn-sm btn-success" 
+                    (click)="grantPrivilege(privilege)"
+                  >
+                    <i class="ri-check-line"></i> Ajouter
+                  </button>
+                </div>
+
+                <div *ngIf="availablePrivileges.length === 0" class="no-items">
+                  Tous les privilèges sont attribués
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="close()">
+      <i class="ri-close-line"></i> Fermer
+    </button>
+  </div>
+</div>
+

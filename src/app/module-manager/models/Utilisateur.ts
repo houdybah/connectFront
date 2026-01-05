@@ -1,4 +1,4 @@
-import { UserAppDtos } from "./UserAppDtos";
+import { UserProfile } from "./UserProfile";
 import { Role } from "./role.enum";
 
 export class Utilisateur {
@@ -13,5 +13,5 @@ export class Utilisateur {
     active:boolean = true;
     password:string = "";
     enabled:boolean = true;
-    userAppDtos:UserAppDtos[] = [];
+    userProfileDtos:UserProfile[] = [];
 }

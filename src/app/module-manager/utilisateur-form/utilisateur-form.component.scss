@@ -206,6 +206,69 @@
     color: #6c757d;
     font-style: italic;
   }
+
+  // Groupement par application
+  .app-group {
+    margin-bottom: 1rem;
+
+    .app-group-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.6rem 1rem;
+      background: linear-gradient(135deg, #0d6846 0%, #0f8654 100%);
+      color: white;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      margin-bottom: 0.5rem;
+
+      i {
+        font-size: 1.1rem;
+      }
+
+      span:first-of-type {
+        flex: 1;
+      }
+
+      .badge-count {
+        background: rgba(255, 255, 255, 0.3);
+        padding: 0.2rem 0.6rem;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 700;
+      }
+    }
+
+    .app-group-items {
+      padding-left: 0.5rem;
+
+      .app-item {
+        margin-bottom: 0.5rem;
+      }
+    }
+
+    & + .app-group {
+      margin-top: 1.5rem;
+    }
+  }
+
+  // Styles pour l'affichage des profils
+  .profile-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    
+    strong {
+      font-weight: 600;
+      color: #212529;
+    }
+    
+    small {
+      font-size: 0.875rem;
+      color: #6c757d;
+    }
+  }
 }
 
 // Fix z-index pour SweetAlert au-dessus du modal

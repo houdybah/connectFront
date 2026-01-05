@@ -91,8 +91,14 @@
           </td>
           <td data-label="Actions">
             <div class="action-buttons">
-              <button class="btn-icon btn-edit" (click)="editApplication(app)" title="Modifier">
+              <button class="btn-icon btn-edit" (click)="editApplication(app)" title="Modifier l'application">
                 <i class="ri-edit-line"></i>
+              </button>
+              <button class="btn-icon btn-profile" (click)="openProfileManagement(app)" title="Gérer les profils">
+                <i class="ri-user-settings-line"></i>
+              </button>
+              <button class="btn-icon btn-privilege" (click)="openPrivilegeManagement(app)" title="Gérer les privilèges">
+                <i class="ri-shield-keyhole-line"></i>
               </button>
               <button class="btn-icon btn-delete" (click)="deleteApplication(app)" title="Supprimer">
                 <i class="ri-delete-bin-line"></i>
@@ -173,5 +179,23 @@
     [applicationToEdit]="selectedApplication"
     (onClose)="onModalClose($event)">
   </app-application-form>
+  }
+
+  <!-- Modal pour la gestion des privilèges -->
+  @if (showPrivilegeModal && selectedApplication) {
+  <app-privilege-management 
+    [application]="selectedApplication"
+    (closeModal)="closePrivilegeModal()"
+    (privilegeUpdated)="onPrivilegeUpdated()">
+  </app-privilege-management>
+  }
+
+  <!-- Modal pour la gestion des profils -->
+  @if (showProfileModal && selectedApplication) {
+  <app-profile-management 
+    [application]="selectedApplication"
+    (closeModal)="closeProfileModal()"
+    (profileUpdated)="onProfileUpdated()">
+  </app-profile-management>
   }
 </div>

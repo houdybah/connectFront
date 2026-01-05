@@ -390,6 +390,26 @@
     }
   }
 
+  &.btn-profile {
+    background-color: #e8f5e9;
+    color: #0d6846;
+
+    &:hover {
+      background-color: #0d6846;
+      color: white;
+    }
+  }
+
+  &.btn-privilege {
+    background-color: #fff3e0;
+    color: #e65100;
+
+    &:hover {
+      background-color: #e65100;
+      color: white;
+    }
+  }
+
   &.btn-delete {
     background-color: #ffe8e8;
     color: #c92a2a;

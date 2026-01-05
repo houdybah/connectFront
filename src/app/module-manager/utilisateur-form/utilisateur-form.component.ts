@@ -2,12 +2,18 @@ import { Component, OnInit, OnChanges, SimpleChanges, Input, Output, EventEmitte
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { UtilisateurService } from '../services/utilisateur.service';
-import { ApplicationService } from '../services/application.service';
+import { ProfileService } from '../services/profile.service';
 import { Utilisateur } from '../models/Utilisateur';
-import { Application } from '../models/application';
-import { UserAppDtos } from '../models/UserAppDtos';
+import { Profile } from '../models/Profile';
+import { UserProfile } from '../models/UserProfile';
 import { Role, RoleOptions } from '../models/role.enum';
 import Swal from 'sweetalert2';
+
+interface ProfilesByApp {
+  applicationNom: string;
+  applicationUuid: string;
+  profiles: Profile[];
+}
 
 @Component({
   selector: 'app-utilisateur-form',
@@ -25,45 +31,46 @@ export class UtilisateurFormComponent implements OnInit, OnChanges {
   isLoading: boolean = false;
   errorMessage: string = '';
   
-  applications: Application[] = [];
-  availableApplications: Application[] = [];
+  profiles: Profile[] = [];
+  availableProfiles: Profile[] = [];
+  profilesByApplication: ProfilesByApp[] = [];
   roleOptions = RoleOptions;  // Options pour le select des rôles
 
   constructor(
     private readonly fb: FormBuilder,
     private readonly utilisateurService: UtilisateurService,
-    private readonly applicationService: ApplicationService,
+    private readonly profileService: ProfileService,
     private readonly cdr: ChangeDetectorRef
   ) { }
 
   ngOnInit(): void {
     this.initForm();
-    this.loadApplications();
+    this.loadProfiles();
     
     if (this.userToEdit) {
       this.isEditMode = true;
       this.userForm.patchValue(this.userToEdit);
-      // Initialiser userAppDtos si non défini
-      if (!this.userToEdit.userAppDtos) {
-        this.userToEdit.userAppDtos = [];
+      // Initialiser userProfileDtos si non défini
+      if (!this.userToEdit.userProfileDtos) {
+        this.userToEdit.userProfileDtos = [];
       }
     }
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     console.log('[ngOnChanges] Changes détectés:', changes);
-    // Mettre à jour les applications disponibles quand userToEdit change
+    // Mettre à jour les profils disponibles quand userToEdit change
     if (changes['userToEdit']) {
       console.log('[ngOnChanges] userToEdit a changé');
       console.log('[ngOnChanges] firstChange:', changes['userToEdit'].firstChange);
       console.log('[ngOnChanges] previousValue:', changes['userToEdit'].previousValue);
       console.log('[ngOnChanges] currentValue:', changes['userToEdit'].currentValue);
       
-      if (this.userToEdit && !this.userToEdit.userAppDtos) {
-        console.log('[ngOnChanges] Initialisation de userAppDtos à []');
-        this.userToEdit.userAppDtos = [];
+      if (this.userToEdit && !this.userToEdit.userProfileDtos) {
+        console.log('[ngOnChanges] Initialisation de userProfileDtos à []');
+        this.userToEdit.userProfileDtos = [];
       }
-      this.updateAvailableApplications();
+      this.updateAvailableProfiles();
     }
   }
 
@@ -82,18 +89,18 @@ export class UtilisateurFormComponent implements OnInit, OnChanges {
     });
   }
 
-  loadApplications(): void {
-    console.log('[loadApplications] Début du chargement des applications');
-    this.applicationService.getAllApplication().subscribe({
-      next: (appsPaged) => {
-        console.log('[loadApplications] Applications reçues:', appsPaged.data);
-        console.log('[loadApplications] Nombre d\'applications:', appsPaged.data?.length || 0);
-        this.applications = appsPaged.data;
-        // Mettre à jour les applications disponibles après le chargement
-        this.updateAvailableApplications();
+  loadProfiles(): void {
+    console.log('[loadProfiles] Début du chargement des profils');
+    this.profileService.getAllProfiles().subscribe({
+      next: (profiles) => {
+        console.log('[loadProfiles] Profils reçus:', profiles);
+        console.log('[loadProfiles] Nombre de profils:', profiles?.length || 0);
+        this.profiles = profiles;
+        // Mettre à jour les profils disponibles après le chargement
+        this.updateAvailableProfiles();
       },
       error: (error) => {
-        console.error('[loadApplications] Erreur chargement applications:', error);
+        console.error('[loadProfiles] Erreur chargement profils:', error);
       }
     });
   }
@@ -106,18 +113,18 @@ export class UtilisateurFormComponent implements OnInit, OnChanges {
 
     if (this.isEditMode && this.userToEdit) {
       console.log('[onSubmit] ========== SOUMISSION ==========');
-      console.log('[onSubmit] userToEdit.userAppDtos:', this.userToEdit.userAppDtos);
-      console.log('[onSubmit] Nombre d\'applications autorisées:', this.userToEdit.userAppDtos?.length || 0);
+      console.log('[onSubmit] userToEdit.userProfileDtos:', this.userToEdit.userProfileDtos);
+      console.log('[onSubmit] Nombre de profils autorisés:', this.userToEdit.userProfileDtos?.length || 0);
       
       const utilisateur: Utilisateur = { 
         uuid: this.userToEdit.uuid,
         password: this.userToEdit.password,
-        userAppDtos: this.userToEdit.userAppDtos || [],
+        userProfileDtos: this.userToEdit.userProfileDtos || [],
         ...formData
       };
       
       console.log('[onSubmit] Objet utilisateur à envoyer:', utilisateur);
-      console.log('[onSubmit] userAppDtos envoyés:', utilisateur.userAppDtos);
+      console.log('[onSubmit] userProfileDtos envoyés:', utilisateur.userProfileDtos);
       
       this.utilisateurService.updateUtilisateur(utilisateur).subscribe({
         next: () => {
@@ -145,7 +152,7 @@ export class UtilisateurFormComponent implements OnInit, OnChanges {
       const utilisateur: Utilisateur = { 
         uuid: '',
         password: '',
-        userAppDtos: [],
+        userProfileDtos: [],
         ...formData
       };
       this.utilisateurService.newUtilisateur(utilisateur).subscribe({
@@ -178,12 +185,12 @@ export class UtilisateurFormComponent implements OnInit, OnChanges {
   }
 
   // Fonction trackBy pour optimiser le ngFor et forcer la détection de changement
-  trackByCodeApp(index: number, item: UserAppDtos): string {
-    return item.codeApp || item.uuidApp;
+  trackByUuidProfile(index: number, item: UserProfile): string {
+    return item.uuidProfile || item.uuid || '';
   }
 
-  trackByUuid(index: number, item: Application): string {
-    return item.uuid;
+  trackByUuid(index: number, item: Profile): string {
+    return item.uuid || '';
   }
 
   getRoleDescription(role: Role | null): string {
@@ -192,53 +199,85 @@ export class UtilisateurFormComponent implements OnInit, OnChanges {
     return roleOption ? roleOption.description : '';
   }
 
-  updateAvailableApplications(): void {
-    console.log('[updateAvailableApplications] ========== DEBUT ==========');
-    console.log('[updateAvailableApplications] applications:', this.applications);
-    console.log('[updateAvailableApplications] applications.length:', this.applications?.length);
-    console.log('[updateAvailableApplications] userToEdit:', this.userToEdit);
-    console.log('[updateAvailableApplications] userToEdit.userAppDtos:', this.userToEdit?.userAppDtos);
+  updateAvailableProfiles(): void {
+    console.log('[updateAvailableProfiles] ========== DEBUT ==========');
+    console.log('[updateAvailableProfiles] profiles:', this.profiles);
+    console.log('[updateAvailableProfiles] profiles.length:', this.profiles?.length);
+    console.log('[updateAvailableProfiles] userToEdit:', this.userToEdit);
+    console.log('[updateAvailableProfiles] userToEdit.userProfileDtos:', this.userToEdit?.userProfileDtos);
     
-    // Si pas d'applications chargées, ne rien faire
-    if (!this.applications || this.applications.length === 0) {
-      console.log('[updateAvailableApplications] ❌ Pas d\'applications chargées');
-      this.availableApplications = [];
+    // Si pas de profils chargés, ne rien faire
+    if (!this.profiles || this.profiles.length === 0) {
+      console.log('[updateAvailableProfiles] ❌ Pas de profils chargés');
+      this.availableProfiles = [];
       return;
     }
     
-    console.log('[updateAvailableApplications] ✅ Applications totales:', this.applications.length);
+    console.log('[updateAvailableProfiles] ✅ Profils totaux:', this.profiles.length);
     
     if (!this.userToEdit) {
-      console.log('[updateAvailableApplications] ⚠️ Pas d\'utilisateur à éditer - Toutes les applications disponibles');
-      this.availableApplications = [...this.applications];
-      console.log('[updateAvailableApplications] availableApplications:', this.availableApplications.length);
+      console.log('[updateAvailableProfiles] ⚠️ Pas d\'utilisateur à éditer - Tous les profils disponibles');
+      this.availableProfiles = [...this.profiles];
+      console.log('[updateAvailableProfiles] availableProfiles:', this.availableProfiles.length);
       return;
     }
     
-    if (!this.userToEdit.userAppDtos || this.userToEdit.userAppDtos.length === 0) {
-      console.log('[updateAvailableApplications] ✅ Aucune application autorisée - Toutes sont disponibles');
-      this.availableApplications = [...this.applications];
-      console.log('[updateAvailableApplications] availableApplications:', this.availableApplications.length);
+    if (!this.userToEdit.userProfileDtos || this.userToEdit.userProfileDtos.length === 0) {
+      console.log('[updateAvailableProfiles] ✅ Aucun profil autorisé - Tous sont disponibles');
+      this.availableProfiles = [...this.profiles];
+      console.log('[updateAvailableProfiles] availableProfiles:', this.availableProfiles.length);
       return;
     }
     
-    // Filtrer les applications déjà autorisées
-    const authorizedAppUuids = this.userToEdit.userAppDtos.map(ua => ua.uuidApp);
-    console.log('[updateAvailableApplications] 📋 Applications autorisées (UUID):', authorizedAppUuids);
-    console.log('[updateAvailableApplications] 📋 Applications autorisées (noms):', this.userToEdit.userAppDtos.map(ua => ua.nomApp));
+    // Filtrer les profils déjà autorisés
+    const authorizedProfileUuids = this.userToEdit.userProfileDtos.map(up => up.uuidProfile);
+    console.log('[updateAvailableProfiles] 📋 Profils autorisés (UUID):', authorizedProfileUuids);
+    console.log('[updateAvailableProfiles] 📋 Profils autorisés (noms):', this.userToEdit.userProfileDtos.map(up => up.nomProfile));
     
-    this.availableApplications = this.applications.filter(app => !authorizedAppUuids.includes(app.uuid));
-    console.log('[updateAvailableApplications] ✅ Applications disponibles:', this.availableApplications.length);
-    console.log('[updateAvailableApplications] 📋 Applications disponibles (noms):', this.availableApplications.map(app => app.nom));
-    console.log('[updateAvailableApplications] ========== FIN ==========');
+    this.availableProfiles = this.profiles.filter(profile => profile.uuid && !authorizedProfileUuids.includes(profile.uuid));
+    console.log('[updateAvailableProfiles] ✅ Profils disponibles:', this.availableProfiles.length);
+    console.log('[updateAvailableProfiles] 📋 Profils disponibles (noms):', this.availableProfiles.map(profile => profile.nom));
+    
+    // Grouper les profils disponibles par application
+    this.groupProfilesByApplication();
+    
+    console.log('[updateAvailableProfiles] ========== FIN ==========');
   }
 
-  grantAppAccess(application: Application): void {
+  groupProfilesByApplication(): void {
+    const grouped = new Map<string, ProfilesByApp>();
+    
+    this.availableProfiles.forEach(profile => {
+      if (!profile.nomApplication || !profile.uuidApplication) {
+        console.warn('Profil sans application:', profile);
+        return;
+      }
+      
+      if (!grouped.has(profile.uuidApplication)) {
+        grouped.set(profile.uuidApplication, {
+          applicationNom: profile.nomApplication,
+          applicationUuid: profile.uuidApplication,
+          profiles: []
+        });
+      }
+      
+      grouped.get(profile.uuidApplication)!.profiles.push(profile);
+    });
+    
+    this.profilesByApplication = Array.from(grouped.values());
+    
+    console.log('[groupProfilesByApplication] Groupes créés:', this.profilesByApplication.length);
+    this.profilesByApplication.forEach(group => {
+      console.log(`  - ${group.applicationNom}: ${group.profiles.length} profil(s)`);
+    });
+  }
+
+  grantProfileAccess(profile: Profile): void {
     if (!this.userToEdit) return;
 
     Swal.fire({
       title: 'Autoriser l\'accès',
-      text: `Voulez-vous autoriser l'accès à ${application.nom} ?`,
+      text: `Voulez-vous autoriser le profil "${profile.nom}" pour ${profile.nomApplication} ?`,
       icon: 'question',
       showCancelButton: true,
       confirmButtonText: 'Oui, autoriser',
@@ -248,36 +287,40 @@ export class UtilisateurFormComponent implements OnInit, OnChanges {
       backdrop: true
     } as any).then((result) => {
       if (result.isConfirmed) {
-        // Créer un nouveau UserAppDto avec toutes les propriétés requises
-        const newUserApp = new UserAppDtos();
-        newUserApp.uuid = '';  // Sera généré par le backend
-        newUserApp.uuidUtilisateur = this.userToEdit!.uuid;
-        newUserApp.emailUtilisateur = this.userToEdit!.email;
-        newUserApp.telephoneUtilisateur = this.userToEdit!.telephone || '';
-        newUserApp.uuidApp = application.uuid;
-        newUserApp.codeApp = application.code;
-        newUserApp.nomApp = application.nom;
-        newUserApp.dependances = application.dependances || '';
-        newUserApp.hasAccess = true;
-        newUserApp.enabled = true;
-        newUserApp.nonLocked = true;
-        newUserApp.nonExpired = true;
+        // Créer un nouveau UserProfile avec toutes les propriétés requises
+        const newUserProfile: UserProfile = {
+          uuid: '',  // Sera généré par le backend
+          uuidUtilisateur: this.userToEdit!.uuid,
+          emailUtilisateur: this.userToEdit!.email,
+          nomUtilisateur: this.userToEdit!.nom,
+          prenomUtilisateur: this.userToEdit!.prenom,
+          uuidProfile: profile.uuid!,
+          nomProfile: profile.nom,
+          descriptionProfile: profile.description,
+          uuidApplication: profile.uuidApplication,
+          codeApplication: profile.codeApplication,
+          nomApplication: profile.nomApplication,
+          hasAccess: true,
+          enabled: true,
+          nonLocked: true,
+          nonExpired: true
+        };
 
         // Ajouter à la liste
-        if (!this.userToEdit!.userAppDtos) {
-          this.userToEdit!.userAppDtos = [];
+        if (!this.userToEdit!.userProfileDtos) {
+          this.userToEdit!.userProfileDtos = [];
         }
-        this.userToEdit!.userAppDtos.push(newUserApp);
+        this.userToEdit!.userProfileDtos.push(newUserProfile);
 
-        // Mettre à jour les applications disponibles
-        this.updateAvailableApplications();
+        // Mettre à jour les profils disponibles
+        this.updateAvailableProfiles();
         
         // Forcer la détection de changement
         this.cdr.detectChanges();
 
         Swal.fire({
           title: 'Succès !',
-          text: 'Accès autorisé. N\'oubliez pas de sauvegarder.',
+          text: 'Profil autorisé. N\'oubliez pas de sauvegarder.',
           icon: 'success',
           timer: 2000,
           showConfirmButton: false,
@@ -288,18 +331,18 @@ export class UtilisateurFormComponent implements OnInit, OnChanges {
     });
   }
 
-  revokeAppAccess(userApp: any): void {
-    console.log('[revokeAppAccess] ========== DEBUT ==========');
-    console.log('[revokeAppAccess] userApp à retirer:', userApp);
-    console.log('[revokeAppAccess] userApp.codeApp:', userApp.codeApp);
-    console.log('[revokeAppAccess] userApp.uuidApp:', userApp.uuidApp);
-    console.log('[revokeAppAccess] userAppDtos AVANT:', this.userToEdit?.userAppDtos);
+  revokeProfileAccess(userProfile: UserProfile): void {
+    console.log('[revokeProfileAccess] ========== DEBUT ==========');
+    console.log('[revokeProfileAccess] userProfile à retirer:', userProfile);
+    console.log('[revokeProfileAccess] userProfile.uuidProfile:', userProfile.uuidProfile);
+    console.log('[revokeProfileAccess] userProfile.nomProfile:', userProfile.nomProfile);
+    console.log('[revokeProfileAccess] userProfileDtos AVANT:', this.userToEdit?.userProfileDtos);
     
     if (!this.userToEdit) return;
 
     Swal.fire({
       title: 'Retirer l\'accès',
-      text: `Voulez-vous retirer l'accès à ${userApp.nomApp} ?`,
+      text: `Voulez-vous retirer le profil "${userProfile.nomProfile}" pour ${userProfile.nomApplication} ?`,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Oui, retirer',
@@ -309,38 +352,38 @@ export class UtilisateurFormComponent implements OnInit, OnChanges {
       backdrop: true
     } as any).then((result) => {
       if (result.isConfirmed) {
-        console.log('[revokeAppAccess] Confirmation reçue');
-        console.log('[revokeAppAccess] userAppDtos AVANT le retrait:', JSON.stringify(this.userToEdit!.userAppDtos!.map(ua => ({code: ua.codeApp, nom: ua.nomApp}))));
+        console.log('[revokeProfileAccess] Confirmation reçue');
+        console.log('[revokeProfileAccess] userProfileDtos AVANT le retrait:', JSON.stringify(this.userToEdit!.userProfileDtos!.map(up => ({profile: up.nomProfile, app: up.nomApplication}))));
         
-        // Filtrer pour retirer l'application en créant un nouveau tableau
-        const newUserAppDtos = this.userToEdit!.userAppDtos!.filter(ua => {
-          const keepIt = ua.codeApp !== userApp.codeApp && ua.uuidApp !== userApp.uuidApp;
+        // Filtrer pour retirer le profil en créant un nouveau tableau
+        const newUserProfileDtos = this.userToEdit!.userProfileDtos!.filter(up => {
+          const keepIt = up.uuidProfile !== userProfile.uuidProfile;
           if (!keepIt) {
-            console.log('[revokeAppAccess] 🗑️ Retrait de:', ua.nomApp, '(codeApp:', ua.codeApp, ')');
+            console.log('[revokeProfileAccess] 🗑️ Retrait de:', up.nomProfile, '(uuidProfile:', up.uuidProfile, ')');
           }
           return keepIt;
         });
         
-        console.log('[revokeAppAccess] Nouveau tableau créé avec', newUserAppDtos.length, 'éléments');
+        console.log('[revokeProfileAccess] Nouveau tableau créé avec', newUserProfileDtos.length, 'éléments');
         
         // Assigner le nouveau tableau
-        this.userToEdit!.userAppDtos = newUserAppDtos;
+        this.userToEdit!.userProfileDtos = newUserProfileDtos;
         
-        console.log('[revokeAppAccess] userAppDtos APRES le retrait:', JSON.stringify(this.userToEdit!.userAppDtos!.map(ua => ({code: ua.codeApp, nom: ua.nomApp}))));
-        console.log('[revokeAppAccess] Nombre restant:', this.userToEdit!.userAppDtos!.length);
-        console.log('[revokeAppAccess] Référence du tableau changée:', newUserAppDtos !== this.userToEdit!.userAppDtos);
+        console.log('[revokeProfileAccess] userProfileDtos APRES le retrait:', JSON.stringify(this.userToEdit!.userProfileDtos!.map(up => ({profile: up.nomProfile, app: up.nomApplication}))));
+        console.log('[revokeProfileAccess] Nombre restant:', this.userToEdit!.userProfileDtos!.length);
+        console.log('[revokeProfileAccess] Référence du tableau changée:', newUserProfileDtos !== this.userToEdit!.userProfileDtos);
 
-        // Mettre à jour les applications disponibles
-        this.updateAvailableApplications();
+        // Mettre à jour les profils disponibles
+        this.updateAvailableProfiles();
         
         // Forcer la détection de changement d'Angular
-        console.log('[revokeAppAccess] Force la détection de changement...');
+        console.log('[revokeProfileAccess] Force la détection de changement...');
         this.cdr.detectChanges();
-        console.log('[revokeAppAccess] Détection de changement terminée');
+        console.log('[revokeProfileAccess] Détection de changement terminée');
 
         Swal.fire({
           title: 'Succès !',
-          text: 'Accès retiré. N\'oubliez pas de sauvegarder.',
+          text: 'Profil retiré. N\'oubliez pas de sauvegarder.',
           icon: 'success',
           timer: 2000,
           showConfirmButton: false,
@@ -348,7 +391,7 @@ export class UtilisateurFormComponent implements OnInit, OnChanges {
           backdrop: true
         } as any);
       }
-      console.log('[revokeAppAccess] ========== FIN ==========');
+      console.log('[revokeProfileAccess] ========== FIN ==========');
     });
   }
 }
