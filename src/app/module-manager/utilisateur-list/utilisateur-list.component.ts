@@ -165,7 +165,15 @@ export class UtilisateurListComponent implements OnInit {
   }
 
   editUser(user: Utilisateur): void {
-    this.selectedUser = { ...user };
+    // Copie profonde : la modale mute userProfileDtos/userAttributDtos (grant/revoke, ajout
+    // d'attributs) avant l'enregistrement. Un spread superficiel partagerait la même référence
+    // de tableau avec la ligne de la liste, et toute modification (ou annulation) contaminerait
+    // l'état affiché dans la liste avant même la sauvegarde.
+    this.selectedUser = {
+      ...user,
+      userProfileDtos: user.userProfileDtos ? user.userProfileDtos.map(up => ({ ...up })) : [],
+      userAttributDtos: user.userAttributDtos ? user.userAttributDtos.map(attr => ({ ...attr })) : []
+    };
     this.showModal = true;
   }
 

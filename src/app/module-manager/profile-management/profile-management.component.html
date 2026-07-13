@@ -4,7 +4,7 @@
   <div class="modal-header">
     <h2>
       <i class="ri-user-settings-line"></i>
-      Gestion des Profils - {{ application?.nom }}
+      Gestion des Profils - {{ application.nom }}
     </h2>
     <button type="button" class="close-btn" (click)="close()">
       <i class="ri-close-line"></i>
@@ -125,7 +125,7 @@
               <div class="profile-stats">
                 <span class="badge">
                   <i class="ri-shield-keyhole-line"></i>
-                  {{ profile.privilegesAttributed?.length || 0 }} privilège(s)
+                  {{ profile.privilegesAttributed.length || 0 }} privilège(s)
                 </span>
               </div>
             </div>

@@ -48,15 +48,32 @@ export class TokenStorageService {
   }
 
   /**
-   * Extrait l'UUID de l'utilisateur depuis le token (champ jti)
-   * @returns L'UUID de l'utilisateur ou null
+   * Déchiffre le token stocké (couche serveur AES-256-GCM) et retourne ses claims.
+   * Le token retourné par getToken() est toujours sous forme chiffrée : il faut le
+   * déchiffrer avant de pouvoir lire un champ quelconque (role, profiles, jti...).
+   * @returns Les claims du token, ou null si absent/illisible
    */
-  public getUserUuid(): string | null {
+  public async getDecryptedClaims(): Promise<any | null> {
     const token = this.getToken();
     if (!token) {
       return null;
     }
-    return this.encryptionService.extractUserUuid(token);
+    try {
+      const rawJwt = await this.encryptionService.decryptServerToken(token);
+      return this.encryptionService.decodeJWT(rawJwt);
+    } catch (error) {
+      console.error('Erreur lors du déchiffrement du token serveur:', error);
+      return null;
+    }
+  }
+
+  /**
+   * Extrait l'UUID de l'utilisateur depuis le token (champ jti)
+   * @returns L'UUID de l'utilisateur ou null
+   */
+  public async getUserUuid(): Promise<string | null> {
+    const claims = await this.getDecryptedClaims();
+    return claims?.jti || null;
   }
 
   public saveUser(user: any): void {

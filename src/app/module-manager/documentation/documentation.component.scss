@@ -1,0 +1,46 @@
+.section-card {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+
+  .section-header {
+    padding: 15px 20px;
+    background: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+    font-weight: 600;
+    font-size: 14px;
+    color: #212529;
+  }
+
+  .section-body {
+    padding: 20px;
+    font-size: 14px;
+
+    h6 {
+      color: #212529;
+    }
+
+    pre {
+      background: #212529;
+      color: #f8f9fa;
+      border-radius: 6px;
+      padding: 15px;
+      font-size: 12.5px;
+      overflow-x: auto;
+    }
+
+    code {
+      color: inherit;
+    }
+
+    p code,
+    li code,
+    td code {
+      background: #f1f3f5;
+      color: #d63384;
+      padding: 2px 6px;
+      border-radius: 3px;
+    }
+  }
+}

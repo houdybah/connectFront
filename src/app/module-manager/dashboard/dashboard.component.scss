@@ -197,6 +197,20 @@ code {
   border-radius: 3px;
 }
 
+// Pied de page
+.dashboard-footer {
+  .footer-doc-link {
+    font-size: 13px;
+    font-weight: 500;
+    color: #405189;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
 // Responsive
 @media (max-width: 768px) {
   .stats-card {

@@ -271,6 +271,150 @@
   }
 }
 
+// Styles pour la section des attributs
+.attributs-section {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #dee2e6;
+
+  .attribut-form {
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: white;
+    border-radius: 6px;
+    border: 1px solid #e0e0e0;
+  }
+
+  .form-grid-inline {
+    display: grid;
+    grid-template-columns: 1fr 1fr auto;
+    gap: 1rem;
+    align-items: end;
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+    }
+
+    .form-group {
+      margin-bottom: 0;
+    }
+
+    .form-group-action {
+      display: flex;
+      gap: 0.5rem;
+      padding-bottom: 0.2rem;
+
+      @media (max-width: 768px) {
+        justify-content: flex-end;
+      }
+    }
+  }
+
+  .attributs-list {
+    h4 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #495057;
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid #dee2e6;
+    }
+
+    .attribut-items {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .attribut-item {
+      background: white;
+      border: 1px solid #e0e0e0;
+      border-radius: 6px;
+      transition: all 0.2s;
+
+      &:hover {
+        border-color: #0d6846;
+        box-shadow: 0 2px 8px rgba(13, 104, 70, 0.1);
+      }
+    }
+
+    .attribut-view {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem 1rem;
+
+      .attribut-content {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        flex: 1;
+
+        strong {
+          color: #0d6846;
+          font-weight: 600;
+        }
+
+        .attribut-separator {
+          color: #6c757d;
+          font-weight: 600;
+        }
+
+        .attribut-value {
+          color: #495057;
+          font-style: italic;
+        }
+      }
+
+      .attribut-actions {
+        display: flex;
+        gap: 0.5rem;
+      }
+    }
+
+    .attribut-edit {
+      padding: 0.75rem 1rem;
+      background: #f8f9fa;
+    }
+
+    .no-attributs {
+      text-align: center;
+      padding: 2rem;
+      color: #6c757d;
+      font-style: italic;
+      background: white;
+      border: 1px dashed #dee2e6;
+      border-radius: 6px;
+    }
+  }
+
+  .btn-outline {
+    background: transparent;
+    border: 1px solid #6c757d;
+    color: #6c757d;
+    padding: 0.25rem 0.5rem;
+
+    &:hover {
+      background: #6c757d;
+      color: white;
+    }
+  }
+
+  .btn-outline-danger {
+    background: transparent;
+    border: 1px solid #dc3545;
+    color: #dc3545;
+    padding: 0.25rem 0.5rem;
+
+    &:hover {
+      background: #dc3545;
+      color: white;
+    }
+  }
+}
+
 // Fix z-index pour SweetAlert au-dessus du modal
 ::ng-deep {
   .swal2-container {

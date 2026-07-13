@@ -1,0 +1,46 @@
+<div class="app-frame-container">
+
+  <!-- Barre supérieure DouaneConnect -->
+  <header class="app-frame-topbar">
+    <button type="button" class="btn-back" (click)="retour()" aria-label="Retour au portail">
+      <i class="ri-arrow-left-line"></i>
+      Portail
+    </button>
+    <div class="app-frame-title" *ngIf="app">
+      <i [class]="app.icon || 'ri-apps-line'"></i>
+      <span>{{ app.nomApplication }}</span>
+    </div>
+  </header>
+
+  <!-- Loader -->
+  <div *ngIf="isLoading && !hasError" class="app-frame-loading">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Chargement...</span>
+    </div>
+    <p class="mt-3 text-muted">Chargement de {{ app?.nomApplication }}...</p>
+  </div>
+
+  <!-- Erreur -->
+  <div *ngIf="hasError" class="app-frame-error">
+    <i class="ri-error-warning-line"></i>
+    <h3>Erreur de chargement</h3>
+    <p>{{ errorMessage }}</p>
+    <button type="button" class="btn btn-primary" (click)="retour()">
+      <i class="ri-arrow-left-line me-1"></i>Retour au portail
+    </button>
+  </div>
+
+  <!-- Frame de l'application -->
+  <iframe
+    *ngIf="frameUrl && !hasError"
+    [src]="frameUrl"
+    (load)="onIframeLoad()"
+    (error)="onIframeError()"
+    class="app-frame-iframe"
+    title="Application intégrée"
+    frameborder="0"
+    allow="fullscreen"
+    allowfullscreen>
+  </iframe>
+
+</div>

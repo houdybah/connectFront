@@ -30,22 +30,22 @@
   <div class="quick-stats" *ngIf="dashboard">
     <div class="quick-stat-item">
       <i class="fas fa-truck"></i>
-      <span class="stat-number">{{ dashboard.statistiques?.nombreCamionsDisponibles || 0 }}</span>
+      <span class="stat-number">{{ dashboard.statistiques.nombreCamionsDisponibles || 0 }}</span>
       <span class="stat-label">Camions</span>
     </div>
     <div class="quick-stat-item">
       <i class="fas fa-users"></i>
-      <span class="stat-number">{{ dashboard.camionsChauffeursDisponibles?.length || 0 }}</span>
+      <span class="stat-number">{{ dashboard.camionsChauffeursDisponibles.length || 0 }}</span>
       <span class="stat-label">Chauffeurs</span>
     </div>
     <div class="quick-stat-item">
       <i class="fas fa-link"></i>
-      <span class="stat-number">{{ dashboard.camionsChauffeursDisponibles?.length || 0 }}</span>
+      <span class="stat-number">{{ dashboard.camionsChauffeursDisponibles.length || 0 }}</span>
       <span class="stat-label">Affectations</span>
     </div>
     <div class="quick-stat-item">
       <i class="fas fa-route"></i>
-      <span class="stat-number">{{ dashboard.statistiques?.nombreMesLignes || 0 }}</span>
+      <span class="stat-number">{{ dashboard.statistiques.nombreMesLignes || 0 }}</span>
       <span class="stat-label">Lignes</span>
     </div>
   </div>
@@ -66,7 +66,7 @@
       <div class="card-stats">
         <div class="stat-row">
           <span class="stat-label">Disponibles</span>
-          <span class="stat-value">{{ dashboard.statistiques?.nombreCamionsDisponibles || 0 }}</span>
+          <span class="stat-value">{{ dashboard.statistiques.nombreCamionsDisponibles || 0 }}</span>
         </div>
         <div class="stat-row">
           <span class="stat-label">En Mission</span>
@@ -74,7 +74,7 @@
         </div>
         <div class="stat-row">
           <span class="stat-label">Total</span>
-          <span class="stat-value text-info">{{ dashboard.statistiques?.nombreCamionsDisponibles || 0 }}</span>
+          <span class="stat-value text-info">{{ dashboard.statistiques.nombreCamionsDisponibles || 0 }}</span>
         </div>
       </div>
       <div class="card-footer">
@@ -96,7 +96,7 @@
       <div class="card-stats">
         <div class="stat-row">
           <span class="stat-label">Disponibles</span>
-          <span class="stat-value text-success">{{ dashboard.camionsChauffeursDisponibles?.length || 0 }}</span>
+          <span class="stat-value text-success">{{ dashboard.camionsChauffeursDisponibles.length || 0 }}</span>
         </div>
         <div class="stat-row">
           <span class="stat-label">En Mission</span>
@@ -104,7 +104,7 @@
         </div>
         <div class="stat-row">
           <span class="stat-label">Total</span>
-          <span class="stat-value text-info">{{ dashboard.camionsChauffeursDisponibles?.length || 0 }}</span>
+          <span class="stat-value text-info">{{ dashboard.camionsChauffeursDisponibles.length || 0 }}</span>
         </div>
       </div>
       <div class="card-footer">
@@ -126,7 +126,7 @@
       <div class="card-stats">
         <div class="stat-row">
           <span class="stat-label">Actives</span>
-          <span class="stat-value text-success">{{ dashboard.statistiques?.nombreMesLignes || 0 }}</span>
+          <span class="stat-value text-success">{{ dashboard.statistiques.nombreMesLignes || 0 }}</span>
         </div>
         <div class="stat-row">
           <span class="stat-label">En Cours</span>
@@ -156,7 +156,7 @@
       <div class="card-stats">
         <div class="stat-row">
           <span class="stat-label">En Attente</span>
-          <span class="stat-value text-warning">{{ dashboard.statistiques?.nombreDemandesEnAttente || 0 }}</span>
+          <span class="stat-value text-warning">{{ dashboard.statistiques.nombreDemandesEnAttente || 0 }}</span>
         </div>
         <div class="stat-row">
           <span class="stat-label">Traitées</span>
@@ -164,7 +164,7 @@
         </div>
         <div class="stat-row">
           <span class="stat-label">Total</span>
-          <span class="stat-value text-info">{{ dashboard.statistiques?.nombreDemandesEnAttente || 0 }}</span>
+          <span class="stat-value text-info">{{ dashboard.statistiques.nombreDemandesEnAttente || 0 }}</span>
         </div>
       </div>
       <div class="card-footer">

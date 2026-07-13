@@ -6,7 +6,9 @@ import { ProfileService } from '../services/profile.service';
 import { Utilisateur } from '../models/Utilisateur';
 import { Profile } from '../models/Profile';
 import { UserProfile } from '../models/UserProfile';
+import { Attribut } from '../models/Attribut';
 import { Role, RoleOptions } from '../models/role.enum';
+import { AdminAccessService, AdminAccess } from '../../core/services/admin-access.service';
 import Swal from 'sweetalert2';
 
 interface ProfilesByApp {
@@ -36,23 +38,39 @@ export class UtilisateurFormComponent implements OnInit, OnChanges {
   profilesByApplication: ProfilesByApp[] = [];
   roleOptions = RoleOptions;  // Options pour le select des rôles
 
+  // Périmètre d'administration de l'utilisateur courant (celui qui édite ce formulaire) :
+  // un administrateur d'application ne doit pouvoir accorder/retirer des profils que pour
+  // les applications qu'il administre lui-même. Un SUPER_USER n'est pas restreint.
+  adminAccess: AdminAccess | null = null;
+
+  // Attributs de l'utilisateur
+  newAttributCle: string = '';
+  newAttributValeur: string = '';
+  editingAttributIndex: number = -1;
+
   constructor(
     private readonly fb: FormBuilder,
     private readonly utilisateurService: UtilisateurService,
     private readonly profileService: ProfileService,
+    private readonly adminAccessService: AdminAccessService,
     private readonly cdr: ChangeDetectorRef
   ) { }
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     this.initForm();
+    this.adminAccess = await this.adminAccessService.getAccess();
     this.loadProfiles();
-    
+
     if (this.userToEdit) {
       this.isEditMode = true;
       this.userForm.patchValue(this.userToEdit);
       // Initialiser userProfileDtos si non défini
       if (!this.userToEdit.userProfileDtos) {
         this.userToEdit.userProfileDtos = [];
+      }
+      // Initialiser userAttributDtos si non défini
+      if (!this.userToEdit.userAttributDtos) {
+        this.userToEdit.userAttributDtos = [];
       }
     }
   }
@@ -120,6 +138,7 @@ export class UtilisateurFormComponent implements OnInit, OnChanges {
         uuid: this.userToEdit.uuid,
         password: this.userToEdit.password,
         userProfileDtos: this.userToEdit.userProfileDtos || [],
+        userAttributDtos: this.userToEdit.userAttributDtos || [],
         ...formData
       };
       
@@ -153,6 +172,7 @@ export class UtilisateurFormComponent implements OnInit, OnChanges {
         uuid: '',
         password: '',
         userProfileDtos: [],
+        userAttributDtos: [],
         ...formData
       };
       this.utilisateurService.newUtilisateur(utilisateur).subscribe({
@@ -193,10 +213,30 @@ export class UtilisateurFormComponent implements OnInit, OnChanges {
     return item.uuid || '';
   }
 
+  trackByAttributUuid(index: number, item: Attribut): string {
+    return item.uuid || index.toString();
+  }
+
   getRoleDescription(role: Role | null): string {
     if (!role) return '';
     const roleOption = this.roleOptions.find(r => r.value === role);
     return roleOption ? roleOption.description : '';
+  }
+
+  /**
+   * true si l'utilisateur courant (celui qui édite ce formulaire) peut accorder ou retirer un
+   * profil pour l'application donnée : un SUPER_USER peut tout, un administrateur d'application
+   * uniquement pour les applications qu'il administre lui-même. Tant que le périmètre n'est pas
+   * encore chargé, on refuse par prudence (aucune action de gestion tant que ce n'est pas certain).
+   */
+  canManageApplication(uuidApplication?: string): boolean {
+    if (!this.adminAccess) {
+      return false;
+    }
+    if (this.adminAccess.isSuperUser) {
+      return true;
+    }
+    return !!uuidApplication && this.adminAccess.adminApplicationUuids.includes(uuidApplication);
   }
 
   updateAvailableProfiles(): void {
@@ -205,42 +245,51 @@ export class UtilisateurFormComponent implements OnInit, OnChanges {
     console.log('[updateAvailableProfiles] profiles.length:', this.profiles?.length);
     console.log('[updateAvailableProfiles] userToEdit:', this.userToEdit);
     console.log('[updateAvailableProfiles] userToEdit.userProfileDtos:', this.userToEdit?.userProfileDtos);
-    
+
     // Si pas de profils chargés, ne rien faire
     if (!this.profiles || this.profiles.length === 0) {
       console.log('[updateAvailableProfiles] ❌ Pas de profils chargés');
       this.availableProfiles = [];
+      this.profilesByApplication = [];
       return;
     }
-    
+
     console.log('[updateAvailableProfiles] ✅ Profils totaux:', this.profiles.length);
-    
+
+    // Un administrateur d'application ne doit voir (et donc pouvoir accorder) que les profils
+    // des applications qu'il administre lui-même ; un SUPER_USER voit tout. Tant que le périmètre
+    // n'est pas encore chargé (adminAccess null), on n'affiche rien par prudence.
+    const scopedProfiles = this.profiles.filter(profile => this.canManageApplication(profile.uuidApplication));
+    console.log('[updateAvailableProfiles] 🔒 Profils dans le périmètre d\'administration:', scopedProfiles.length);
+
     if (!this.userToEdit) {
-      console.log('[updateAvailableProfiles] ⚠️ Pas d\'utilisateur à éditer - Tous les profils disponibles');
-      this.availableProfiles = [...this.profiles];
+      console.log('[updateAvailableProfiles] ⚠️ Pas d\'utilisateur à éditer - Tous les profils du périmètre disponibles');
+      this.availableProfiles = [...scopedProfiles];
+      this.groupProfilesByApplication();
       console.log('[updateAvailableProfiles] availableProfiles:', this.availableProfiles.length);
       return;
     }
-    
+
     if (!this.userToEdit.userProfileDtos || this.userToEdit.userProfileDtos.length === 0) {
-      console.log('[updateAvailableProfiles] ✅ Aucun profil autorisé - Tous sont disponibles');
-      this.availableProfiles = [...this.profiles];
+      console.log('[updateAvailableProfiles] ✅ Aucun profil autorisé - Tous ceux du périmètre sont disponibles');
+      this.availableProfiles = [...scopedProfiles];
+      this.groupProfilesByApplication();
       console.log('[updateAvailableProfiles] availableProfiles:', this.availableProfiles.length);
       return;
     }
-    
+
     // Filtrer les profils déjà autorisés
     const authorizedProfileUuids = this.userToEdit.userProfileDtos.map(up => up.uuidProfile);
     console.log('[updateAvailableProfiles] 📋 Profils autorisés (UUID):', authorizedProfileUuids);
     console.log('[updateAvailableProfiles] 📋 Profils autorisés (noms):', this.userToEdit.userProfileDtos.map(up => up.nomProfile));
-    
-    this.availableProfiles = this.profiles.filter(profile => profile.uuid && !authorizedProfileUuids.includes(profile.uuid));
+
+    this.availableProfiles = scopedProfiles.filter(profile => profile.uuid && !authorizedProfileUuids.includes(profile.uuid));
     console.log('[updateAvailableProfiles] ✅ Profils disponibles:', this.availableProfiles.length);
     console.log('[updateAvailableProfiles] 📋 Profils disponibles (noms):', this.availableProfiles.map(profile => profile.nom));
-    
+
     // Grouper les profils disponibles par application
     this.groupProfilesByApplication();
-    
+
     console.log('[updateAvailableProfiles] ========== FIN ==========');
   }
 
@@ -275,6 +324,49 @@ export class UtilisateurFormComponent implements OnInit, OnChanges {
   grantProfileAccess(profile: Profile): void {
     if (!this.userToEdit) return;
 
+    // Un administrateur d'application ne peut accorder l'accès qu'aux applications qu'il
+    // administre lui-même (le bouton n'est normalement même pas affiché dans ce cas).
+    if (!this.canManageApplication(profile.uuidApplication)) {
+      Swal.fire({
+        title: 'Action non autorisée',
+        text: `Vous n'administrez pas l'application ${profile.nomApplication}.`,
+        icon: 'error',
+        confirmButtonColor: '#0d6846',
+        heightAuto: false
+      } as any);
+      return;
+    }
+
+    // Validation: Vérifier si l'utilisateur a déjà un profil pour cette application
+    const existingProfileForApp = this.userToEdit.userProfileDtos?.find(
+      up => up.uuidApplication === profile.uuidApplication && up.hasAccess
+    );
+
+    if (existingProfileForApp) {
+      Swal.fire({
+        title: 'Attention !',
+        html: `L'utilisateur a déjà le profil <strong>"${existingProfileForApp.nomProfile}"</strong> pour l'application <strong>${profile.nomApplication}</strong>.<br><br>Un utilisateur ne peut avoir qu'un seul profil par application.<br><br>Voulez-vous remplacer ce profil par <strong>"${profile.nom}"</strong> ?`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Oui, remplacer',
+        cancelButtonText: 'Annuler',
+        confirmButtonColor: '#0d6846',
+        cancelButtonColor: '#dc3545',
+        heightAuto: false,
+        backdrop: true
+      } as any).then((result) => {
+        if (result.isConfirmed) {
+          // Retirer l'ancien profil
+          this.userToEdit!.userProfileDtos = this.userToEdit!.userProfileDtos!.filter(
+            up => up.uuidProfile !== existingProfileForApp.uuidProfile
+          );
+          // Ajouter le nouveau profil
+          this.addNewProfile(profile);
+        }
+      });
+      return;
+    }
+
     Swal.fire({
       title: 'Autoriser l\'accès',
       text: `Voulez-vous autoriser le profil "${profile.nom}" pour ${profile.nomApplication} ?`,
@@ -287,6 +379,13 @@ export class UtilisateurFormComponent implements OnInit, OnChanges {
       backdrop: true
     } as any).then((result) => {
       if (result.isConfirmed) {
+        this.addNewProfile(profile);
+      }
+    });
+  }
+
+  private addNewProfile(profile: Profile): void {
+    if (!this.userToEdit) return;
         // Créer un nouveau UserProfile avec toutes les propriétés requises
         const newUserProfile: UserProfile = {
           uuid: '',  // Sera généré par le backend
@@ -327,8 +426,6 @@ export class UtilisateurFormComponent implements OnInit, OnChanges {
           heightAuto: false,
           backdrop: true
         } as any);
-      }
-    });
   }
 
   revokeProfileAccess(userProfile: UserProfile): void {
@@ -337,8 +434,21 @@ export class UtilisateurFormComponent implements OnInit, OnChanges {
     console.log('[revokeProfileAccess] userProfile.uuidProfile:', userProfile.uuidProfile);
     console.log('[revokeProfileAccess] userProfile.nomProfile:', userProfile.nomProfile);
     console.log('[revokeProfileAccess] userProfileDtos AVANT:', this.userToEdit?.userProfileDtos);
-    
+
     if (!this.userToEdit) return;
+
+    // Un administrateur d'application ne peut retirer l'accès que pour les applications qu'il
+    // administre lui-même (le bouton n'est normalement même pas affiché dans ce cas).
+    if (!this.canManageApplication(userProfile.uuidApplication)) {
+      Swal.fire({
+        title: 'Action non autorisée',
+        text: `Vous n'administrez pas l'application ${userProfile.nomApplication}.`,
+        icon: 'error',
+        confirmButtonColor: '#0d6846',
+        heightAuto: false
+      } as any);
+      return;
+    }
 
     Swal.fire({
       title: 'Retirer l\'accès',
@@ -392,6 +502,147 @@ export class UtilisateurFormComponent implements OnInit, OnChanges {
         } as any);
       }
       console.log('[revokeProfileAccess] ========== FIN ==========');
+    });
+  }
+
+  // ========== Gestion des Attributs ==========
+
+  addAttribut(): void {
+    if (!this.userToEdit || !this.newAttributCle.trim() || !this.newAttributValeur.trim()) {
+      Swal.fire({
+        title: 'Attention !',
+        text: 'Veuillez remplir la clé et la valeur de l\'attribut.',
+        icon: 'warning',
+        confirmButtonColor: '#0d6846',
+        heightAuto: false
+      } as any);
+      return;
+    }
+
+    // Vérifier si la clé existe déjà
+    const existingAttribut = this.userToEdit.userAttributDtos?.find(
+      attr => attr.cle === this.newAttributCle.trim()
+    );
+
+    if (existingAttribut) {
+      Swal.fire({
+        title: 'Attention !',
+        text: 'Un attribut avec cette clé existe déjà.',
+        icon: 'warning',
+        confirmButtonColor: '#0d6846',
+        heightAuto: false
+      } as any);
+      return;
+    }
+
+    // Initialiser userAttributDtos si nécessaire
+    if (!this.userToEdit.userAttributDtos) {
+      this.userToEdit.userAttributDtos = [];
+    }
+
+    // Ajouter le nouvel attribut
+    const newAttribut = new Attribut({
+      cle: this.newAttributCle.trim(),
+      valeur: this.newAttributValeur.trim(),
+      uuidUtilisateur: this.userToEdit.uuid
+    });
+
+    this.userToEdit.userAttributDtos.push(newAttribut);
+
+    // Réinitialiser les champs
+    this.newAttributCle = '';
+    this.newAttributValeur = '';
+
+    Swal.fire({
+      title: 'Succès !',
+      text: 'Attribut ajouté. N\'oubliez pas de sauvegarder.',
+      icon: 'success',
+      timer: 2000,
+      showConfirmButton: false,
+      heightAuto: false
+    } as any);
+  }
+
+  startEditAttribut(index: number): void {
+    this.editingAttributIndex = index;
+  }
+
+  saveEditAttribut(index: number): void {
+    if (!this.userToEdit || !this.userToEdit.userAttributDtos) return;
+
+    const attribut = this.userToEdit.userAttributDtos[index];
+    
+    if (!attribut.cle.trim() || !attribut.valeur.trim()) {
+      Swal.fire({
+        title: 'Attention !',
+        text: 'La clé et la valeur ne peuvent pas être vides.',
+        icon: 'warning',
+        confirmButtonColor: '#0d6846',
+        heightAuto: false
+      } as any);
+      return;
+    }
+
+    // Vérifier si la clé n'est pas déjà utilisée par un autre attribut
+    const duplicateAttribut = this.userToEdit.userAttributDtos.find(
+      (attr, idx) => idx !== index && attr.cle === attribut.cle.trim()
+    );
+
+    if (duplicateAttribut) {
+      Swal.fire({
+        title: 'Attention !',
+        text: 'Un autre attribut avec cette clé existe déjà.',
+        icon: 'warning',
+        confirmButtonColor: '#0d6846',
+        heightAuto: false
+      } as any);
+      return;
+    }
+
+    this.editingAttributIndex = -1;
+
+    Swal.fire({
+      title: 'Succès !',
+      text: 'Attribut modifié. N\'oubliez pas de sauvegarder.',
+      icon: 'success',
+      timer: 2000,
+      showConfirmButton: false,
+      heightAuto: false
+    } as any);
+  }
+
+  cancelEditAttribut(): void {
+    this.editingAttributIndex = -1;
+  }
+
+  deleteAttribut(index: number): void {
+    if (!this.userToEdit || !this.userToEdit.userAttributDtos) return;
+
+    const attribut = this.userToEdit.userAttributDtos[index];
+
+    Swal.fire({
+      title: 'Supprimer l\'attribut',
+      text: `Voulez-vous supprimer l'attribut "${attribut.cle}" ?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Oui, supprimer',
+      cancelButtonText: 'Annuler',
+      confirmButtonColor: '#dc3545',
+      heightAuto: false,
+      backdrop: true
+    } as any).then((result) => {
+      if (result.isConfirmed) {
+        this.userToEdit!.userAttributDtos!.splice(index, 1);
+
+        Swal.fire({
+          title: 'Succès !',
+          text: 'Attribut supprimé. N\'oubliez pas de sauvegarder.',
+          icon: 'success',
+          timer: 2000,
+          showConfirmButton: false,
+          heightAuto: false
+        } as any);
+      }
     });
   }
 }

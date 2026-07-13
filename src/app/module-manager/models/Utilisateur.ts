@@ -1,5 +1,6 @@
 import { UserProfile } from "./UserProfile";
 import { Role } from "./role.enum";
+import {Attribut} from "./Attribut";
 
 export class Utilisateur {
     uuid:string = "";
@@ -14,4 +15,5 @@ export class Utilisateur {
     password:string = "";
     enabled:boolean = true;
     userProfileDtos:UserProfile[] = [];
+    userAttributDtos:Attribut[] = [];
 }

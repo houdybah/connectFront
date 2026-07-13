@@ -6,7 +6,7 @@
 	"version": 1,
 	"newProjectRoot": "projects",
 	"projects": {
-		"velzon": {
+		"eDouane": {
 			"projectType": "application",
 			"schematics": {
 				"@schematics/angular:component": {
@@ -24,7 +24,7 @@
 					"builder": "ngx-build-plus:browser",
 					"options": {
 						"extraWebpackConfig": "webpack.config.js",
-						"outputPath": "dist/velzon",
+						"outputPath": "dist/eDouane",
 						"index": "src/index.html",
 						"main": "src/main.ts",
 						"polyfills": "src/polyfills.ts",
@@ -32,7 +32,12 @@
 						"inlineStyleLanguage": "scss",
 						"assets": [
 							"src/favicon.ico",
-							"src/assets"
+							"src/assets",
+							{
+								"glob": "**/*",
+								"input": "src/WEB-INF",
+								"output": "WEB-INF"
+							}
 						],
 						"styles": [
 							"node_modules/prismjs/themes/prism.css",
@@ -83,11 +88,11 @@
 							"file-saver",
 							"prismjs"
 						],
-						"extraWebpackConfig": "webpack.config.js",
 						"commonChunk": false
 					},
 					"configurations": {
 						"production": {
+							"baseHref": "/eDouane/",
 							"budgets": [
 								{
 									"type": "initial",
@@ -96,8 +101,8 @@
 								},
 								{
 									"type": "anyComponentStyle",
-									"maximumWarning": "2kb",
-									"maximumError": "4kb"
+									"maximumWarning": "8kb",
+									"maximumError": "20kb"
 								}
 							],
 							"fileReplacements": [
@@ -131,11 +136,11 @@
 					"builder": "ngx-build-plus:dev-server",
 					"configurations": {
 						"production": {
-							"buildTarget": "velzon:build:production",
+							"buildTarget": "eDouane:build:production",
 							"extraWebpackConfig": "webpack.prod.config.js"
 						},
 						"development": {
-							"buildTarget": "velzon:build:development"
+							"buildTarget": "eDouane:build:development"
 						}
 					},
 					"defaultConfiguration": "development",
@@ -148,7 +153,7 @@
 				"extract-i18n": {
 					"builder": "ngx-build-plus:extract-i18n",
 					"options": {
-						"buildTarget": "velzon:build",
+						"buildTarget": "eDouane:build",
 						"extraWebpackConfig": "webpack.config.js"
 					}
 				},

@@ -1,11 +1,16 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { AdminGuard } from '../core/guards/admin.guard';
 
 const routes: Routes = [
   // Application tabs SANS layout (reste comme avant)
   {
     path: 'applications',
     loadComponent: () => import('./application-tabs/application-tabs.component').then(m => m.ApplicationTabsComponent)
+  },
+  {
+    path: 'app-frame',
+    loadComponent: () => import('./app-frame/app-frame.component').then(m => m.AppFrameComponent)
   },
   {
     path: 'list',
@@ -22,6 +27,7 @@ const routes: Routes = [
   // Routes d'administration AVEC layout (topbar + menu)
   {
     path: 'admin',
+    canActivate: [AdminGuard],
     loadComponent: () => import('./admin-layout/admin-layout.component').then(m => m.AdminLayoutComponent),
     children: [
       {
@@ -43,6 +49,10 @@ const routes: Routes = [
       {
         path: 'login-history',
         loadComponent: () => import('./login-history/login-history.component').then(m => m.LoginHistoryComponent)
+      },
+      {
+        path: 'documentation',
+        loadComponent: () => import('./documentation/documentation.component').then(m => m.DocumentationComponent)
       },
       {
         path: '',

@@ -10,7 +10,6 @@ import { first } from 'rxjs/operators';
 import { ToastService } from './toast-service';
 import { Store } from '@ngrx/store';
 import { login } from 'src/app/store/Authentication/authentication.actions';
-import { jwtDecode } from "jwt-decode";
 import { TokenStorageService } from 'src/app/core/services/token-storage.service';
 
 @Component({
@@ -67,16 +66,17 @@ export class LoginComponent implements OnInit {
     this.messageError = ''; // Réinitialiser le message d'erreur
     
     this.authenticationService.login(this.f['email'].value, this.f['password'].value).subscribe(
-     (data:any) => {
+     async (data:any) => {
      if(data.token != null){
        sessionStorage.setItem('toast', 'true');
-       const decodedHeader = jwtDecode(data.token);
-      // console.log(decodedHeader)
-       sessionStorage.setItem('currentUser', JSON.stringify(decodedHeader.sub));
-       
-       // Sauvegarde du token de manière cryptée dans sessionStorage 'dConnect'
+
+       // Sauvegarde du token (chiffré côté serveur) de manière cryptée dans sessionStorage 'dConnect'
        this.tokenStorageService.saveToken(data.token);
-       
+
+       // Le token est chiffré (AES-256-GCM) : il faut le déchiffrer avant de pouvoir lire ses claims
+       const claims = await this.tokenStorageService.getDecryptedClaims();
+       sessionStorage.setItem('currentUser', JSON.stringify(claims?.sub));
+
        // Redirection uniquement en cas de succès
        this.router.navigate(['']);
      } else {

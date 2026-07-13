@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="https://jakarta.ee/xml/ns/jakartaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_5_0.xsd"
+         version="5.0">
+
+    <display-name>eDouane</display-name>
+
+    <welcome-file-list>
+        <welcome-file>index.html</welcome-file>
+    </welcome-file-list>
+
+    <mime-mapping>
+        <extension>mjs</extension>
+        <mime-type>application/javascript</mime-type>
+    </mime-mapping>
+
+    <!-- Angular Router utilise le mode HTML5 (pushState). Une URL profonde comme
+         /eDouane/modules/xyz rechargee directement n'existe pas en tant que fichier
+         statique cote Tomcat : cette regle redirige les 404 vers index.html pour que
+         le routeur Angular cote client prenne le relais. -->
+    <error-page>
+        <error-code>404</error-code>
+        <location>/index.html</location>
+    </error-page>
+
+</web-app>

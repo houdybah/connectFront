@@ -15,6 +15,7 @@ export class DashboardComponent implements OnInit {
   stats: DashboardStats | null = null;
   isLoading: boolean = true;
   errorMessage: string = '';
+  currentYear: number = new Date().getFullYear();
 
   constructor(private readonly dashboardService: DashboardService) { }
 

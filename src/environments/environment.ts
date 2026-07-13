@@ -5,9 +5,12 @@
 export const environment = {
   production: false,
   //defaultauth: 'https://atns-backend.atns-guinee.com',
-   defaultauth: 'http://localhost:8091',
-  // Clé secrète pour le cryptage AES-256 du token
+   defaultauth: 'http://41.77.184.36:8087/douaneConnect',
+  // Clé secrète pour le cryptage AES-256 du token stocké dans le navigateur (sessionStorage)
   encryptionSecretKey: 'douane-connect-secret-key-2024-secure',
+  // Doit être identique à `token.encryption.secret` dans application.properties du backend :
+  // c'est la clé utilisée pour déchiffrer (AES-256-GCM) le token émis par /authenticate
+  serverTokenSecret: 'DouaneConnect2025SecureTokenEncryptionKeyForAES256',
   firebaseConfig: {
     apiKey: '',
     authDomain: '',

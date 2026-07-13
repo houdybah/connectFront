@@ -1,0 +1,369 @@
+<div class="container-fluid">
+  <!-- En-tête -->
+  <div class="row">
+    <div class="col-12">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="mb-0">
+          <i class="ri-book-2-line me-2"></i>Documentation d'intégration &amp; d'administration
+        </h4>
+        <a routerLink="/modules/admin/dashboard" class="btn btn-outline-secondary btn-sm">
+          <i class="ri-arrow-left-line me-1"></i>Retour au tableau de bord
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="section-card">
+        <div class="section-header">
+          <i class="ri-shield-keyhole-line me-2"></i>Vue d'ensemble
+        </div>
+        <div class="section-body">
+          <p>
+            <strong>DouaneConnect</strong> joue le rôle d'un fournisseur d'identité centralisé pour l'ensemble
+            des applications de la Direction Générale des Douanes, un peu à la manière de <strong>Keycloak</strong> :
+          </p>
+          <ul>
+            <li><strong>Application</strong> (ce que Keycloak appelle un <em>client</em>) : chaque système
+              métier (ALTEREGO, COEA, DACTOV, SYDONIA WORLD, SYGDRD, SYGREH, E-DOUANE, ...) est déclaré une fois
+              dans DouaneConnect avec un <code>code</code> unique, une <code>url</code> et un statut
+              <code>enabled</code>.</li>
+            <li><strong>Profil</strong> (équivalent d'un <em>rôle</em>/<em>realm role</em>) : défini par
+              application, il regroupe un ensemble de <strong>Privilèges</strong> (permissions fines).</li>
+            <li><strong>Utilisateur</strong> : un compte unique dans DouaneConnect, auquel on attache un ou
+              plusieurs Profils (donc un accès à une ou plusieurs applications) via la relation
+              <code>UserProfile</code> (<code>hasAccess</code>, <code>enabled</code>, <code>nonLocked</code>,
+              <code>nonExpired</code>).</li>
+            <li><strong>Authentification déléguée</strong> : les applications clientes ne gèrent pas leurs
+              propres mots de passe. Elles redirigent l'utilisateur vers DouaneConnect (ou lui envoient
+              email/mot de passe côté serveur), reçoivent un <strong>token</strong>, puis l'échangent contre
+              une session/JWT local.</li>
+          </ul>
+          <p class="mb-0 text-muted">
+            En résumé : <strong>1 application = 1 client</strong>, <strong>1 profil = 1 rôle</strong>,
+            <strong>1 privilège = 1 permission</strong>, exactement comme dans un realm Keycloak.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="section-card">
+        <div class="section-header">
+          <i class="ri-lock-2-line me-2"></i>Sécurité des tokens (chiffrement de bout en bout)
+        </div>
+        <div class="section-body">
+          <p>
+            Le token DouaneConnect ne circule <strong>jamais en clair</strong> : un JWT est généré puis
+            immédiatement chiffré (<strong>AES-256-GCM</strong>) avant de quitter le serveur. C'est cette
+            forme chiffrée qui est persistée en base (<code>Utilisateur.currentToken</code>), renvoyée par
+            <code>/authenticate</code>, utilisée comme <code>Authorization: Bearer ...</code> pour tous les
+            appels à l'API DouaneConnect, transmise en paramètre <code>?token=...</code> à l'application
+            cliente affichée dans l'iframe, et renvoyée à <code>/api/token/validate/simple</code> pour
+            validation. Le JWT en clair n'existe que le temps d'un traitement serveur.
+          </p>
+
+          <h6 class="fw-bold mt-3">Deux couches de chiffrement</h6>
+          <ol>
+            <li>
+              <strong>Serveur → client (obligatoire)</strong> : <code>TokenEncryptionUtil</code>
+              (AES-256-GCM, clé dérivée par SHA-256 de <code>token.encryption.secret</code>). Déchiffré côté
+              serveur par <code>JwtRequestFilter</code> (pour authentifier les appels API) et par
+              <code>TokenValidationServiceImpl</code> (pour la validation SSO).
+            </li>
+            <li>
+              <strong>Stockage navigateur (défense en profondeur)</strong> : avant d'écrire le token
+              (déjà chiffré côté serveur) dans <code>sessionStorage</code>, <code>TokenStorageService</code>
+              lui applique une seconde couche AES (CryptoJS, clé <code>environment.encryptionSecretKey</code>),
+              pour qu'il ne soit pas lisible tel quel via les outils de développement du navigateur.
+            </li>
+          </ol>
+
+          <h6 class="fw-bold mt-3">Déchiffrement avant utilisation</h6>
+          <ul>
+            <li><code>TokenStorageService.getToken()</code> ne fait que retirer la couche "stockage
+              navigateur" : il renvoie le token toujours chiffré côté serveur — c'est la valeur correcte à
+              renvoyer telle quelle à l'API DouaneConnect ou à transmettre à une application cliente.</li>
+            <li>Pour lire un champ du token (rôle, profils, <code>jti</code>...), il faut d'abord le
+              déchiffrer : <code>await TokenStorageService.getDecryptedClaims()</code> effectue le
+              déchiffrement AES-256-GCM (Web Crypto API, compatible avec <code>TokenEncryptionUtil</code>)
+              puis décode le JWT obtenu.</li>
+            <li>Côté backend, tout endpoit qui reçoit un token (Bearer ou <code>?token=</code>) doit appeler
+              <code>tokenEncryptionUtil.decrypt(...)</code> avant toute lecture JJWT — déjà fait dans
+              <code>JwtRequestFilter</code> et <code>TokenValidationServiceImpl</code>.</li>
+          </ul>
+          <p class="text-muted">
+            <strong>Important :</strong> <code>token.encryption.secret</code> (backend,
+            <code>application.properties</code>) et <code>environment.serverTokenSecret</code> (frontend)
+            doivent être strictement identiques. En production, ces deux valeurs doivent provenir d'une
+            configuration sécurisée (variable d'environnement / coffre-fort de secrets), pas d'une valeur
+            codée en dur.
+          </p>
+
+          <h6 class="fw-bold mt-3">Composition du JWT (une fois déchiffré)</h6>
+          <p>Exemple pour un utilisateur ayant accès à plusieurs applications :</p>
+          <pre><code>&#123;
+  "aud": "",
+  "role": "SUPER_USER",
+  "profiles": [
+    &#123;
+      "uuidApplication": "49e930cd-9c25-47d9-8bb8-859b891a2e9c",
+      "privileges": ["CONSULTATION", "CREATION", "MODIFICATION", "SUPPRESSION", "ADMINISTRATION"],
+      "codeApplication": "ALTEREGO",
+      "nomApplication": "ALTEREGO",
+      "uuidProfile": "1af705b1-2332-4eb5-b30e-a6bdfb1b1c89",
+      "nomProfile": "Administrateur",
+      "descriptionProfile": "Accès complet à l'application ALTEREGO"
+    &#125;
+    // ... un objet par profil actif (hasAccess=true, enabled=true) de l'utilisateur
+  ],
+  "active": true,
+  "nom": "Admin",
+  "prenom": "Super",
+  "attributs": &#123;
+    "PORT": "GNCKY, GNBFA",
+    "BUREAU": "GNB12,GNB14,GNB11"
+  &#125;,
+  "jti": "5bef80a3-89e8-42ac-ae31-e866ee206f34",
+  "email": "superadmin&#64;douane.gov.gn",
+  "sub": "superadmin&#64;douane.gov.gn",
+  "iat": 1783431528,
+  "exp": 1783449528
+&#125;</code></pre>
+          <p class="mb-0 text-muted">
+            <code>profiles[]</code> porte un objet par profil actif : c'est de là que
+            <code>checkAdminRole()</code> et <code>AdminGuard</code> déduisent si l'utilisateur administre au
+            moins une application (<code>nomProfile === "Administrateur"</code>), et que
+            <code>/api/token/validate/simple?codeApp=...</code> dérive les <code>privileges</code> scopés à
+            une application donnée (voir Référence API).
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="section-card">
+        <div class="section-header">
+          <i class="ri-plug-line me-2"></i>Intégrer une nouvelle application
+        </div>
+        <div class="section-body">
+
+          <h6 class="fw-bold">Étape 1 — Déclarer l'application dans DouaneConnect</h6>
+          <p>
+            Depuis <a routerLink="/modules/admin/application-list">Applications</a> (ou par API), créez
+            l'application cliente :
+          </p>
+          <pre><code>POST /application
+{{ '{' }}
+  "code": "MON_APP",
+  "nom": "Mon Application",
+  "url": "https://mon-app.gov.gn",
+  "environnement": "Production",
+  "description": "Description fonctionnelle de l'application",
+  "enabled": true
+{{ '}' }}</code></pre>
+
+          <h6 class="fw-bold mt-4">Étape 2 — Définir les profils et privilèges</h6>
+          <p>
+            Toujours pour cette application, créez au moins un profil (ex. <em>Administrateur</em>,
+            <em>Utilisateur standard</em>) puis les privilèges à lui rattacher, depuis la page
+            <a routerLink="/modules/admin/application-list">Applications</a> (onglet Profils / Privilèges) :
+          </p>
+          <pre><code>POST /privilege   &#123; "nom": "GESTION_DOSSIER", "description": "...", "application": &#123; "uuid": "..." &#125; &#125;
+POST /profile     &#123; "nom": "Administrateur", "application": &#123; "uuid": "..." &#125; &#125;
+POST /profile/&#123;uuidProfile&#125;/privilege/&#123;uuidPrivilege&#125;   (attache un privilège au profil)</code></pre>
+
+          <h6 class="fw-bold mt-4">Étape 3 — Configurer le backend de l'application cliente</h6>
+          <p>Dans <code>application.properties</code> de la nouvelle application :</p>
+          <pre><code>api.external.base-url=https://douaneconnect.gov.gn/api</code></pre>
+          <p>Puis exposer un endpoint qui valide le token reçu de DouaneConnect et ouvre une session locale :</p>
+          <pre><code>&#64;PostMapping("/authenticateWithDouaneConnect")
+public ResponseEntity&lt;?&gt; authenticate(&#64;RequestParam String token) {{ '{' }}
+    ValidateTokenResponse result = apiConsumerService.validerTokenSimpleSync(token);
+    if (Boolean.TRUE.equals(result.getValid())) {{ '{' }}
+        String email = result.getUtilisateur().getEmail();
+        UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+        String jwt = jwtTokenUtil.generateToken(userDetails);
+        return ResponseEntity.ok(new JwtResponse(jwt));
+    {{ '}' }}
+    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+{{ '}' }}</code></pre>
+          <p class="text-muted mb-0">
+            Vérifiez systématiquement que l'utilisateur a bien accès à <code>codeApp</code> avant d'ouvrir une
+            session (champ <code>hasAccess</code> du profil renvoyé dans <code>userAppDtos</code>).
+          </p>
+
+          <h6 class="fw-bold mt-4">Étape 4 — Brancher le frontend (application affichée dans un frame DouaneConnect)</h6>
+          <ol>
+            <li>Depuis le portail (<code>/modules/applications</code>), un clic sur une carte application ouvre
+              celle-ci dans un <strong>iframe intégré à DouaneConnect</strong> (route
+              <code>/modules/app-frame</code>) plutôt que de rediriger la page entière.</li>
+            <li>L'URL chargée dans l'iframe est
+              <code>{{ '{' }}urlApplication{{ '}' }}?token=...&amp;codeApp=...&amp;url=...</code> : le
+              <code>token</code> DouaneConnect, le <code>codeApp</code> de l'application cliquée, et une
+              <code>url</code> de retour vers le portail.</li>
+            <li>L'application cliente détecte ces paramètres dès le chargement, appelle son backend qui
+              valide le token auprès de DouaneConnect (<code>codeApp</code> inclus, voir Étape 3), puis ouvre sa
+              propre session applicative.</li>
+            <li><strong>Important :</strong> pour être affichable dans l'iframe, l'application cliente ne doit
+              pas envoyer d'en-tête <code>X-Frame-Options: DENY</code> ni de <code>Content-Security-Policy:
+              frame-ancestors</code> restrictive.</li>
+          </ol>
+
+          <h6 class="fw-bold mt-4">Étape 5 — Tester</h6>
+          <p class="mb-0">
+            Utilisez Swagger (<code>/swagger-ui.html</code>) côté DouaneConnect et côté application cliente pour
+            valider le flux de bout en bout, avec un utilisateur de test possédant un profil sur la nouvelle
+            application.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="section-card">
+        <div class="section-header">
+          <i class="ri-user-settings-line me-2"></i>Administrer les utilisateurs et les accès
+        </div>
+        <div class="section-body">
+          <div class="alert alert-info">
+            <i class="ri-information-line me-2"></i>
+            <strong>Accès à l'espace admin scopé par application :</strong> un <code>SUPER_USER</code> voit
+            tout l'espace <code>/modules/admin</code>. Un utilisateur portant le profil
+            <code>Administrateur</code> sur une ou plusieurs applications — sans être <code>SUPER_USER</code>
+            — peut aussi y accéder (<code>AdminGuard</code> côté frontend), mais n'y voit que ses propres
+            applications (<code>ApplicationListComponent</code>), les utilisateurs qui y sont rattachés
+            (<code>UtilisateurListComponent</code>), et des statistiques de tableau de bord scopées à ces
+            applications. Ce filtrage est appliqué côté serveur (<code>ApplicationServiceImpl</code>,
+            <code>UtilisateurServiceImpl</code>, <code>DashboardServiceImpl</code> consultent
+            <code>SecurityContextService.getAdminApplicationUuids()</code>), pas seulement dans l'interface.
+          </div>
+          <ol>
+            <li>
+              <strong>Créer un utilisateur</strong> depuis
+              <a routerLink="/modules/admin/utilisateur-list">Utilisateurs</a> : email, nom, prénom,
+              service/fonction, rôle (<code>SUPER_USER</code> ou <code>USER_APP</code>).
+            </li>
+            <li>
+              <strong>Attribuer un accès applicatif</strong> : associer à l'utilisateur un ou plusieurs profils
+              (un profil par application souhaitée). Cela crée un enregistrement <code>UserProfile</code> avec
+              <code>hasAccess = true</code>.
+            </li>
+            <li>
+              <strong>Gérer le cycle de vie du compte</strong> sans le supprimer, via les indicateurs du
+              profil utilisateur :
+              <code>enabled</code> (compte actif), <code>nonLocked</code> (non verrouillé),
+              <code>nonExpired</code> (non expiré), <code>hasAccess</code> (accès à cette application
+              spécifiquement révocable indépendamment des autres).
+            </li>
+            <li>
+              <strong>Ajuster les droits fins</strong> depuis la gestion des profils/privilèges de chaque
+              application : ajouter/retirer un privilège d'un profil impacte instantanément tous les
+              utilisateurs qui portent ce profil.
+            </li>
+            <li>
+              <strong>Suivre l'activité</strong> via
+              <a routerLink="/modules/admin/audit-logs">Journaux d'Audit</a> et
+              <a routerLink="/modules/admin/login-history">Historique des Connexions</a>.
+            </li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="section-card">
+        <div class="section-header">
+          <i class="ri-terminal-box-line me-2"></i>Référence API rapide
+        </div>
+        <div class="section-body">
+          <div class="table-responsive">
+            <table class="table table-hover mb-0">
+              <thead>
+                <tr>
+                  <th>Ressource</th>
+                  <th>Endpoint</th>
+                  <th>Usage</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Applications</td>
+                  <td><code>GET/POST /application</code>, <code>PUT|DELETE /application/&#123;uuid&#125;</code></td>
+                  <td>Déclarer / lister / modifier / supprimer une application cliente</td>
+                </tr>
+                <tr>
+                  <td>Profils</td>
+                  <td><code>GET/POST /profile</code>, <code>GET /profile/application/&#123;uuidApplication&#125;</code></td>
+                  <td>Créer / lister les profils (rôles) d'une application</td>
+                </tr>
+                <tr>
+                  <td>Privilèges</td>
+                  <td><code>GET/POST /privilege</code>, <code>GET /privilege/application/&#123;uuidApplication&#125;</code></td>
+                  <td>Créer / lister les privilèges (permissions) d'une application</td>
+                </tr>
+                <tr>
+                  <td>Attribution profil ↔ privilège</td>
+                  <td><code>POST|DELETE /profile/&#123;uuidProfile&#125;/privilege/&#123;uuidPrivilege&#125;</code></td>
+                  <td>Attacher / retirer un privilège d'un profil</td>
+                </tr>
+                <tr>
+                  <td>Utilisateurs</td>
+                  <td><code>GET/POST /utilisateur</code>, <code>PUT|DELETE /utilisateur/&#123;uuid&#125;</code></td>
+                  <td>Gestion des comptes utilisateurs</td>
+                </tr>
+                <tr>
+                  <td>Accès applicatifs d'un utilisateur</td>
+                  <td><code>GET /api/utilisateur/&#123;uuidUtilisateur&#125;/applications/active</code></td>
+                  <td>Lister les applications auxquelles un utilisateur a effectivement accès</td>
+                </tr>
+                <tr>
+                  <td>Authentification email/mot de passe</td>
+                  <td><code>POST /api/validateTheAuthentication?email=&amp;password=&amp;codeApp=</code></td>
+                  <td>Utilisé par une application cliente pour authentifier un utilisateur pour son code app</td>
+                </tr>
+                <tr>
+                  <td>Validation de token</td>
+                  <td><code>POST /api/token/validate/simple?token=&amp;codeApp=</code></td>
+                  <td>
+                    Valide un token DouaneConnect. Si <code>codeApp</code> est fourni, la réponse est scopée à
+                    cette application (<code>codeApplication</code>, <code>privileges</code>) et refuse l'accès
+                    (<code>valid: false</code>) si l'utilisateur n'y a pas de profil actif. Retourne aussi
+                    <code>attributs</code> (<code>[{{ '{' }}"cle": "...", "valeur": "..."{{ '}' }}]</code>).
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-12">
+      <div class="section-card">
+        <div class="section-header">
+          <i class="ri-file-text-line me-2"></i>Documents source
+        </div>
+        <div class="section-body">
+          <p class="mb-0 text-muted">
+            Cette page résume la documentation détaillée conservée dans le dépôt, sous
+            <code>documentation/back</code> (configuration backend, DTOs, gestion des erreurs) et
+            <code>documentation/front</code> (flux de redirection SSO côté Angular). Consultez ces fichiers
+            pour le détail d'implémentation complet lors de l'intégration d'une nouvelle application.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

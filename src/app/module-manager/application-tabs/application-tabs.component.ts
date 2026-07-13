@@ -3,9 +3,9 @@ import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MenuVisibilityService } from '../../core/services/menu-visibility.service';
 import { TokenStorageService } from '../../core/services/token-storage.service';
+import { AdminAccessService } from '../../core/services/admin-access.service';
 import { ApplicationService } from '../services/application.service';
 import { UserApplicationAcces } from '../models/UserApplicationAcces';
-import { EncryptionService } from '../../core/services/encryption.service';
 
 @Component({
   selector: 'app-application-tabs',
@@ -26,60 +26,42 @@ export class ApplicationTabsComponent implements OnInit {
     private readonly router: Router,
     private readonly menuVisibilityService: MenuVisibilityService,
     private readonly tokenStorageService: TokenStorageService,
-    private readonly applicationService: ApplicationService,
-    private readonly encryptionService: EncryptionService
+    private readonly adminAccessService: AdminAccessService,
+    private readonly applicationService: ApplicationService
   ) { }
 
   ngOnInit(): void {
     // Masquer le menu au chargement
     this.menuVisibilityService.hideMenu();
-    
+
     // Vérifier si l'utilisateur est admin
     this.checkAdminRole();
-    
+
     // Charger les applications de l'utilisateur depuis l'API
     this.loadUserApplications();
   }
 
   /**
-   * Vérifie si l'utilisateur a le rôle admin en vérifiant le champ 'service' dans le token
+   * Détermine si le bouton flottant d'accès à l'administration DouaneConnect doit être
+   * affiché : uniquement pour les SUPER_USER et les administrateurs d'application (profil
+   * "Administrateur" sur au moins une application). Logique centralisée dans
+   * AdminAccessService, partagée avec AdminGuard, pour rester cohérente avec ce qui protège
+   * réellement /modules/admin/*.
    */
-  checkAdminRole(): void {
-    const token = this.tokenStorageService.getToken();
-    
-    if (!token) {
-      this.isAdmin = false;
-      return;
-    }
-    
-    try {
-      const payload = this.encryptionService.decodeJWT(token);
-      console.log('Payload du token pour vérification admin:', payload);
-      console.log('Champ service:', payload?.service);
-      
-      // Vérifier si le champ 'service' est égal à 'admin'
-      this.isAdmin = payload?.role === 'SUPER_USER';
-      console.log('Utilisateur est admin:', this.isAdmin);
-    } catch (error) {
-      console.error('Erreur lors de la vérification du rôle admin:', error);
-      this.isAdmin = false;
-    }
+  async checkAdminRole(): Promise<void> {
+    const access = await this.adminAccessService.getAccess();
+    this.isAdmin = access.isAdmin;
   }
 
   /**
    * Charge les applications de l'utilisateur depuis l'API
    */
-  loadUserApplications(): void {
+  async loadUserApplications(): Promise<void> {
     this.isLoading = true;
     this.errorMessage = '';
 
-    // DEBUG: Vérifier le token
-    const token = this.tokenStorageService.getToken();
-    console.log('Token récupéré:', token ? 'Token présent' : 'Token absent');
-
-    // Extraire l'UUID de l'utilisateur depuis le token JWT (champ jti)
-    const userUuid = this.tokenStorageService.getUserUuid();
-    console.log('UUID utilisateur extrait:', userUuid);
+    // Extraire l'UUID de l'utilisateur depuis le token (champ jti, après déchiffrement)
+    const userUuid = await this.tokenStorageService.getUserUuid();
 
     if (!userUuid) {
       console.error('UUID utilisateur non trouvé dans le token');
@@ -152,10 +134,10 @@ export class ApplicationTabsComponent implements OnInit {
     }
     
     const appCode = app.codeApplication?.toLowerCase() || '';
-    
+
     // Récupérer le token décrypté depuis le service
     const token = this.tokenStorageService.getToken();
-    
+
     if (!token) {
       console.error('Token non trouvé dans le sessionStorage');
       this.errorMessage = 'Session expirée. Veuillez vous reconnecter.';
@@ -164,29 +146,18 @@ export class ApplicationTabsComponent implements OnInit {
       }, 2000);
       return;
     }
-    
-    // Récupérer l'URL de la page en cours
-    const currentUrl = globalThis.location.href;
-    
+
     // Sauvegarder des informations dans le sessionStorage pour référence
     sessionStorage.setItem('currentApp', appCode);
-    sessionStorage.setItem('returnUrl', currentUrl);
-    
+    sessionStorage.setItem('currentAppData', JSON.stringify(app));
+
     // Mettre à jour le service de visibilité du menu
     this.menuVisibilityService.setSelectedApp(appCode);
-    
-    // Construire l'URL avec le token et l'URL de retour en paramètres de requête
-    const url = new URL(app.urlApplication);
-    url.searchParams.append('token', token);
-    url.searchParams.append('url', currentUrl);
-    const finalUrl = url.toString();
-    
-    console.log(`Redirection vers l'application ${app.nomApplication}:`, finalUrl);
-    console.log('Token passé:', token);
-    console.log('URL de retour:', currentUrl);
-    
-    // Rediriger vers l'URL de l'application avec le token et l'URL de retour
-    globalThis.location.href = finalUrl;
+
+    console.log(`Ouverture de l'application ${app.nomApplication} dans un frame DouaneConnect`);
+
+    // Afficher l'application dans un frame intégré à DouaneConnect plutôt que de rediriger
+    this.router.navigate(['/modules/app-frame']);
   }
 
   logout(): void {

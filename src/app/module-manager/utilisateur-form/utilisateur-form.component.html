@@ -112,9 +112,12 @@
                     <small class="text-muted">{{ userProfile.nomApplication }}</small>
                   </div>
                 </div>
-                <button type="button" class="btn btn-sm btn-danger" (click)="revokeProfileAccess(userProfile)">
+                <button *ngIf="canManageApplication(userProfile.uuidApplication)" type="button" class="btn btn-sm btn-danger" (click)="revokeProfileAccess(userProfile)">
                   <i class="ri-close-line"></i> Retirer
                 </button>
+                <span *ngIf="!canManageApplication(userProfile.uuidApplication)" class="text-muted small" title="Vous n'administrez pas cette application">
+                  <i class="ri-lock-line"></i> Non gérable
+                </span>
               </div>
               <div *ngIf="!userToEdit.userProfileDtos || userToEdit.userProfileDtos.length === 0" class="no-apps">
                 Aucun profil autorisé
@@ -148,6 +151,101 @@
               <div *ngIf="!profilesByApplication || profilesByApplication.length === 0" class="no-apps">
                 Tous les profils disponibles sont déjà autorisés
               </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section : Gestion des attributs utilisateur -->
+      <h3 *ngIf="userToEdit"><i class="ri-list-settings-line"></i> Attributs Utilisateur</h3>
+      
+      <div class="attributs-section" *ngIf="userToEdit">
+        <p class="text-muted">Ajoutez des attributs personnalisés pour cet utilisateur (paires clé/valeur).</p>
+        
+        <!-- Formulaire d'ajout d'attribut -->
+        <div class="attribut-form">
+          <div class="form-grid-inline">
+            <div class="form-group">
+              <label for="newAttributCle">Clé</label>
+              <input 
+                type="text" 
+                id="newAttributCle" 
+                [(ngModel)]="newAttributCle" 
+                [ngModelOptions]="{standalone: true}"
+                class="form-control" 
+                placeholder="Ex: departement">
+            </div>
+            <div class="form-group">
+              <label for="newAttributValeur">Valeur</label>
+              <input 
+                type="text" 
+                id="newAttributValeur" 
+                [(ngModel)]="newAttributValeur" 
+                [ngModelOptions]="{standalone: true}"
+                class="form-control" 
+                placeholder="Ex: Informatique">
+            </div>
+            <div class="form-group-action">
+              <button type="button" class="btn btn-sm btn-primary" (click)="addAttribut()">
+                <i class="ri-add-line"></i> Ajouter
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Liste des attributs -->
+        <div class="attributs-list">
+          <h4>Attributs définis</h4>
+          <div class="attribut-items">
+            <div *ngFor="let attribut of userToEdit.userAttributDtos; let i = index; trackBy: trackByAttributUuid" class="attribut-item">
+              <div *ngIf="editingAttributIndex !== i" class="attribut-view">
+                <div class="attribut-content">
+                  <strong>{{ attribut.cle }}</strong>
+                  <span class="attribut-separator">:</span>
+                  <span class="attribut-value">{{ attribut.valeur }}</span>
+                </div>
+                <div class="attribut-actions">
+                  <button type="button" class="btn btn-sm btn-outline" (click)="startEditAttribut(i)" title="Modifier">
+                    <i class="ri-edit-line"></i>
+                  </button>
+                  <button type="button" class="btn btn-sm btn-outline-danger" (click)="deleteAttribut(i)" title="Supprimer">
+                    <i class="ri-delete-bin-line"></i>
+                  </button>
+                </div>
+              </div>
+              
+              <div *ngIf="editingAttributIndex === i" class="attribut-edit">
+                <div class="form-grid-inline">
+                  <div class="form-group">
+                    <input 
+                      type="text" 
+                      [(ngModel)]="attribut.cle" 
+                      [ngModelOptions]="{standalone: true}"
+                      class="form-control" 
+                      placeholder="Clé">
+                  </div>
+                  <div class="form-group">
+                    <input 
+                      type="text" 
+                      [(ngModel)]="attribut.valeur" 
+                      [ngModelOptions]="{standalone: true}"
+                      class="form-control" 
+                      placeholder="Valeur">
+                  </div>
+                  <div class="form-group-action">
+                    <button type="button" class="btn btn-sm btn-success" (click)="saveEditAttribut(i)" title="Sauvegarder">
+                      <i class="ri-check-line"></i>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-secondary" (click)="cancelEditAttribut()" title="Annuler">
+                      <i class="ri-close-line"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div *ngIf="!userToEdit.userAttributDtos || userToEdit.userAttributDtos.length === 0" class="no-attributs">
+              Aucun attribut défini
             </div>
           </div>
         </div>

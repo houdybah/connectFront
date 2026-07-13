@@ -173,7 +173,7 @@
                     <td>
                       <div class="d-flex align-items-center">
                         <div class="user-avatar me-2">
-                          {{ user.prenom?.charAt(0) || 'U' }}{{ user.nom?.charAt(0) || '' }}
+                          {{ user.prenom.charAt(0) || 'U' }}{{ user.nom.charAt(0) || '' }}
                         </div>
                         <span class="fw-medium">{{ user.prenom }} {{ user.nom }}</span>
                       </div>
@@ -219,7 +219,7 @@
                     <td>
                       <div class="d-flex align-items-center">
                         <div class="user-avatar me-2">
-                          {{ login.prenom?.charAt(0) || 'U' }}
+                          {{ login.prenom.charAt(0) || 'U' }}
                         </div>
                         <div>
                           <div class="fw-medium">{{ login.prenom }} {{ login.nom }}</div>
@@ -254,4 +254,12 @@
     </div>
 
   </div>
+
+  <!-- Pied de page -->
+  <footer class="dashboard-footer mt-4 pt-3 border-top d-flex justify-content-between align-items-center flex-wrap gap-2">
+    <span class="text-muted small">&copy; {{ currentYear }} DouaneConnect &mdash; Direction Générale des Douanes</span>
+    <a routerLink="/modules/admin/documentation" class="footer-doc-link">
+      <i class="ri-book-2-line me-1"></i>Documentation d'intégration &amp; d'administration
+    </a>
+  </footer>
 </div>

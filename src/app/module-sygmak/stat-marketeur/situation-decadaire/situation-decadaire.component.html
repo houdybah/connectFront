@@ -165,13 +165,13 @@
          
 
            <div class="col-md-4 d-flex justify-content-start mt-4">
-            <button type="button" class="btn btn-info w-100" (click)="exportToPdf()"   [disabled]="!pageData?.content?.length">
+            <button type="button" class="btn btn-info w-100" (click)="exportToPdf()"   [disabled]="!pageData.content.length">
               <i class="fas fa-file-pdf"></i> PDF
             </button>
           </div>
              
           <div class="col-md-3 d-flex justify-content-start mt-4">
-            <button type="button" class="btn btn-warning w-100" (click)="exportToExcel1()"   [disabled]="!pageData?.content?.length">
+            <button type="button" class="btn btn-warning w-100" (click)="exportToExcel1()"   [disabled]="!pageData.content.length">
               <i class="fas fa-file-excel"></i> Excel
             </button>
           </div>
