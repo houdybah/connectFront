@@ -5,7 +5,8 @@
 export const environment = {
   production: false,
   //defaultauth: 'https://atns-backend.atns-guinee.com',
-   defaultauth: 'http://41.77.184.36:8087/douaneConnect',
+  // defaultauth: 'http://41.77.184.36:8087/douaneConnect',
+  defaultauth: 'http://localhost:8091',
   // Clé secrète pour le cryptage AES-256 du token stocké dans le navigateur (sessionStorage)
   encryptionSecretKey: 'douane-connect-secret-key-2024-secure',
   // Doit être identique à `token.encryption.secret` dans application.properties du backend :
